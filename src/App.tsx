@@ -5,6 +5,7 @@ import viteLogo from "/vite.svg";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import DragAndDrop from "./components/DragAndDrop";
+import SortableList from "./components/SortableList";
 
 const router = createBrowserRouter([
 	{
@@ -14,7 +15,17 @@ const router = createBrowserRouter([
 	{
 		path: "/config",
 		element: (
-			<DragAndDrop items={["AZN", "APL", "ABC", "XYZ"]}></DragAndDrop>
+			<DragAndDrop
+				onDragEnd={(result, provided) => {
+					console.log({ result });
+					console.log({ provided });
+				}}
+			>
+				<SortableList
+					droppableId={"config-sortable-symbols"}
+					items={["AZN", "APL", "ABC", "XYZ"]}
+				></SortableList>
+			</DragAndDrop>
 		),
 	},
 ]);

@@ -1,10 +1,22 @@
-import { Draggable, DraggableProps } from "react-beautiful-dnd";
+import { Draggable } from "react-beautiful-dnd";
 export default function SortableItem({
-	ref,
-	children,
+	item,
+	index,
 }: {
-	children: React.ReactNode;
-	ref: (element: HTMLElement | null) => void;
+	item: string;
+	index: number;
 }) {
-	return <>{children}</>;
+	return (
+		<Draggable draggableId={item} key={item} index={index}>
+			{(provided, snapshot) => (
+				<div
+					ref={provided.innerRef}
+					{...provided.draggableProps}
+					{...provided.dragHandleProps}
+				>
+					<>{item}</>
+				</div>
+			)}
+		</Draggable>
+	);
 }
