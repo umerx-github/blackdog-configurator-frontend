@@ -5,7 +5,7 @@ export default function SortableList({
 	items,
 }: {
 	droppableId: string;
-	items: string[];
+	items: { itemId: string; itemValue: string }[];
 }) {
 	return (
 		<StrictModeDroppable droppableId={droppableId}>
@@ -13,7 +13,8 @@ export default function SortableList({
 				<div ref={provided.innerRef} {...provided.droppableProps}>
 					{items.map((item, index) => (
 						<SortableItem
-							item={item}
+							itemId={item.itemId}
+							itemValue={item.itemValue}
 							index={index}
 							key={index}
 						></SortableItem>

@@ -1,20 +1,22 @@
 import { Draggable } from "react-beautiful-dnd";
 export default function SortableItem({
-	item,
+	itemId,
+	itemValue,
 	index,
 }: {
-	item: string;
+	itemId: string;
+	itemValue: string;
 	index: number;
 }) {
 	return (
-		<Draggable draggableId={item} key={item} index={index}>
+		<Draggable draggableId={itemId} key={itemId} index={index}>
 			{(provided, snapshot) => (
 				<div
 					ref={provided.innerRef}
 					{...provided.draggableProps}
 					{...provided.dragHandleProps}
 				>
-					<>{item}</>
+					<>{itemValue}</>
 				</div>
 			)}
 		</Draggable>

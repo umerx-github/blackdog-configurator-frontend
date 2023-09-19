@@ -29,7 +29,9 @@ export default function ConfigForm() {
 		<DragAndDrop onDragEnd={onDragEnd}>
 			<SortableList
 				droppableId={"config-sortable-symbols"}
-				items={symbols}
+				items={symbols.map((symbol) => {
+					return { itemId: symbol, itemValue: symbol };
+				})}
 			></SortableList>
 		</DragAndDrop>
 	);
