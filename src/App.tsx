@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import ConfigForm, {
 	loader as configFormLoader,
+	action as configFormAction,
 } from "./components/ConfigForm";
 
 const router = createBrowserRouter([
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
 		path: "/config",
 		element: <ConfigForm></ConfigForm>,
 		loader: configFormLoader,
+		action: configFormAction,
 	},
 ]);
 
