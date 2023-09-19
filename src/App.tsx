@@ -4,8 +4,9 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
-import DragAndDrop from "./components/DragAndDrop";
-import SortableList from "./components/SortableList";
+import ConfigForm, {
+	loader as configFormLoader,
+} from "./components/ConfigForm";
 
 const router = createBrowserRouter([
 	{
@@ -14,27 +15,16 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "/config",
-		element: (
-			<DragAndDrop
-				onDragEnd={(result, provided) => {
-					console.log({ result });
-					console.log({ provided });
-				}}
-			>
-				<SortableList
-					droppableId={"config-sortable-symbols"}
-					items={["AZN", "APL", "ABC", "XYZ"]}
-				></SortableList>
-			</DragAndDrop>
-		),
+		element: <ConfigForm></ConfigForm>,
+		loader: configFormLoader,
 	},
 ]);
 
 function App() {
 	return (
-		// <React.StrictMode>
-		<RouterProvider router={router} />
-		// </React.StrictMode>
+		<React.StrictMode>
+			<RouterProvider router={router} />
+		</React.StrictMode>
 	);
 }
 

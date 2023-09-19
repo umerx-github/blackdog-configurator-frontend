@@ -11,7 +11,6 @@ export default function SortableList({
 		<StrictModeDroppable droppableId={droppableId}>
 			{(provided, snapshot) => (
 				<div ref={provided.innerRef} {...provided.droppableProps}>
-					<h2>Drag and Drop</h2>
 					{items.map((item, index) => (
 						<SortableItem
 							item={item}
