@@ -16,8 +16,9 @@ export const loader: LoaderFunction<LoaderData> = async () => {
 	return { symbols: ["AAPL", "GOOG", "TSLA"] };
 };
 
-export const action: ActionFunction = ({ request }) => {
-	console.log("running action");
+export const action: ActionFunction = async ({ request }) => {
+	const body = await request.json();
+	console.log({ body });
 	return "";
 };
 
@@ -27,8 +28,16 @@ export default function ConfigForm() {
 	const submit = useSubmit();
 	return (
 		<Form
-			onSubmit={() => {
-				console.log("submitting form");
+			onSubmit={(e) => {
+				const formData = new FormData(e.currentTarget);
+				const formDataObject = {
+					...Object.fromEntries(formData.entries()),
+					symbols,
+				};
+				submit(formDataObject, {
+					method: "post",
+					encType: "application/json",
+				});
 			}}
 		>
 			<DragAndDrop
