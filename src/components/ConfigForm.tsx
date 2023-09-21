@@ -7,6 +7,8 @@ import {
 	LoaderFunction,
 	useSubmit,
 } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 
 interface LoaderData {
 	symbols: string[];
@@ -24,6 +26,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function ConfigForm() {
 	const data = useLoaderData() as LoaderData;
 	const [symbols, setSymbols] = useState(data.symbols ?? []);
+	const [newSymbol, setNewSymbol] = useState("");
 	useEffect(() => {
 		setSymbols(data.symbols ?? []);
 	}, [data.symbols]);
@@ -55,7 +58,21 @@ export default function ConfigForm() {
 					setSymbols(items.map((item) => item.itemValue));
 				}}
 			></DragAndDrop>
-
+			<div>
+				<input
+					name="symbolNew"
+					type="text"
+					value={newSymbol}
+					onChange={(e) => setNewSymbol(e.target.value)}
+				></input>
+				<FontAwesomeIcon
+					icon={faPlusCircle}
+					onClick={() => {
+						setSymbols([...symbols, newSymbol]);
+						setNewSymbol("");
+					}}
+				/>
+			</div>
 			<button type="submit">Submit</button>
 		</Form>
 	);
