@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import DragAndDrop from "./DragAndDrop";
 import {
 	Form,
 	useLoaderData,
@@ -9,6 +8,7 @@ import {
 } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import DragAndDropRepeater from "./DragAndDropRepeater";
 
 interface LoaderData {
 	symbols: string[];
@@ -26,7 +26,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function ConfigForm() {
 	const data = useLoaderData() as LoaderData;
 	const [symbols, setSymbols] = useState(data.symbols ?? []);
-	const [newSymbol, setNewSymbol] = useState("");
+	const [newItemValue, setNewItemValue] = useState("");
 	useEffect(() => {
 		setSymbols(data.symbols ?? []);
 	}, [data.symbols]);
@@ -49,30 +49,23 @@ export default function ConfigForm() {
 				);
 			}}
 		>
-			<DragAndDrop
+			<DragAndDropRepeater
 				items={symbols.map((symbol) => {
 					return { itemId: symbol, itemValue: symbol };
 				})}
+				newItemValue={newItemValue}
+				onNewItemValueChange={(newItemValue) => {
+					setNewItemValue(newItemValue);
+				}}
 				droppableId="symbols"
-				onChange={(items) => {
+				onReorder={(items) => {
 					setSymbols(items.map((item) => item.itemValue));
 				}}
-			></DragAndDrop>
-			<div>
-				<input
-					name="symbolNew"
-					type="text"
-					value={newSymbol}
-					onChange={(e) => setNewSymbol(e.target.value)}
-				></input>
-				<FontAwesomeIcon
-					icon={faPlusCircle}
-					onClick={() => {
-						setSymbols([...symbols, newSymbol]);
-						setNewSymbol("");
-					}}
-				/>
-			</div>
+				onAdd={(item) => {
+					setSymbols([...symbols, item]);
+					setNewItemValue("");
+				}}
+			></DragAndDropRepeater>
 			<button type="submit">Submit</button>
 		</Form>
 	);
