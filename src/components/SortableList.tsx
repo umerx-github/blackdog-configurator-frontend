@@ -1,11 +1,14 @@
 import StrictModeDroppable from "./StrictModeDroppable";
 import SortableItem from "./SortableItem";
+import { Item } from "../interfaces/DragAndDrop";
 export default function SortableList({
 	droppableId,
 	items,
+	onDelete = () => {},
 }: {
 	droppableId: string;
-	items: { itemId: string; itemValue: string }[];
+	items: Item[];
+	onDelete?: (item: Item) => void;
 }) {
 	return (
 		<StrictModeDroppable droppableId={droppableId}>
@@ -17,6 +20,7 @@ export default function SortableList({
 							itemValue={item.itemValue}
 							index={index}
 							key={index}
+							onDelete={onDelete}
 						></SortableItem>
 					))}
 					{provided.placeholder}

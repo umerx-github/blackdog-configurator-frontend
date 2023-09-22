@@ -6,16 +6,29 @@ import {
 	LoaderFunction,
 	useSubmit,
 } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import DragAndDropRepeater from "./DragAndDropRepeater";
+import { Item } from "../interfaces/DragAndDrop";
 
+type JsonObject = {
+	[Key in string]: JsonValue;
+} & {
+	[Key in string]?: JsonValue | undefined;
+};
+type JsonArray = JsonValue[] | readonly JsonValue[];
+type JsonPrimitive = string | number | boolean | null;
+type JsonValue = JsonPrimitive | JsonObject | JsonArray;
 interface LoaderData {
-	symbols: string[];
+	symbols: Item[];
 }
 
 export const loader: LoaderFunction<LoaderData> = async () => {
-	return { symbols: ["AAPL", "GOOG", "TSLA"] };
+	return {
+		symbols: [
+			{ itemId: "1", itemValue: "AAPL" },
+			{ itemId: "2", itemValue: "TSLA" },
+			{ itemId: "3", itemValue: "SPY" },
+		],
+	};
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -27,6 +40,7 @@ export default function ConfigForm() {
 	const data = useLoaderData() as LoaderData;
 	const [symbols, setSymbols] = useState(data.symbols ?? []);
 	const [newItemValue, setNewItemValue] = useState("");
+	const [newItemId, setNewItemId] = useState("");
 	useEffect(() => {
 		setSymbols(data.symbols ?? []);
 	}, [data.symbols]);
@@ -39,8 +53,21 @@ export default function ConfigForm() {
 			onSubmit={(e) => {
 				e.preventDefault();
 				const formData = new FormData(e.currentTarget);
+				const jsonValueFormData: JsonValue = Array.from(
+					formData.entries()
+				).map((entry) => {
+					return { [entry[0]]: entry[1].toString() };
+				});
+				const jsonValueSymbols: JsonValue = {
+					symbols: symbols.map((item) => {
+						return {
+							itemId: item.itemId,
+							itemValue: item.itemValue,
+						};
+					}),
+				};
 				submit(
-					{ ...Object.fromEntries(formData.entries()), symbols },
+					{ ...jsonValueFormData, ...jsonValueSymbols },
 					{
 						method: "post",
 						action: "/config",
@@ -50,20 +77,28 @@ export default function ConfigForm() {
 			}}
 		>
 			<DragAndDropRepeater
-				items={symbols.map((symbol) => {
-					return { itemId: symbol, itemValue: symbol };
-				})}
+				items={symbols}
 				newItemValue={newItemValue}
+				newItemId={newItemId}
 				onNewItemValueChange={(newItemValue) => {
 					setNewItemValue(newItemValue);
+					setNewItemId(newItemValue);
 				}}
 				droppableId="symbols"
 				onReorder={(items) => {
-					setSymbols(items.map((item) => item.itemValue));
+					setSymbols([...items]);
 				}}
 				onAdd={(item) => {
 					setSymbols([...symbols, item]);
 					setNewItemValue("");
+					setNewItemId("");
+				}}
+				onDelete={(item) => {
+					setSymbols(
+						symbols.filter(
+							(symbol) => symbol.itemId !== item.itemId
+						)
+					);
 				}}
 			></DragAndDropRepeater>
 			<button type="submit">Submit</button>

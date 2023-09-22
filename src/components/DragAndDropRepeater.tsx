@@ -2,22 +2,26 @@ import { DragDropContext, OnDragEndResponder } from "react-beautiful-dnd";
 import SortableList from "./SortableList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { Item } from "../interfaces/DragAndDrop";
 
 export default function DragAndDropRepeater({
 	items,
+	newItemId,
 	newItemValue,
 	droppableId,
 	onNewItemValueChange = () => {},
 	onReorder = () => {},
 	onAdd = () => {},
+	onDelete = () => {},
 }: {
-	items: { itemId: string; itemValue: string }[];
+	items: Item[];
+	newItemId: string;
 	newItemValue: string;
 	droppableId: string;
 	onNewItemValueChange?: (newItemValue: string) => void;
-	onReorder?: (items: { itemId: string; itemValue: string }[]) => void;
-	onAdd?: (item: string) => void;
+	onReorder?: (items: Item[]) => void;
+	onAdd?: (item: Item) => void;
+	onDelete?: (item: Item) => void;
 }) {
 	const onDragEnd: OnDragEndResponder = (result, provided) => {
 		if (result.destination) {
@@ -34,6 +38,7 @@ export default function DragAndDropRepeater({
 			<SortableList
 				droppableId={droppableId}
 				items={items}
+				onDelete={onDelete}
 			></SortableList>
 			<div>
 				<input
@@ -44,7 +49,7 @@ export default function DragAndDropRepeater({
 				<FontAwesomeIcon
 					icon={faPlusCircle}
 					onClick={() => {
-						onAdd(newItemValue);
+						onAdd({ itemId: newItemId, itemValue: newItemValue });
 					}}
 				/>
 			</div>
