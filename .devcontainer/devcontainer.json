@@ -1,9 +1,13 @@
 {
     "name": "blackdog-configurator-frontend",
-    "build": {
-        "dockerfile": "Dockerfile",
-    },
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "blackdog_configurator_frontend",
+	"workspaceFolder": "/workspace",
     "postCreateCommand": "npm ci",
+	// https://tjtelan.com/blog/how-to-link-multiple-docker-compose-via-network/
+	// https://containers.dev/guide/dockerfile
+	// https://github.com/microsoft/vscode-remote-release/issues/2485
+	"initializeCommand": "docker network create blackdog || echo 'Already exists'",
     "customizations": {
 		"vscode": {
 			"settings": {
