@@ -89,6 +89,14 @@ export default function ConfigForm() {
 					setSymbols([...items]);
 				}}
 				onAdd={(item) => {
+					// Determine if symbol already exists and do not allow duplicates
+					if (
+						symbols.findIndex(
+							(symbol) => item.itemValue === symbol.itemValue
+						) !== -1
+					) {
+						return;
+					}
 					setSymbols([...symbols, item]);
 					setNewItemValue("");
 					setNewItemId("");
