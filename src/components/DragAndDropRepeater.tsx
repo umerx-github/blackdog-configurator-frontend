@@ -62,6 +62,7 @@ export default function DragAndDropRepeater({
 }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [options, setOptions] = useState<Option[]>([]);
+	// @todo - instead of using a useEffect, move this into onCreate handler
 	useEffect(() => {
 		(async () => {
 			const newOptions = await promiseOptions("");
@@ -76,6 +77,7 @@ export default function DragAndDropRepeater({
 			onReorder(newItems);
 		}
 	};
+	// @todo - setOptions here.
 	const onCreate = (inputValue: string) => {
 		setIsLoading(true);
 		setTimeout(() => {
