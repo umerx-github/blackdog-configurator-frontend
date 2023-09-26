@@ -3,6 +3,31 @@ import SortableList from "./SortableList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { Item } from "../interfaces/DragAndDrop";
+import AsyncSelect from "react-select/async";
+
+interface Option {
+	label: string;
+	value: string;
+}
+
+const myOptions: Option[] = [
+	{ label: "foo", value: "foo" },
+	{ label: "bar", value: "bar" },
+	{ label: "baz", value: "baz" },
+];
+
+const filterOptions = (inputValue: string) => {
+	return myOptions.filter((i) =>
+		i.label.toLowerCase().includes(inputValue.toLowerCase())
+	);
+};
+
+const promiseOptions = (inputValue: string) =>
+	new Promise<Option[]>((resolve) => {
+		setTimeout(() => {
+			resolve(filterOptions(inputValue));
+		}, 1000);
+	});
 
 export default function DragAndDropRepeater({
 	items,
@@ -41,11 +66,13 @@ export default function DragAndDropRepeater({
 				onDelete={onDelete}
 			></SortableList>
 			<div>
-				<input
-					type="text"
-					value={newItemValue}
-					onChange={(e) => onNewItemValueChange(e.target.value)}
-				></input>
+				<AsyncSelect
+					value={{ label: newItemValue, value: newItemId }}
+					cacheOptions
+					defaultOptions
+					loadOptions={promiseOptions}
+					onChange={(e) => onNewItemValueChange(e?.value || "")}
+				/>
 				<FontAwesomeIcon
 					icon={faPlusCircle}
 					onClick={() => {
