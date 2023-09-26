@@ -3,8 +3,8 @@ import SortableList from "./SortableList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { Item } from "../interfaces/DragAndDrop";
-import AsyncSelect from "react-select/async";
-
+import AsyncCreatableSelect from "react-select/async-creatable";
+import { useState } from "react";
 interface Option {
 	label: string;
 	value: string;
@@ -22,12 +22,14 @@ const filterOptions = (inputValue: string) => {
 	);
 };
 
-const promiseOptions = (inputValue: string) =>
-	new Promise<Option[]>((resolve) => {
+const promiseOptions = (inputValue: string) => {
+	console.log("promiseOptions");
+	return new Promise<Option[]>((resolve) => {
 		setTimeout(() => {
 			resolve(filterOptions(inputValue));
 		}, 1000);
 	});
+};
 
 export default function DragAndDropRepeater({
 	items,
@@ -48,6 +50,7 @@ export default function DragAndDropRepeater({
 	onAdd?: (item: Item) => void;
 	onDelete?: (item: Item) => void;
 }) {
+	const [isLoading, setIsLoading] = useState(false);
 	const onDragEnd: OnDragEndResponder = (result, provided) => {
 		if (result.destination) {
 			const newItems = Array.from(items);
@@ -55,6 +58,17 @@ export default function DragAndDropRepeater({
 			newItems.splice(result.destination.index, 0, removed);
 			onReorder(newItems);
 		}
+	};
+	const onCreate = (inputValue: string) => {
+		setIsLoading(true);
+		setTimeout(() => {
+			const newOption: Item = {
+				itemId: inputValue,
+				itemValue: inputValue,
+			};
+			onAdd(newOption);
+			setIsLoading(false);
+		}, 1000);
 	};
 	// https://dev.to/kyleortiz/getting-started-with-react-beautiful-dnd-using-functional-components-50d0
 	// https://react.dev/reference/react/forwardRef
@@ -66,12 +80,17 @@ export default function DragAndDropRepeater({
 				onDelete={onDelete}
 			></SortableList>
 			<div>
-				<AsyncSelect
+				<AsyncCreatableSelect
 					value={{ label: newItemValue, value: newItemId }}
-					cacheOptions
+					// cacheOptions
 					defaultOptions
 					loadOptions={promiseOptions}
-					onChange={(e) => onNewItemValueChange(e?.value || "")}
+					onChange={(option) =>
+						onNewItemValueChange(option?.value || "")
+					}
+					onCreateOption={(inputValue) => onCreate(inputValue)}
+					isLoading={isLoading}
+					isDisabled={isLoading}
 				/>
 				<FontAwesomeIcon
 					icon={faPlusCircle}
