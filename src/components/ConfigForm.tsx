@@ -6,7 +6,7 @@ import {
 	LoaderFunction,
 	useSubmit,
 } from "react-router-dom";
-import DragAndDropRepeater from "./DragAndDropRepeater";
+import DragAndDropRepeater, { Option } from "./DragAndDropRepeater";
 import { Item } from "../interfaces/DragAndDrop";
 
 type JsonObject = {
@@ -36,15 +36,55 @@ export const action: ActionFunction = async ({ request }) => {
 	return body;
 };
 
+const myOptions: Option[] = [
+	{ label: "foo", value: "foo" },
+	{ label: "bar", value: "bar" },
+	{ label: "baz", value: "baz" },
+];
+
+const filterOptions = (inputValue: string) => {
+	if (!inputValue) {
+		return myOptions;
+	}
+	return myOptions.filter((i) =>
+		i.label.toLowerCase().includes(inputValue.toLowerCase())
+	);
+};
+
+/**
+ * @todo This needs to be an async function that calls the API
+ */
+const promiseOptions = (inputValue: string) => {
+	console.log("promiseOptions");
+	return new Promise<Option[]>((resolve) => {
+		setTimeout(() => {
+			resolve(filterOptions(inputValue));
+		}, 1000);
+	});
+};
+
 export default function ConfigForm() {
+	const submit = useSubmit();
 	const data = useLoaderData() as LoaderData;
+	const [options, setOptions] = useState<Option[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
 	const [symbols, setSymbols] = useState(data.symbols ?? []);
 	const [newItemValue, setNewItemValue] = useState("");
 	const [newItemId, setNewItemId] = useState("");
+	// Query to load inital config
 	useEffect(() => {
 		setSymbols(data.symbols ?? []);
 	}, [data.symbols]);
-	const submit = useSubmit();
+	// Query to load options
+	useEffect(() => {
+		(async () => {
+			console.log("setting options");
+			setIsLoading(true);
+			const options = await promiseOptions("");
+			setOptions(options);
+			setIsLoading(false);
+		})();
+	}, []);
 	return (
 		// You have to make sure your Form has defined the `method` and `action` props and that your invokation of submit() uses the same values for `method` and `action` in the SubmitOptions
 		<Form
@@ -77,14 +117,17 @@ export default function ConfigForm() {
 			}}
 		>
 			<DragAndDropRepeater
+				droppableId="symbols"
 				items={symbols}
-				newItemValue={newItemValue}
+				options={options}
 				newItemId={newItemId}
+				newItemValue={newItemValue}
+				isLoading={isLoading}
 				onNewItemValueChange={(newItemValue) => {
+					console.log("new item value change");
 					setNewItemValue(newItemValue);
 					setNewItemId(newItemValue);
 				}}
-				droppableId="symbols"
 				onReorder={(items) => {
 					setSymbols([...items]);
 				}}
@@ -107,6 +150,25 @@ export default function ConfigForm() {
 							(symbol) => symbol.itemId !== item.itemId
 						)
 					);
+				}}
+				onCreate={(inputValue) => {
+					(async () => {
+						console.log("onCreate");
+						setIsLoading(true);
+						const newOption: Item = {
+							itemId: inputValue,
+							itemValue: inputValue,
+						};
+						// @todo AJAX request to create new item
+						setOptions([
+							...options,
+							{ label: inputValue, value: inputValue },
+						]);
+						setSymbols([...symbols, newOption]);
+						setNewItemValue("");
+						setNewItemId("");
+						setIsLoading(false);
+					})();
 				}}
 			></DragAndDropRepeater>
 			<button type="submit">Submit</button>
