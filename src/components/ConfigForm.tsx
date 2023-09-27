@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import APIInstance from "../lib/backend/api";
 import {
 	Form,
 	useLoaderData,
@@ -54,13 +55,22 @@ const filterOptions = (inputValue: string) => {
 /**
  * @todo This needs to be an async function that calls the API
  */
-const promiseOptions = (inputValue: string) => {
+const promiseOptions = async (inputValue: string) => {
 	console.log("promiseOptions");
-	return new Promise<Option[]>((resolve) => {
-		setTimeout(() => {
-			resolve(filterOptions(inputValue));
-		}, 1000);
+	let symbols = await APIInstance.getSymbolEndpoint().get();
+	if (inputValue) {
+		symbols = symbols.filter((symbol) => {
+			return symbol.name.toLowerCase().includes(inputValue.toLowerCase());
+		});
+	}
+	return symbols.map((symbol) => {
+		return { label: symbol.name, value: symbol.name };
 	});
+	// return new Promise<Option[]>((resolve) => {
+	// 	setTimeout(() => {
+	// 		resolve(filterOptions(inputValue));
+	// 	}, 1000);
+	// });
 };
 
 export default function ConfigForm() {
