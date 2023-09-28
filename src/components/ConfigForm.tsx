@@ -169,6 +169,10 @@ export default function ConfigForm() {
 							itemId: inputValue,
 							itemValue: inputValue,
 						};
+						const response =
+							await APIInstance.getSymbolEndpoint().post({
+								name: inputValue,
+							});
 						// @todo AJAX request to create new item
 						setOptions([
 							...options,

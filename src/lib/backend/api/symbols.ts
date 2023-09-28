@@ -21,6 +21,9 @@ export default class SymbolEndpoint implements SymbolEndpointInterface {
 			`${this.credentials.getURL()}/${this.endpoint}`,
 			{
 				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
 				body: JSON.stringify(symbol),
 			}
 		);
