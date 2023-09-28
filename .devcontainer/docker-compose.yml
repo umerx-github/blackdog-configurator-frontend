@@ -7,6 +7,10 @@ services:
         command: sleep infinity
         volumes:
             - ./..:/workspace
+        ports:
+            - ${BLACKDOG_CONFIGURATOR_FRONTEND_PORT}:${BLACKDOG_CONFIGURATOR_FRONTEND_VITE_PORT}
+        environment:
+            - BLACKDOG_CONFIGURATOR_FRONTEND_VITE_PORT=${BLACKDOG_CONFIGURATOR_FRONTEND_VITE_PORT}
 
 # https://tjtelan.com/blog/how-to-link-multiple-docker-compose-via-network/
 # https://containers.dev/guide/dockerfile

@@ -2,9 +2,6 @@
     "name": "umerx-blackdog-configurator-frontend",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "umerx_blackdog_configurator_frontend",
-	"remoteEnv": {
-		"VITE_PORT": "3000"
-	},
 	"workspaceFolder": "/workspace",
     "postCreateCommand": "npm ci",
 	// https://tjtelan.com/blog/how-to-link-multiple-docker-compose-via-network/
