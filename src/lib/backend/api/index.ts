@@ -3,7 +3,8 @@ import {
 	APIInterface,
 	CredentialInterface,
 } from "../../../interfaces/backend/api";
-import SymbolEndpoint from "./symbols";
+import SymbolEndpoint from "./symbol.js";
+import ConfigEndpoint from "./config.js";
 export class API implements APIInterface {
 	constructor(public credentials: CredentialInterface) {}
 	getURL() {
@@ -11,6 +12,9 @@ export class API implements APIInterface {
 	}
 	getSymbolEndpoint() {
 		return new SymbolEndpoint(this.credentials, "symbol");
+	}
+	getConfigEndpoint() {
+		return new ConfigEndpoint(this.credentials, "config");
 	}
 }
 // import.meta.env.VITE_TEST_VAR

@@ -9,6 +9,11 @@ import {
 } from "react-router-dom";
 import DragAndDropRepeater, { Option } from "./DragAndDropRepeater";
 import { Item } from "../interfaces/DragAndDrop";
+import {
+	ConfigInterface,
+	NewConfigInterface,
+	SymbolInterface,
+} from "../interfaces/backend/api";
 
 type JsonObject = {
 	[Key in string]: JsonValue;
@@ -22,50 +27,38 @@ interface LoaderData {
 	symbols: Item[];
 }
 
-export const loader: LoaderFunction<LoaderData> = async () => {
-	return {
-		symbols: [
-			{ itemId: "1", itemValue: "AAPL" },
-			{ itemId: "2", itemValue: "TSLA" },
-			{ itemId: "3", itemValue: "SPY" },
-		],
-	};
+export const loader: LoaderFunction<ConfigInterface> = async () => {
+	const config = await APIInstance.getConfigEndpoint().getActive();
+	return config;
+	// return {
+	// 	symbols: [
+	// 		{ itemId: "1", itemValue: "AAPL" },
+	// 		{ itemId: "2", itemValue: "TSLA" },
+	// 		{ itemId: "3", itemValue: "SPY" },
+	// 	],
+	// };
 };
 
 export const action: ActionFunction = async ({ request }) => {
-	const body = await request.json();
+	const body = (await request.json()) as NewConfigInterface;
+	console.log({ body });
 	return body;
-};
-
-const myOptions: Option[] = [
-	{ label: "foo", value: "foo" },
-	{ label: "bar", value: "bar" },
-	{ label: "baz", value: "baz" },
-];
-
-const filterOptions = (inputValue: string) => {
-	if (!inputValue) {
-		return myOptions;
-	}
-	return myOptions.filter((i) =>
-		i.label.toLowerCase().includes(inputValue.toLowerCase())
-	);
 };
 
 /**
  * @todo This needs to be an async function that calls the API
  */
-const promiseOptions = async (inputValue: string) => {
+const promiseOptions = async (
+	inputValue: string
+): Promise<SymbolInterface[]> => {
 	console.log("promiseOptions");
 	let symbols = await APIInstance.getSymbolEndpoint().get();
 	if (inputValue) {
 		symbols = symbols.filter((symbol) => {
-			return symbol.name.toLowerCase().includes(inputValue.toLowerCase());
+			return symbol.name.toUpperCase().includes(inputValue.toUpperCase());
 		});
 	}
-	return symbols.map((symbol) => {
-		return { label: symbol.name, value: symbol.name };
-	});
+	return symbols;
 	// return new Promise<Option[]>((resolve) => {
 	// 	setTimeout(() => {
 	// 		resolve(filterOptions(inputValue));
@@ -75,8 +68,8 @@ const promiseOptions = async (inputValue: string) => {
 
 export default function ConfigForm() {
 	const submit = useSubmit();
-	const data = useLoaderData() as LoaderData;
-	const [options, setOptions] = useState<Option[]>([]);
+	const data = useLoaderData() as ConfigInterface;
+	const [options, setOptions] = useState<SymbolInterface[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [symbols, setSymbols] = useState(data.symbols ?? []);
 	const [newItemValue, setNewItemValue] = useState("");
@@ -111,8 +104,7 @@ export default function ConfigForm() {
 				const jsonValueSymbols: JsonValue = {
 					symbols: symbols.map((item) => {
 						return {
-							itemId: item.itemId,
-							itemValue: item.itemValue,
+							...item,
 						};
 					}),
 				};
@@ -128,36 +120,60 @@ export default function ConfigForm() {
 		>
 			<DragAndDropRepeater
 				droppableId="symbols"
-				items={symbols}
-				options={options}
+				items={symbols.map((symbol) => {
+					return {
+						itemId: symbol.id.toString(),
+						itemValue: symbol.name,
+					};
+				})}
+				options={options.map((option) => {
+					return { label: option.name, value: option.id.toString() };
+				})}
 				newItemId={newItemId}
 				newItemValue={newItemValue}
 				isLoading={isLoading}
 				onNewItemValueChange={(newItemValue) => {
 					console.log("new item value change");
-					setNewItemValue(newItemValue);
-					setNewItemId(newItemValue);
+					const uppercased = newItemValue.toUpperCase();
+					setNewItemValue(uppercased);
+					setNewItemId(uppercased);
 				}}
 				onReorder={(items) => {
-					setSymbols([...items]);
+					const symbolsReordered: SymbolInterface[] = [];
+					items.forEach((item) => {
+						const symbolIndex = symbols.findIndex(
+							(symbol) => symbol.id.toString() === item.itemId
+						);
+						if (symbolIndex !== -1) {
+							symbolsReordered.push(symbols[symbolIndex]);
+						}
+					});
+					setSymbols(symbolsReordered);
 				}}
 				onAdd={(item) => {
 					// Determine if symbol already exists and do not allow duplicates
 					if (
 						symbols.findIndex(
-							(symbol) => item.itemValue === symbol.itemValue
+							(symbol) => item.itemId === symbol.id.toString()
 						) !== -1
 					) {
 						return;
 					}
-					setSymbols([...symbols, item]);
+					// Lookup item in options
+					const optionIndex = options.findIndex(
+						(option) => item.itemId === option.id.toString()
+					);
+					if (optionIndex === -1) {
+						return;
+					}
+					setSymbols([...symbols, options[optionIndex]]);
 					setNewItemValue("");
 					setNewItemId("");
 				}}
 				onDelete={(item) => {
 					setSymbols(
 						symbols.filter(
-							(symbol) => symbol.itemId !== item.itemId
+							(symbol) => symbol.id.toString() !== item.itemId
 						)
 					);
 				}}
@@ -174,11 +190,8 @@ export default function ConfigForm() {
 								name: inputValue,
 							});
 						// @todo AJAX request to create new item
-						setOptions([
-							...options,
-							{ label: inputValue, value: inputValue },
-						]);
-						setSymbols([...symbols, newOption]);
+						setOptions([...options, response]);
+						setSymbols([...symbols, response]);
 						setNewItemValue("");
 						setNewItemId("");
 						setIsLoading(false);

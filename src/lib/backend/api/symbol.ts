@@ -1,5 +1,6 @@
 import {
 	CredentialInterface,
+	ResponseBase,
 	SymbolEndpointInterface,
 	SymbolInterface,
 } from "../../../interfaces/backend/api";
@@ -13,8 +14,9 @@ export default class SymbolEndpoint implements SymbolEndpointInterface {
 		const response = await fetch(
 			`${this.credentials.getURL()}/${this.endpoint}`
 		);
-		const symbols = await response.json();
-		return symbols as SymbolInterface[];
+		const symbols: ResponseBase<SymbolInterface[]> = await response.json();
+		if (symbols.status !== "success") throw new Error(symbols.message);
+		return symbols.data;
 	}
 	async post(symbol: { name: String }): Promise<SymbolInterface> {
 		const response = await fetch(
@@ -27,7 +29,8 @@ export default class SymbolEndpoint implements SymbolEndpointInterface {
 				body: JSON.stringify(symbol),
 			}
 		);
-		const newSymbol = await response.json();
-		return newSymbol as SymbolInterface;
+		const newSymbol: ResponseBase<SymbolInterface> = await response.json();
+		if (newSymbol.status !== "success") throw new Error(newSymbol.message);
+		return newSymbol.data;
 	}
 }
