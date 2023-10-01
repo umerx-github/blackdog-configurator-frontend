@@ -66,9 +66,9 @@ export default function DragAndDropRepeater({
 					// onInputChange={(inputString) =>
 					// 	onNewItemValueChange(inputString || "")
 					// }
-					onChange={(option) =>
-						onNewItemValueChange(option?.value || "")
-					}
+					onChange={(option) => {
+						onNewItemValueChange(option?.value || "");
+					}}
 					onCreateOption={(inputValue) => onCreate(inputValue)}
 					isLoading={isLoading}
 					isDisabled={isLoading}

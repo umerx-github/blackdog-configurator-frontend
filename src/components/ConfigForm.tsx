@@ -41,7 +41,6 @@ export const loader: LoaderFunction<ConfigInterface> = async () => {
 
 export const action: ActionFunction = async ({ request }) => {
 	const body = (await request.json()) as NewConfigInterface;
-	console.log({ body });
 	return body;
 };
 
@@ -51,7 +50,6 @@ export const action: ActionFunction = async ({ request }) => {
 const promiseOptions = async (
 	inputValue: string
 ): Promise<SymbolInterface[]> => {
-	console.log("promiseOptions");
 	let symbols = await APIInstance.getSymbolEndpoint().get();
 	if (inputValue) {
 		symbols = symbols.filter((symbol) => {
@@ -81,7 +79,6 @@ export default function ConfigForm() {
 	// Query to load options
 	useEffect(() => {
 		(async () => {
-			console.log("setting options");
 			setIsLoading(true);
 			const options = await promiseOptions("");
 			setOptions(options);
@@ -133,10 +130,13 @@ export default function ConfigForm() {
 				newItemValue={newItemValue}
 				isLoading={isLoading}
 				onNewItemValueChange={(newItemValue) => {
-					console.log("new item value change");
-					const uppercased = newItemValue.toUpperCase();
-					setNewItemValue(uppercased);
-					setNewItemId(uppercased);
+					const newItem = options.find(
+						(option) => option.id.toString() === newItemValue
+					);
+					if (newItem) {
+						setNewItemId(newItem.id.toString());
+						setNewItemValue(newItem.name);
+					}
 				}}
 				onReorder={(items) => {
 					const symbolsReordered: SymbolInterface[] = [];
@@ -179,7 +179,6 @@ export default function ConfigForm() {
 				}}
 				onCreate={(inputValue) => {
 					(async () => {
-						console.log("onCreate");
 						setIsLoading(true);
 						const newOption: Item = {
 							itemId: inputValue,
