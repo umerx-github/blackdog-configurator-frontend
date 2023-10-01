@@ -140,36 +140,26 @@ export default function ConfigForm() {
 					setSymbols(symbolsReordered);
 				}}
 				onAdd={(item) => {
-					// Determine if symbol already exists and do not allow duplicates
-					if (
-						symbols.findIndex(
-							(symbol) => item.itemId === symbol.id.toString()
-						) !== -1
-					) {
-						return;
-					}
-					// Lookup item in options
 					const optionIndex = options.findIndex(
-						(option) => item.itemId === option.id.toString()
+						(option) => option.id.toString() === item.itemId
 					);
-					if (optionIndex === -1) {
-						return;
-					}
-					setSymbols([...symbols, options[optionIndex]]);
-					// Remove item from options
+					const option = options[optionIndex];
 					const newOptions = [...options];
 					newOptions.splice(optionIndex, 1);
 					setOptions(newOptions);
-					// Update new item values
+					setSymbols([...symbols, option]);
 					setNewItemValue("");
 					setNewItemId("");
 				}}
 				onDelete={(item) => {
-					setSymbols(
-						symbols.filter(
-							(symbol) => symbol.id.toString() !== item.itemId
-						)
+					const symbolIndex = symbols.findIndex(
+						(symbol) => symbol.id.toString() === item.itemId
 					);
+					const symbol = symbols[symbolIndex];
+					const newSymbols = [...symbols];
+					newSymbols.splice(symbolIndex, 1);
+					setSymbols(newSymbols);
+					setOptions([...options, symbol]);
 					// @todo Add item back to options
 				}}
 				onCreate={(inputValue) => {
@@ -181,7 +171,7 @@ export default function ConfigForm() {
 							});
 						setSymbols([...symbols, response]);
 						// @todo Remove the item from options
-						setOptions([...options, response]);
+						// setOptions([...options, response]);
 						setNewItemValue("");
 						setNewItemId("");
 						setIsLoading(false);
