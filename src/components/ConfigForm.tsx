@@ -29,7 +29,10 @@ export const loader: LoaderFunction<ConfigInterface> = async () => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
-	const body = (await request.json()) as NewConfigInterface;
+	const newConfig = (await request.json()) as NewConfigInterface;
+	// Make this the new active config
+	newConfig.isActive = true;
+	const body = await APIInstance.getConfigEndpoint().post(newConfig);
 	return body;
 };
 
@@ -62,7 +65,16 @@ export default function ConfigForm() {
 		(async () => {
 			setIsLoading(true);
 			const options = await promiseOptions("");
-			setOptions(options);
+			// Filter out options that are already in symbols
+			const filteredOptions = options.filter((option) => {
+				return (
+					symbols.findIndex(
+						(symbol) =>
+							symbol.id.toString() === option.id.toString()
+					) === -1
+				);
+			});
+			setOptions(filteredOptions);
 			setIsLoading(false);
 		})();
 	}, []);
@@ -79,15 +91,11 @@ export default function ConfigForm() {
 				).map((entry) => {
 					return { [entry[0]]: entry[1].toString() };
 				});
-				const jsonValueSymbols: JsonValue = {
-					symbols: symbols.map((item) => {
-						return {
-							...item,
-						};
-					}),
+				const jsonValueSymbolIds: JsonValue = {
+					symbolIds: symbols.map((item) => item.id),
 				};
 				submit(
-					{ ...jsonValueFormData, ...jsonValueSymbols },
+					{ ...jsonValueFormData, ...jsonValueSymbolIds },
 					{
 						method: "post",
 						action: "/config",
@@ -148,6 +156,11 @@ export default function ConfigForm() {
 						return;
 					}
 					setSymbols([...symbols, options[optionIndex]]);
+					// Remove item from options
+					const newOptions = [...options];
+					newOptions.splice(optionIndex, 1);
+					setOptions(newOptions);
+					// Update new item values
 					setNewItemValue("");
 					setNewItemId("");
 				}}
@@ -157,6 +170,7 @@ export default function ConfigForm() {
 							(symbol) => symbol.id.toString() !== item.itemId
 						)
 					);
+					// @todo Add item back to options
 				}}
 				onCreate={(inputValue) => {
 					(async () => {
@@ -165,8 +179,9 @@ export default function ConfigForm() {
 							await APIInstance.getSymbolEndpoint().post({
 								name: inputValue,
 							});
-						setOptions([...options, response]);
 						setSymbols([...symbols, response]);
+						// @todo Remove the item from options
+						setOptions([...options, response]);
 						setNewItemValue("");
 						setNewItemId("");
 						setIsLoading(false);
