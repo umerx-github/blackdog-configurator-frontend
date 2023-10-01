@@ -3,7 +3,6 @@ import SortableList from "./SortableList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { Item } from "../interfaces/DragAndDrop";
-import { useEffect, useState } from "react";
 import CreatableSelect from "react-select/creatable";
 export interface Option {
 	label: string;

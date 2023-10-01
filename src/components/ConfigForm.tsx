@@ -8,7 +8,6 @@ import {
 	useSubmit,
 } from "react-router-dom";
 import DragAndDropRepeater, { Option } from "./DragAndDropRepeater";
-import { Item } from "../interfaces/DragAndDrop";
 import {
 	ConfigInterface,
 	NewConfigInterface,
@@ -23,20 +22,10 @@ type JsonObject = {
 type JsonArray = JsonValue[] | readonly JsonValue[];
 type JsonPrimitive = string | number | boolean | null;
 type JsonValue = JsonPrimitive | JsonObject | JsonArray;
-interface LoaderData {
-	symbols: Item[];
-}
 
 export const loader: LoaderFunction<ConfigInterface> = async () => {
 	const config = await APIInstance.getConfigEndpoint().getActive();
 	return config;
-	// return {
-	// 	symbols: [
-	// 		{ itemId: "1", itemValue: "AAPL" },
-	// 		{ itemId: "2", itemValue: "TSLA" },
-	// 		{ itemId: "3", itemValue: "SPY" },
-	// 	],
-	// };
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -44,9 +33,6 @@ export const action: ActionFunction = async ({ request }) => {
 	return body;
 };
 
-/**
- * @todo This needs to be an async function that calls the API
- */
 const promiseOptions = async (
 	inputValue: string
 ): Promise<SymbolInterface[]> => {
@@ -57,11 +43,6 @@ const promiseOptions = async (
 		});
 	}
 	return symbols;
-	// return new Promise<Option[]>((resolve) => {
-	// 	setTimeout(() => {
-	// 		resolve(filterOptions(inputValue));
-	// 	}, 1000);
-	// });
 };
 
 export default function ConfigForm() {
@@ -180,15 +161,10 @@ export default function ConfigForm() {
 				onCreate={(inputValue) => {
 					(async () => {
 						setIsLoading(true);
-						const newOption: Item = {
-							itemId: inputValue,
-							itemValue: inputValue,
-						};
 						const response =
 							await APIInstance.getSymbolEndpoint().post({
 								name: inputValue,
 							});
-						// @todo AJAX request to create new item
 						setOptions([...options, response]);
 						setSymbols([...symbols, response]);
 						setNewItemValue("");
