@@ -19,6 +19,10 @@ export interface SymbolInterface {
 	createdAt: string;
 }
 
+export interface OrderedSymbolInterface extends SymbolInterface {
+	order: number;
+}
+
 export interface NewSymbolInterface {
 	name: string;
 }
@@ -26,11 +30,11 @@ export interface ConfigInterface {
 	id: number;
 	isActive: boolean;
 	createdAt: string;
-	symbols: SymbolInterface[];
+	symbols: OrderedSymbolInterface[];
 }
 export interface NewConfigInterface {
 	isActive?: boolean;
-	symbolIds?: number[];
+	symbols?: OrderedSymbolInterface[];
 }
 export interface SymbolEndpointInterface {
 	get(): Promise<SymbolInterface[]>;

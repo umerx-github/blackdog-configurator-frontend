@@ -25,6 +25,9 @@ type JsonValue = JsonPrimitive | JsonObject | JsonArray;
 
 export const loader: LoaderFunction<ConfigInterface> = async () => {
 	const config = await APIInstance.getConfigEndpoint().getActive();
+	config.symbols = config.symbols.sort((a, b) => {
+		return a.order - b.order;
+	});
 	return config;
 };
 
@@ -91,11 +94,13 @@ export default function ConfigForm() {
 				).map((entry) => {
 					return { [entry[0]]: entry[1].toString() };
 				});
-				const jsonValueSymbolIds: JsonValue = {
-					symbolIds: symbols.map((item) => item.id),
+				const jsonValueSymbols: JsonValue = {
+					symbols: symbols.map((symbol) => {
+						return { ...symbol };
+					}),
 				};
 				submit(
-					{ ...jsonValueFormData, ...jsonValueSymbolIds },
+					{ ...jsonValueFormData, ...jsonValueSymbols },
 					{
 						method: "post",
 						action: "/config",
@@ -137,7 +142,14 @@ export default function ConfigForm() {
 							symbolsReordered.push(symbols[symbolIndex]);
 						}
 					});
-					setSymbols(symbolsReordered);
+					setSymbols(
+						symbolsReordered.map((symbol, index) => {
+							return {
+								...symbol,
+								order: index,
+							};
+						})
+					);
 				}}
 				onAdd={(item) => {
 					const optionIndex = options.findIndex(
@@ -147,7 +159,14 @@ export default function ConfigForm() {
 					const newOptions = [...options];
 					newOptions.splice(optionIndex, 1);
 					setOptions(newOptions);
-					setSymbols([...symbols, option]);
+					setSymbols(
+						[...symbols, option].map((symbol, index) => {
+							return {
+								...symbol,
+								order: index,
+							};
+						})
+					);
 					setNewItemValue("");
 					setNewItemId("");
 				}}
@@ -169,7 +188,14 @@ export default function ConfigForm() {
 							await APIInstance.getSymbolEndpoint().post({
 								name: inputValue,
 							});
-						setSymbols([...symbols, response]);
+						setSymbols(
+							[...symbols, response].map((symbol, index) => {
+								return {
+									...symbol,
+									order: index,
+								};
+							})
+						);
 						// @todo Remove the item from options
 						// setOptions([...options, response]);
 						setNewItemValue("");
