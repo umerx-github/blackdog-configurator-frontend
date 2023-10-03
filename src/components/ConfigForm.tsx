@@ -42,42 +42,42 @@ export const action: ActionFunction = async ({ request }) => {
 const promiseOptions = async (
 	inputValue: string
 ): Promise<SymbolInterface[]> => {
-	let symbols = await APIInstance.getSymbolEndpoint().get();
+	let selectedSymbols = await APIInstance.getSymbolEndpoint().get();
 	if (inputValue) {
-		symbols = symbols.filter((symbol) => {
+		selectedSymbols = selectedSymbols.filter((symbol) => {
 			return symbol.name.toUpperCase().includes(inputValue.toUpperCase());
 		});
 	}
-	return symbols;
+	return selectedSymbols;
 };
 
 export default function ConfigForm() {
 	const submit = useSubmit();
 	const data = useLoaderData() as ConfigInterface;
-	const [options, setOptions] = useState<SymbolInterface[]>([]);
+	const [symbolOptions, setSymbolOptions] = useState<SymbolInterface[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const [symbols, setSymbols] = useState(data.symbols ?? []);
+	const [selectedSymbols, setSelectedSymbols] = useState(data.symbols ?? []);
 	const [newItemValue, setNewItemValue] = useState("");
 	const [newItemId, setNewItemId] = useState("");
 	// Query to load inital config
 	useEffect(() => {
-		setSymbols(data.symbols ?? []);
+		setSelectedSymbols(data.symbols ?? []);
 	}, [data.symbols]);
-	// Query to load options
+	// Query to load symbolOptions
 	useEffect(() => {
 		(async () => {
 			setIsLoading(true);
-			const options = await promiseOptions("");
-			// Filter out options that are already in symbols
-			const filteredOptions = options.filter((option) => {
+			const symbolOptions = await promiseOptions("");
+			// Filter out symbolOptions that are already in selectedSymbols
+			const filteredOptions = symbolOptions.filter((option) => {
 				return (
-					symbols.findIndex(
+					selectedSymbols.findIndex(
 						(symbol) =>
 							symbol.id.toString() === option.id.toString()
 					) === -1
 				);
 			});
-			setOptions(filteredOptions);
+			setSymbolOptions(filteredOptions);
 			setIsLoading(false);
 		})();
 	}, []);
@@ -95,7 +95,7 @@ export default function ConfigForm() {
 					return { [entry[0]]: entry[1].toString() };
 				});
 				const jsonValueSymbols: JsonValue = {
-					symbols: symbols.map((symbol) => {
+					symbols: selectedSymbols.map((symbol) => {
 						return { ...symbol };
 					}),
 				};
@@ -110,21 +110,21 @@ export default function ConfigForm() {
 			}}
 		>
 			<DragAndDropRepeater
-				droppableId="symbols"
-				items={symbols.map((symbol) => {
+				droppableId="selectedSymbols"
+				items={selectedSymbols.map((symbol) => {
 					return {
 						itemId: symbol.id.toString(),
 						itemValue: symbol.name,
 					};
 				})}
-				options={options.map((option) => {
+				options={symbolOptions.map((option) => {
 					return { label: option.name, value: option.id.toString() };
 				})}
 				newItemId={newItemId}
 				newItemValue={newItemValue}
 				isLoading={isLoading}
 				onNewItemValueChange={(newItemValue) => {
-					const newItem = options.find(
+					const newItem = symbolOptions.find(
 						(option) => option.id.toString() === newItemValue
 					);
 					if (newItem) {
@@ -133,17 +133,19 @@ export default function ConfigForm() {
 					}
 				}}
 				onReorder={(items) => {
-					const symbolsReordered: SymbolInterface[] = [];
+					const selectedSymbolsReordered: SymbolInterface[] = [];
 					items.forEach((item) => {
-						const symbolIndex = symbols.findIndex(
+						const symbolIndex = selectedSymbols.findIndex(
 							(symbol) => symbol.id.toString() === item.itemId
 						);
 						if (symbolIndex !== -1) {
-							symbolsReordered.push(symbols[symbolIndex]);
+							selectedSymbolsReordered.push(
+								selectedSymbols[symbolIndex]
+							);
 						}
 					});
-					setSymbols(
-						symbolsReordered.map((symbol, index) => {
+					setSelectedSymbols(
+						selectedSymbolsReordered.map((symbol, index) => {
 							return {
 								...symbol,
 								order: index,
@@ -152,15 +154,15 @@ export default function ConfigForm() {
 					);
 				}}
 				onAdd={(item) => {
-					const optionIndex = options.findIndex(
+					const optionIndex = symbolOptions.findIndex(
 						(option) => option.id.toString() === item.itemId
 					);
-					const option = options[optionIndex];
-					const newOptions = [...options];
+					const option = symbolOptions[optionIndex];
+					const newOptions = [...symbolOptions];
 					newOptions.splice(optionIndex, 1);
-					setOptions(newOptions);
-					setSymbols(
-						[...symbols, option].map((symbol, index) => {
+					setSymbolOptions(newOptions);
+					setSelectedSymbols(
+						[...selectedSymbols, option].map((symbol, index) => {
 							return {
 								...symbol,
 								order: index,
@@ -171,15 +173,15 @@ export default function ConfigForm() {
 					setNewItemId("");
 				}}
 				onDelete={(item) => {
-					const symbolIndex = symbols.findIndex(
+					const symbolIndex = selectedSymbols.findIndex(
 						(symbol) => symbol.id.toString() === item.itemId
 					);
-					const symbol = symbols[symbolIndex];
-					const newSymbols = [...symbols];
+					const symbol = selectedSymbols[symbolIndex];
+					const newSymbols = [...selectedSymbols];
 					newSymbols.splice(symbolIndex, 1);
-					setSymbols(newSymbols);
-					setOptions([...options, symbol]);
-					// @todo Add item back to options
+					setSelectedSymbols(newSymbols);
+					setSymbolOptions([...symbolOptions, symbol]);
+					// @todo Add item back to symbolOptions
 				}}
 				onCreate={(inputValue) => {
 					(async () => {
@@ -188,16 +190,18 @@ export default function ConfigForm() {
 							await APIInstance.getSymbolEndpoint().post({
 								name: inputValue,
 							});
-						setSymbols(
-							[...symbols, response].map((symbol, index) => {
-								return {
-									...symbol,
-									order: index,
-								};
-							})
+						setSelectedSymbols(
+							[...selectedSymbols, response].map(
+								(symbol, index) => {
+									return {
+										...symbol,
+										order: index,
+									};
+								}
+							)
 						);
-						// @todo Remove the item from options
-						// setOptions([...options, response]);
+						// @todo Remove the item from symbolOptions
+						// setSymbolOptions([...symbolOptions, response]);
 						setNewItemValue("");
 						setNewItemId("");
 						setIsLoading(false);
