@@ -31,10 +31,12 @@ export interface ConfigInterface {
 	isActive: boolean;
 	createdAt: string;
 	symbols: OrderedSymbolInterface[];
+	sellAtPercentile: number;
 }
 export interface NewConfigInterface {
 	isActive?: boolean;
 	symbols?: OrderedSymbolInterface[];
+	sellAtPercentile: number;
 }
 export interface SymbolEndpointInterface {
 	get(): Promise<SymbolInterface[]>;

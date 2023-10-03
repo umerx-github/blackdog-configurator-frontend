@@ -91,9 +91,11 @@ export default function ConfigForm() {
 				const formData = new FormData(e.currentTarget);
 				const jsonValueFormData: JsonValue = Array.from(
 					formData.entries()
-				).map((entry) => {
-					return { [entry[0]]: entry[1].toString() };
-				});
+				).reduce((acc, entry) => {
+					const key = entry[0];
+					const value = Number(entry[1].toString());
+					return { ...acc, ...{ [key]: value } };
+				}, {});
 				const jsonValueSymbols: JsonValue = {
 					symbols: selectedSymbols.map((symbol) => {
 						return { ...symbol };
@@ -109,6 +111,12 @@ export default function ConfigForm() {
 				);
 			}}
 		>
+			<label htmlFor="sellAtPercentile">Sell At Percentile</label>
+			<input
+				type="number"
+				name="sellAtPercentile"
+				defaultValue={data.sellAtPercentile}
+			></input>
 			<DragAndDropRepeater
 				droppableId="selectedSymbols"
 				items={selectedSymbols.map((symbol) => {
