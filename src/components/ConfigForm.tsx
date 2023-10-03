@@ -57,12 +57,19 @@ export default function ConfigForm() {
 	const [symbolOptions, setSymbolOptions] = useState<SymbolInterface[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSymbols, setSelectedSymbols] = useState(data.symbols ?? []);
+	const [sellAtPercentile, setSellAtPercentile] = useState<string>(
+		(data.sellAtPercentile ?? 0).toFixed(2).toString()
+	);
 	const [newItemValue, setNewItemValue] = useState("");
 	const [newItemId, setNewItemId] = useState("");
 	// Query to load inital config
 	useEffect(() => {
 		setSelectedSymbols(data.symbols ?? []);
 	}, [data.symbols]);
+	// Query to load inital config
+	useEffect(() => {
+		setSellAtPercentile((data.sellAtPercentile ?? 0).toFixed(2).toString());
+	}, [data.sellAtPercentile]);
 	// Query to load symbolOptions
 	useEffect(() => {
 		(async () => {
@@ -89,20 +96,25 @@ export default function ConfigForm() {
 			onSubmit={(e) => {
 				e.preventDefault();
 				const formData = new FormData(e.currentTarget);
-				const jsonValueFormData: JsonValue = Array.from(
-					formData.entries()
-				).reduce((acc, entry) => {
-					const key = entry[0];
-					const value = Number(entry[1].toString());
-					return { ...acc, ...{ [key]: value } };
-				}, {});
+				// const jsonValueFormData: JsonValue = Array.from(
+				// 	formData.entries()
+				// ).reduce((acc, entry) => {
+				// 	const key = entry[0];
+				// 	const value = Number(entry[1].toString());
+				// 	return { ...acc, ...{ [key]: value } };
+				// }, {});
 				const jsonValueSymbols: JsonValue = {
 					symbols: selectedSymbols.map((symbol) => {
 						return { ...symbol };
 					}),
 				};
 				submit(
-					{ ...jsonValueFormData, ...jsonValueSymbols },
+					{
+						...jsonValueSymbols,
+						sellAtPercentile: Number(
+							formData.get("sellAtPercentile") ?? ""
+						),
+					},
 					{
 						method: "post",
 						action: "/config",
@@ -113,9 +125,22 @@ export default function ConfigForm() {
 		>
 			<label htmlFor="sellAtPercentile">Sell At Percentile</label>
 			<input
-				type="number"
+				type="text"
 				name="sellAtPercentile"
-				defaultValue={data.sellAtPercentile}
+				pattern="[0-9]*[.]?[0-9]{0,2}"
+				title="Enter a valid number with up to 2 decimal places."
+				value={sellAtPercentile}
+				onChange={(e) => {
+					setSellAtPercentile(e.target.value);
+				}}
+				onBlur={(e) => {
+					let floatVal = parseFloat(e.target.value);
+					if (isNaN(floatVal)) {
+						floatVal = 0;
+					}
+					setSellAtPercentile(floatVal.toFixed(2).toString());
+				}}
+				// defaultValue={data.sellAtPercentile}
 			></input>
 			<DragAndDropRepeater
 				droppableId="selectedSymbols"
