@@ -62,6 +62,10 @@ export default function ConfigForm() {
 	);
 	const [newItemValue, setNewItemValue] = useState("");
 	const [newItemId, setNewItemId] = useState("");
+	const [
+		sellAtPercentileOnChangeTimeout,
+		setSellAtPercentileOnChangeTimeout,
+	] = useState<NodeJS.Timeout>();
 	// Query to load inital config
 	useEffect(() => {
 		setSelectedSymbols(data.symbols ?? []);
@@ -131,8 +135,22 @@ export default function ConfigForm() {
 				title="Enter a valid number with up to 2 decimal places."
 				value={sellAtPercentile}
 				onChange={(e) => {
-					setSellAtPercentile(e.target.value);
+					const newSellAtPercentile = e.target.value;
+					setSellAtPercentile(newSellAtPercentile);
+					clearTimeout(sellAtPercentileOnChangeTimeout);
+					// queue up a new timeout to round the value to 2 decimal places
+					setSellAtPercentileOnChangeTimeout(
+						setTimeout(() => {
+							let floatVal = parseFloat(newSellAtPercentile);
+							if (isNaN(floatVal)) {
+								floatVal = 0;
+							}
+							const stringVal = floatVal.toFixed(2).toString();
+							setSellAtPercentile(stringVal);
+						}, 350)
+					);
 				}}
+				// @todo - may need to be careful this doesn't cause some kind of loop
 				onBlur={(e) => {
 					let floatVal = parseFloat(e.target.value);
 					if (isNaN(floatVal)) {
@@ -140,7 +158,6 @@ export default function ConfigForm() {
 					}
 					setSellAtPercentile(floatVal.toFixed(2).toString());
 				}}
-				// defaultValue={data.sellAtPercentile}
 			></input>
 			<DragAndDropRepeater
 				droppableId="selectedSymbols"
