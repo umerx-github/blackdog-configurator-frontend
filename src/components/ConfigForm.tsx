@@ -58,7 +58,7 @@ export default function ConfigForm() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSymbols, setSelectedSymbols] = useState(data.symbols ?? []);
 	const [sellAtPercentile, setSellAtPercentile] = useState<string>(
-		(data.sellAtPercentile ?? 0).toFixed(2).toString()
+		Number((data.sellAtPercentile ?? 0).toFixed(2)).toString()
 	);
 	const [newItemValue, setNewItemValue] = useState("");
 	const [newItemId, setNewItemId] = useState("");
@@ -72,7 +72,9 @@ export default function ConfigForm() {
 	}, [data.symbols]);
 	// Query to load inital config
 	useEffect(() => {
-		setSellAtPercentile((data.sellAtPercentile ?? 0).toFixed(2).toString());
+		setSellAtPercentile(
+			Number((data.sellAtPercentile ?? 0).toFixed(2)).toString()
+		);
 	}, [data.sellAtPercentile]);
 	// Query to load symbolOptions
 	useEffect(() => {
@@ -141,13 +143,16 @@ export default function ConfigForm() {
 					// queue up a new timeout to round the value to 2 decimal places
 					setSellAtPercentileOnChangeTimeout(
 						setTimeout(() => {
+							// @todo - detect if period at end of number and leave it
 							let floatVal = parseFloat(newSellAtPercentile);
 							if (isNaN(floatVal)) {
 								floatVal = 0;
 							}
-							const stringVal = floatVal.toFixed(2).toString();
+							const stringVal = Number(
+								floatVal.toFixed(2)
+							).toString();
 							setSellAtPercentile(stringVal);
-						}, 350)
+						}, 1500)
 					);
 				}}
 				// @todo - may need to be careful this doesn't cause some kind of loop
@@ -156,7 +161,7 @@ export default function ConfigForm() {
 					if (isNaN(floatVal)) {
 						floatVal = 0;
 					}
-					setSellAtPercentile(floatVal.toFixed(2).toString());
+					setSellAtPercentile(Number(floatVal.toFixed(2)).toString());
 				}}
 			></input>
 			<DragAndDropRepeater
