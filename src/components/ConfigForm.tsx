@@ -7,13 +7,12 @@ import {
 	LoaderFunction,
 	useSubmit,
 } from "react-router-dom";
-import DragAndDropRepeater, { Option } from "./DragAndDropRepeater";
+import DragAndDropRepeater from "./DragAndDropRepeater";
 import {
 	ConfigInterface,
 	NewConfigInterface,
 	SymbolInterface,
 } from "../interfaces/backend/api";
-
 type JsonObject = {
 	[Key in string]: JsonValue;
 } & {
@@ -51,6 +50,15 @@ const promiseOptions = async (
 	return selectedSymbols;
 };
 
+const formatStringFloatValue = (inputValue: string): string => {
+	const endsWithPeriod = inputValue.endsWith(".");
+	let floatVal = parseFloat(inputValue);
+	if (isNaN(floatVal)) {
+		floatVal = 0;
+	}
+	return Number(floatVal.toFixed(2)).toString() + (endsWithPeriod ? "." : "");
+};
+
 export default function ConfigForm() {
 	const submit = useSubmit();
 	const data = useLoaderData() as ConfigInterface;
@@ -58,7 +66,7 @@ export default function ConfigForm() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSymbols, setSelectedSymbols] = useState(data.symbols ?? []);
 	const [sellAtPercentile, setSellAtPercentile] = useState<string>(
-		Number((data.sellAtPercentile ?? 0).toFixed(2)).toString()
+		formatStringFloatValue(data.sellAtPercentile?.toString() ?? "")
 	);
 	const [newItemValue, setNewItemValue] = useState("");
 	const [newItemId, setNewItemId] = useState("");
@@ -73,7 +81,7 @@ export default function ConfigForm() {
 	// Query to load inital config
 	useEffect(() => {
 		setSellAtPercentile(
-			Number((data.sellAtPercentile ?? 0).toFixed(2)).toString()
+			formatStringFloatValue(data.sellAtPercentile?.toString() ?? "")
 		);
 	}, [data.sellAtPercentile]);
 	// Query to load symbolOptions
@@ -102,13 +110,6 @@ export default function ConfigForm() {
 			onSubmit={(e) => {
 				e.preventDefault();
 				const formData = new FormData(e.currentTarget);
-				// const jsonValueFormData: JsonValue = Array.from(
-				// 	formData.entries()
-				// ).reduce((acc, entry) => {
-				// 	const key = entry[0];
-				// 	const value = Number(entry[1].toString());
-				// 	return { ...acc, ...{ [key]: value } };
-				// }, {});
 				const jsonValueSymbols: JsonValue = {
 					symbols: selectedSymbols.map((symbol) => {
 						return { ...symbol };
@@ -144,24 +145,15 @@ export default function ConfigForm() {
 					setSellAtPercentileOnChangeTimeout(
 						setTimeout(() => {
 							// @todo - detect if period at end of number and leave it
-							let floatVal = parseFloat(newSellAtPercentile);
-							if (isNaN(floatVal)) {
-								floatVal = 0;
-							}
-							const stringVal = Number(
-								floatVal.toFixed(2)
-							).toString();
-							setSellAtPercentile(stringVal);
-						}, 1500)
+							setSellAtPercentile(
+								formatStringFloatValue(newSellAtPercentile)
+							);
+						}, 350)
 					);
 				}}
 				// @todo - may need to be careful this doesn't cause some kind of loop
 				onBlur={(e) => {
-					let floatVal = parseFloat(e.target.value);
-					if (isNaN(floatVal)) {
-						floatVal = 0;
-					}
-					setSellAtPercentile(Number(floatVal.toFixed(2)).toString());
+					setSellAtPercentile(formatStringFloatValue(e.target.value));
 				}}
 			></input>
 			<DragAndDropRepeater
