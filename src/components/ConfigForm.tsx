@@ -57,6 +57,11 @@ const formatStringFloatValue = (inputValue: string): string => {
 	if (isNaN(floatVal)) {
 		floatVal = 0;
 	}
+	// const floatValScale = 2;
+	// const floatValToScale = Number(floatVal.toFixed(floatValScale));
+	// const floatValPrecision = 8;
+	// // Truncate to precision
+
 	return (
 		Number(floatVal.toFixed(2)).toString() +
 		(endsWithPeriod && 1 === numberOfPeriods ? "." : "")
@@ -142,6 +147,14 @@ export default function ConfigForm() {
 				title="Enter a valid number with up to 2 decimal places."
 				value={sellAtPercentile}
 				onChange={(e) => {
+					const periodCount = e.target.value.split(".").length - 1;
+					// Don't allow more than 8 numbers - decimal doesn't count
+					if (
+						e.target.value.length > 9 ||
+						(periodCount !== 1 && e.target.value.length > 8)
+					) {
+						return;
+					}
 					const newSellAtPercentile = e.target.value;
 					setSellAtPercentile(newSellAtPercentile);
 					clearTimeout(sellAtPercentileOnChangeTimeout);
