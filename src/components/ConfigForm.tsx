@@ -52,11 +52,15 @@ const promiseOptions = async (
 
 const formatStringFloatValue = (inputValue: string): string => {
 	const endsWithPeriod = inputValue.endsWith(".");
+	const numberOfPeriods = inputValue.split(".").length - 1;
 	let floatVal = parseFloat(inputValue);
 	if (isNaN(floatVal)) {
 		floatVal = 0;
 	}
-	return Number(floatVal.toFixed(2)).toString() + (endsWithPeriod ? "." : "");
+	return (
+		Number(floatVal.toFixed(2)).toString() +
+		(endsWithPeriod && 1 === numberOfPeriods ? "." : "")
+	);
 };
 
 export default function ConfigForm() {
