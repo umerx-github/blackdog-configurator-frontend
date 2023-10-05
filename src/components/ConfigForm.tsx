@@ -13,6 +13,7 @@ import {
 	NewConfigInterface,
 	SymbolInterface,
 } from "../interfaces/backend/api";
+import FloatInput, { formatStringFloatValue } from "./FloatInput";
 type JsonObject = {
 	[Key in string]: JsonValue;
 } & {
@@ -50,24 +51,6 @@ const promiseOptions = async (
 	return selectedSymbols;
 };
 
-const formatStringFloatValue = (inputValue: string): string => {
-	const endsWithPeriod = inputValue.endsWith(".");
-	const numberOfPeriods = inputValue.split(".").length - 1;
-	let floatVal = parseFloat(inputValue);
-	if (isNaN(floatVal)) {
-		floatVal = 0;
-	}
-	// const floatValScale = 2;
-	// const floatValToScale = Number(floatVal.toFixed(floatValScale));
-	// const floatValPrecision = 8;
-	// // Truncate to precision
-
-	return (
-		Number(floatVal.toFixed(2)).toString() +
-		(endsWithPeriod && 1 === numberOfPeriods ? "." : "")
-	);
-};
-
 export default function ConfigForm() {
 	const submit = useSubmit();
 	const data = useLoaderData() as ConfigInterface;
@@ -79,11 +62,6 @@ export default function ConfigForm() {
 	);
 	const [newItemValue, setNewItemValue] = useState("");
 	const [newItemId, setNewItemId] = useState("");
-	const [
-		sellAtPercentileOnChangeTimeout,
-		setSellAtPercentileOnChangeTimeout,
-	] = useState<NodeJS.Timeout>();
-	// Query to load inital config
 	useEffect(() => {
 		setSelectedSymbols(data.symbols ?? []);
 	}, [data.symbols]);
@@ -128,7 +106,10 @@ export default function ConfigForm() {
 					{
 						...jsonValueSymbols,
 						sellAtPercentile: Number(
-							formData.get("sellAtPercentile") ?? ""
+							formatStringFloatValue(
+								formData.get("sellAtPercentile")?.toString() ??
+									""
+							)
 						),
 					},
 					{
@@ -140,39 +121,13 @@ export default function ConfigForm() {
 			}}
 		>
 			<label htmlFor="sellAtPercentile">Sell At Percentile</label>
-			<input
-				type="text"
-				name="sellAtPercentile"
-				pattern="[0-9]*[.]?[0-9]{0,2}"
-				title="Enter a valid number with up to 2 decimal places."
+			<FloatInput
+				name={sellAtPercentile}
 				value={sellAtPercentile}
-				onChange={(e) => {
-					const periodCount = e.target.value.split(".").length - 1;
-					// Don't allow more than 8 numbers - decimal doesn't count
-					if (
-						e.target.value.length > 9 ||
-						(periodCount !== 1 && e.target.value.length > 8)
-					) {
-						return;
-					}
-					const newSellAtPercentile = e.target.value;
-					setSellAtPercentile(newSellAtPercentile);
-					clearTimeout(sellAtPercentileOnChangeTimeout);
-					// queue up a new timeout to round the value to 2 decimal places
-					setSellAtPercentileOnChangeTimeout(
-						setTimeout(() => {
-							// @todo - detect if period at end of number and leave it
-							setSellAtPercentile(
-								formatStringFloatValue(newSellAtPercentile)
-							);
-						}, 350)
-					);
+				onChange={(value) => {
+					setSellAtPercentile(value);
 				}}
-				// @todo - may need to be careful this doesn't cause some kind of loop
-				onBlur={(e) => {
-					setSellAtPercentile(formatStringFloatValue(e.target.value));
-				}}
-			></input>
+			/>
 			<DragAndDropRepeater
 				droppableId="selectedSymbols"
 				items={selectedSymbols.map((symbol) => {
