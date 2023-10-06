@@ -124,7 +124,9 @@ export default function ConfigForm() {
 			<FloatInput
 				name={sellAtPercentile}
 				value={sellAtPercentile}
+				title="Enter a valid number with up to 2 decimal places."
 				onChange={(value) => {
+					console.log({ value });
 					setSellAtPercentile(value);
 				}}
 			/>
