@@ -13,7 +13,7 @@ import {
 	NewConfigInterface,
 	SymbolInterface,
 } from "../interfaces/backend/api";
-import FloatInput, { formatStringFloatValue } from "./FloatInput";
+import FloatInput from "./FloatInput";
 type JsonObject = {
 	[Key in string]: JsonValue;
 } & {
@@ -58,7 +58,7 @@ export default function ConfigForm() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSymbols, setSelectedSymbols] = useState(data.symbols ?? []);
 	const [sellAtPercentile, setSellAtPercentile] = useState<string>(
-		formatStringFloatValue(data.sellAtPercentile?.toString() ?? "")
+		data.sellAtPercentile?.toString() ?? ""
 	);
 	const [newItemValue, setNewItemValue] = useState("");
 	const [newItemId, setNewItemId] = useState("");
@@ -67,9 +67,7 @@ export default function ConfigForm() {
 	}, [data.symbols]);
 	// Query to load inital config
 	useEffect(() => {
-		setSellAtPercentile(
-			formatStringFloatValue(data.sellAtPercentile?.toString() ?? "")
-		);
+		setSellAtPercentile(data.sellAtPercentile?.toString() ?? "");
 	}, [data.sellAtPercentile]);
 	// Query to load symbolOptions
 	useEffect(() => {
@@ -106,10 +104,7 @@ export default function ConfigForm() {
 					{
 						...jsonValueSymbols,
 						sellAtPercentile: Number(
-							formatStringFloatValue(
-								formData.get("sellAtPercentile")?.toString() ??
-									""
-							)
+							formData.get("sellAtPercentile")?.toString() ?? ""
 						),
 					},
 					{
@@ -126,7 +121,6 @@ export default function ConfigForm() {
 				value={sellAtPercentile}
 				title="Enter a valid number with up to 2 decimal places."
 				onChange={(value) => {
-					console.log({ value });
 					setSellAtPercentile(value);
 				}}
 			/>
