@@ -32,6 +32,7 @@ export interface ConfigInterface {
 	createdAt: string;
 	symbols: OrderedSymbolInterface[];
 	sellAtPercentile: number;
+	buyAtPercentile: number;
 }
 export interface NewConfigInterface {
 	isActive?: boolean;

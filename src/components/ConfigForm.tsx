@@ -60,13 +60,15 @@ export default function ConfigForm() {
 	const [sellAtPercentile, setSellAtPercentile] = useState<string>(
 		data.sellAtPercentile?.toString() ?? ""
 	);
-	useEffect(() => {
-		setSelectedSymbols(data.symbols ?? []);
-	}, [data.symbols]);
+	const [buyAtPercentile, setBuyAtPercentile] = useState<string>(
+		data.buyAtPercentile?.toString() ?? ""
+	);
 	// Query to load inital config
 	useEffect(() => {
+		setSelectedSymbols(data.symbols ?? []);
 		setSellAtPercentile(data.sellAtPercentile?.toString() ?? "");
-	}, [data.sellAtPercentile]);
+		setBuyAtPercentile(data.buyAtPercentile?.toString() ?? "");
+	}, [data]);
 	// Query to load symbolOptions
 	useEffect(() => {
 		(async () => {
@@ -104,6 +106,9 @@ export default function ConfigForm() {
 						sellAtPercentile: Number(
 							formData.get("sellAtPercentile")?.toString() ?? ""
 						),
+						buyAtPercentile: Number(
+							formData.get("buyAtPercentile")?.toString() ?? ""
+						),
 					},
 					{
 						method: "post",
@@ -115,11 +120,20 @@ export default function ConfigForm() {
 		>
 			<label htmlFor="sellAtPercentile">Sell At Percentile</label>
 			<FloatInput
-				name={sellAtPercentile}
+				name="sellAtPercentile"
 				value={sellAtPercentile}
 				title="Enter a valid number with up to 2 decimal places."
 				onChange={(value) => {
 					setSellAtPercentile(value);
+				}}
+			/>
+			<label htmlFor="buyAtPercentile">Buy At Percentile</label>
+			<FloatInput
+				name="buyAtPercentile"
+				value={buyAtPercentile}
+				title="Enter a valid number with up to 2 decimal places."
+				onChange={(value) => {
+					setBuyAtPercentile(value);
 				}}
 			/>
 			<DragAndDropRepeaterInput
