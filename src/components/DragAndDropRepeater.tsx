@@ -15,8 +15,8 @@ export interface Option {
  */
 export default function DragAndDropRepeater({
 	droppableId,
-	items = [],
-	options = [],
+	selectedItems = [],
+	availableItems = [],
 	newItemId = "",
 	newItemValue = "",
 	isLoading = false,
@@ -27,8 +27,8 @@ export default function DragAndDropRepeater({
 	onCreate = () => {},
 }: {
 	droppableId: string;
-	items?: Item[];
-	options?: Option[];
+	selectedItems?: Item[];
+	availableItems?: Item[];
 	newItemId?: string;
 	newItemValue?: string;
 	isLoading?: boolean;
@@ -40,7 +40,7 @@ export default function DragAndDropRepeater({
 }) {
 	const onDragEnd: OnDragEndResponder = (result, provided) => {
 		if (result.destination) {
-			const newItems = Array.from(items);
+			const newItems = Array.from(selectedItems);
 			const [removed] = newItems.splice(result.source.index, 1);
 			newItems.splice(result.destination.index, 0, removed);
 			onReorder(newItems);
@@ -52,19 +52,18 @@ export default function DragAndDropRepeater({
 		<DragDropContext onDragEnd={onDragEnd}>
 			<SortableList
 				droppableId={droppableId}
-				items={items}
+				items={selectedItems}
 				onDelete={onDelete}
 			></SortableList>
 			<div>
 				<CreatableSelect
 					value={{ label: newItemValue, value: newItemId }}
-					// cacheOptions
-					// defaultOptions
-					// loadOptions={promiseOptions}
-					options={options}
-					// onInputChange={(inputString) =>
-					// 	onNewItemValueChange(inputString || "")
-					// }
+					options={availableItems.map((option) => {
+						return {
+							label: option.itemValue,
+							value: option.itemId,
+						};
+					})}
 					onChange={(option) => {
 						onNewItemValueChange(option?.value || "");
 					}}

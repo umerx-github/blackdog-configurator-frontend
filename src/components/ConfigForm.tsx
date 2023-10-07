@@ -7,13 +7,13 @@ import {
 	LoaderFunction,
 	useSubmit,
 } from "react-router-dom";
-import DragAndDropRepeater from "./DragAndDropRepeater";
 import {
 	ConfigInterface,
 	NewConfigInterface,
 	SymbolInterface,
 } from "../interfaces/backend/api";
 import FloatInput from "./FloatInput";
+import DragAndDropRepeaterInput from "./DragAndDropRepeaterInput";
 type JsonObject = {
 	[Key in string]: JsonValue;
 } & {
@@ -60,8 +60,6 @@ export default function ConfigForm() {
 	const [sellAtPercentile, setSellAtPercentile] = useState<string>(
 		data.sellAtPercentile?.toString() ?? ""
 	);
-	const [newItemValue, setNewItemValue] = useState("");
-	const [newItemId, setNewItemId] = useState("");
 	useEffect(() => {
 		setSelectedSymbols(data.symbols ?? []);
 	}, [data.symbols]);
@@ -124,29 +122,21 @@ export default function ConfigForm() {
 					setSellAtPercentile(value);
 				}}
 			/>
-			<DragAndDropRepeater
+			<DragAndDropRepeaterInput
 				droppableId="selectedSymbols"
-				items={selectedSymbols.map((symbol) => {
+				selectedItems={selectedSymbols.map((symbol) => {
 					return {
 						itemId: symbol.id.toString(),
 						itemValue: symbol.name,
 					};
 				})}
-				options={symbolOptions.map((option) => {
-					return { label: option.name, value: option.id.toString() };
+				availableItems={symbolOptions.map((option) => {
+					return {
+						itemId: option.id.toString(),
+						itemValue: option.name,
+					};
 				})}
-				newItemId={newItemId}
-				newItemValue={newItemValue}
 				isLoading={isLoading}
-				onNewItemValueChange={(newItemValue) => {
-					const newItem = symbolOptions.find(
-						(option) => option.id.toString() === newItemValue
-					);
-					if (newItem) {
-						setNewItemId(newItem.id.toString());
-						setNewItemValue(newItem.name);
-					}
-				}}
 				onReorder={(items) => {
 					const selectedSymbolsReordered: SymbolInterface[] = [];
 					items.forEach((item) => {
@@ -184,8 +174,6 @@ export default function ConfigForm() {
 							};
 						})
 					);
-					setNewItemValue("");
-					setNewItemId("");
 				}}
 				onDelete={(item) => {
 					const symbolIndex = selectedSymbols.findIndex(
@@ -196,7 +184,6 @@ export default function ConfigForm() {
 					newSymbols.splice(symbolIndex, 1);
 					setSelectedSymbols(newSymbols);
 					setSymbolOptions([...symbolOptions, symbol]);
-					// @todo Add item back to symbolOptions
 				}}
 				onCreate={(inputValue) => {
 					(async () => {
@@ -215,14 +202,10 @@ export default function ConfigForm() {
 								}
 							)
 						);
-						// @todo Remove the item from symbolOptions
-						// setSymbolOptions([...symbolOptions, response]);
-						setNewItemValue("");
-						setNewItemId("");
 						setIsLoading(false);
 					})();
 				}}
-			></DragAndDropRepeater>
+			></DragAndDropRepeaterInput>
 			<button type="submit">Submit</button>
 		</Form>
 	);
