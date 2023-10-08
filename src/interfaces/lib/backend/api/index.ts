@@ -33,6 +33,8 @@ export interface ConfigInterfaceRequired {
 	sellTrailingPercent: number;
 	buyTrailingPercent: number;
 	timeframeInDays: number;
+	alpacaApiKey: string;
+	alpacaApiSecret: string;
 }
 export interface ConfigInterface extends ConfigInterfaceRequired {
 	id: number;

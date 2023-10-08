@@ -49,6 +49,8 @@ export const newConfigToSubmitTarget = function (
 		sellTrailingPercent: newConfig.sellTrailingPercent,
 		buyTrailingPercent: newConfig.buyTrailingPercent,
 		timeframeInDays: newConfig.timeframeInDays,
+		alpacaApiKey: newConfig.alpacaApiKey,
+		alpacaApiSecret: newConfig.alpacaApiSecret,
 	};
 };
 
@@ -137,6 +139,10 @@ export default function ConfigForm() {
 					timeframeInDays: Number(
 						formData.get("timeframeInDays")?.toString() ?? ""
 					),
+					alpacaApiKey:
+						formData.get("alpacaApiKey")?.toString() ?? "",
+					alpacaApiSecret:
+						formData.get("alpacaApiSecret")?.toString() ?? "",
 				};
 				submit(newConfigToSubmitTarget(newConfig), {
 					method: "post",
@@ -189,6 +195,18 @@ export default function ConfigForm() {
 				onChange={(value) => {
 					setTimeframeInDays(value);
 				}}
+			/>
+			<label htmlFor="alpacaApiKey">Alpaca Api Key</label>
+			<input
+				type="text"
+				name="alpacaApiKey"
+				defaultValue={data.alpacaApiKey ?? ""}
+			/>
+			<label htmlFor="alpacaApiSecret">Alpaca Api Secret</label>
+			<input
+				type="password"
+				name="alpacaApiSecret"
+				defaultValue={data.alpacaApiSecret ?? ""}
 			/>
 			<DragAndDropRepeaterInput
 				droppableId="selectedSymbols"
