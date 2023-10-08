@@ -10,17 +10,22 @@ import {
 import {
 	ConfigInterface,
 	NewConfigInterface,
+	OrderedSymbolInterface,
 	SymbolInterface,
 } from "../interfaces/lib/backend/api";
 import FloatInput from "./inputs/FloatInput";
 import DragAndDropRepeaterInput from "./inputs/drag-and-drop/DragAndDropRepeaterInput";
 import { SubmitTarget } from "react-router-dom/dist/dom";
 
-export const loader: LoaderFunction<ConfigInterface> = async () => {
-	const config = await APIInstance.getConfigEndpoint().getActive();
-	config.symbols = config.symbols.sort((a, b) => {
+const sortSymbols = function (symbols: OrderedSymbolInterface[]) {
+	return [...symbols].sort((a, b) => {
 		return a.order - b.order;
 	});
+};
+
+export const loader: LoaderFunction<ConfigInterface> = async () => {
+	const config = await APIInstance.getConfigEndpoint().getActive();
+	config.symbols = sortSymbols(config.symbols);
 	return config;
 };
 
@@ -41,6 +46,7 @@ export const newConfigToSubmitTarget = function (
 					return {
 						name: symbol.name,
 						id: symbol.id,
+						order: symbol.order,
 					};
 			  })
 			: [],
@@ -89,7 +95,7 @@ export default function ConfigForm() {
 	);
 	// Query to load inital config
 	useEffect(() => {
-		setSelectedSymbols(data.symbols ?? []);
+		setSelectedSymbols(sortSymbols(data.symbols ?? []));
 		setSellAtPercentile(data.sellAtPercentile?.toString() ?? "");
 		setBuyAtPercentile(data.buyAtPercentile?.toString() ?? "");
 		setSellTrailingPercent(data.sellTrailingPercent?.toString() ?? "");
@@ -268,7 +274,14 @@ export default function ConfigForm() {
 					const symbol = selectedSymbols[symbolIndex];
 					const newSymbols = [...selectedSymbols];
 					newSymbols.splice(symbolIndex, 1);
-					setSelectedSymbols(newSymbols);
+					setSelectedSymbols(
+						newSymbols.map((symbol, index) => {
+							return {
+								...symbol,
+								order: index,
+							};
+						})
+					);
 					setSymbolOptions([...symbolOptions, symbol]);
 				}}
 				onCreate={(inputValue) => {
