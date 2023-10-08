@@ -11,7 +11,7 @@ import {
 	ConfigInterface,
 	NewConfigInterface,
 	SymbolInterface,
-} from "../interfaces/backend/api";
+} from "../interfaces/lib/backend/api";
 import FloatInput from "./inputs/FloatInput";
 import DragAndDropRepeaterInput from "./inputs/drag-and-drop/DragAndDropRepeaterInput";
 import { SubmitTarget } from "react-router-dom/dist/dom";

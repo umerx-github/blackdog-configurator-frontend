@@ -3,7 +3,7 @@ import {
 	ResponseBase,
 	SymbolEndpointInterface,
 	SymbolInterface,
-} from "../../../interfaces/backend/api";
+} from "../../../interfaces/lib/backend/api";
 
 export default class SymbolEndpoint implements SymbolEndpointInterface {
 	constructor(

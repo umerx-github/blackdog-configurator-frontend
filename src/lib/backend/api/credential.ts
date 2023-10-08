@@ -1,4 +1,4 @@
-import { CredentialInterface } from "../../../interfaces/backend/api";
+import { CredentialInterface } from "../../../interfaces/lib/backend/api";
 export default class Credential implements CredentialInterface {
 	constructor(
 		public scheme: string,

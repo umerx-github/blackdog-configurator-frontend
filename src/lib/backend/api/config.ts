@@ -4,7 +4,7 @@ import {
 	ConfigInterface,
 	NewConfigInterface,
 	ResponseBase,
-} from "../../../interfaces/backend/api";
+} from "../../../interfaces/lib/backend/api";
 
 export default class ConfigEndpoint implements ConfigEndpointInterface {
 	constructor(
