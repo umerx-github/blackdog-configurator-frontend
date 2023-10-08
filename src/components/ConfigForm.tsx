@@ -12,16 +12,9 @@ import {
 	NewConfigInterface,
 	SymbolInterface,
 } from "../interfaces/backend/api";
-import FloatInput from "./FloatInput";
-import DragAndDropRepeaterInput from "./DragAndDropRepeaterInput";
-type JsonObject = {
-	[Key in string]: JsonValue;
-} & {
-	[Key in string]?: JsonValue | undefined;
-};
-type JsonArray = JsonValue[] | readonly JsonValue[];
-type JsonPrimitive = string | number | boolean | null;
-type JsonValue = JsonPrimitive | JsonObject | JsonArray;
+import FloatInput from "./inputs/FloatInput";
+import DragAndDropRepeaterInput from "./inputs/drag-and-drop/DragAndDropRepeaterInput";
+import { SubmitTarget } from "react-router-dom/dist/dom";
 
 export const loader: LoaderFunction<ConfigInterface> = async () => {
 	const config = await APIInstance.getConfigEndpoint().getActive();
@@ -37,6 +30,26 @@ export const action: ActionFunction = async ({ request }) => {
 	newConfig.isActive = true;
 	const body = await APIInstance.getConfigEndpoint().post(newConfig);
 	return body;
+};
+
+export const newConfigToSubmitTarget = function (
+	newConfig: NewConfigInterface
+): SubmitTarget {
+	return {
+		symbols: newConfig.symbols
+			? newConfig.symbols.map((symbol) => {
+					return {
+						name: symbol.name,
+						id: symbol.id,
+					};
+			  })
+			: [],
+		sellAtPercentile: newConfig.sellAtPercentile,
+		buyAtPercentile: newConfig.buyAtPercentile,
+		sellTrailingPercent: newConfig.sellTrailingPercent,
+		buyTrailingPercent: newConfig.buyTrailingPercent,
+		timeframeInDays: newConfig.timeframeInDays,
+	};
 };
 
 const promiseOptions = async (
@@ -63,11 +76,23 @@ export default function ConfigForm() {
 	const [buyAtPercentile, setBuyAtPercentile] = useState<string>(
 		data.buyAtPercentile?.toString() ?? ""
 	);
+	const [sellTrailingPercent, setSellTrailingPercent] = useState<string>(
+		data.sellTrailingPercent?.toString() ?? ""
+	);
+	const [buyTrailingPercent, setBuyTrailingPercent] = useState<string>(
+		data.buyTrailingPercent?.toString() ?? ""
+	);
+	const [timeframeInDays, setTimeframeInDays] = useState<string>(
+		data.timeframeInDays?.toString() ?? ""
+	);
 	// Query to load inital config
 	useEffect(() => {
 		setSelectedSymbols(data.symbols ?? []);
 		setSellAtPercentile(data.sellAtPercentile?.toString() ?? "");
 		setBuyAtPercentile(data.buyAtPercentile?.toString() ?? "");
+		setSellTrailingPercent(data.sellTrailingPercent?.toString() ?? "");
+		setBuyTrailingPercent(data.buyTrailingPercent?.toString() ?? "");
+		setTimeframeInDays(data.timeframeInDays?.toString() ?? "");
 	}, [data]);
 	// Query to load symbolOptions
 	useEffect(() => {
@@ -95,27 +120,29 @@ export default function ConfigForm() {
 			onSubmit={(e) => {
 				e.preventDefault();
 				const formData = new FormData(e.currentTarget);
-				const jsonValueSymbols: JsonValue = {
-					symbols: selectedSymbols.map((symbol) => {
-						return { ...symbol };
-					}),
+				const newConfig: NewConfigInterface = {
+					symbols: selectedSymbols,
+					sellAtPercentile: Number(
+						formData.get("sellAtPercentile")?.toString() ?? ""
+					),
+					buyAtPercentile: Number(
+						formData.get("buyAtPercentile")?.toString() ?? ""
+					),
+					sellTrailingPercent: Number(
+						formData.get("sellTrailingPercent")?.toString() ?? ""
+					),
+					buyTrailingPercent: Number(
+						formData.get("buyTrailingPercent")?.toString() ?? ""
+					),
+					timeframeInDays: Number(
+						formData.get("timeframeInDays")?.toString() ?? ""
+					),
 				};
-				submit(
-					{
-						...jsonValueSymbols,
-						sellAtPercentile: Number(
-							formData.get("sellAtPercentile")?.toString() ?? ""
-						),
-						buyAtPercentile: Number(
-							formData.get("buyAtPercentile")?.toString() ?? ""
-						),
-					},
-					{
-						method: "post",
-						action: "/config",
-						encType: "application/json",
-					}
-				);
+				submit(newConfigToSubmitTarget(newConfig), {
+					method: "post",
+					action: "/config",
+					encType: "application/json",
+				});
 			}}
 		>
 			<label htmlFor="sellAtPercentile">Sell At Percentile</label>
@@ -134,6 +161,33 @@ export default function ConfigForm() {
 				title="Enter a valid number with up to 2 decimal places."
 				onChange={(value) => {
 					setBuyAtPercentile(value);
+				}}
+			/>
+			<label htmlFor="sellTrailingPercent">Sell Trailing Percent</label>
+			<FloatInput
+				name="sellTrailingPercent"
+				value={sellTrailingPercent}
+				title="Enter a valid number with up to 2 decimal places."
+				onChange={(value) => {
+					setSellTrailingPercent(value);
+				}}
+			/>
+			<label htmlFor="buyTrailingPercent">Buy Trailing Percent</label>
+			<FloatInput
+				name="buyTrailingPercent"
+				value={buyTrailingPercent}
+				title="Enter a valid number with up to 2 decimal places."
+				onChange={(value) => {
+					setBuyTrailingPercent(value);
+				}}
+			/>
+			<label htmlFor="timeframeInDays">Timeframe In Days</label>
+			<FloatInput
+				name="timeframeInDays"
+				value={timeframeInDays}
+				title="Enter a valid number with up to 2 decimal places."
+				onChange={(value) => {
+					setTimeframeInDays(value);
 				}}
 			/>
 			<DragAndDropRepeaterInput

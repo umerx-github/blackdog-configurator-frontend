@@ -2,12 +2,8 @@ import { DragDropContext, OnDragEndResponder } from "react-beautiful-dnd";
 import SortableList from "./SortableList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
-import { Item } from "../interfaces/DragAndDrop";
+import { Item } from "../../../interfaces/components/inputs/drag-and-drop";
 import CreatableSelect from "react-select/creatable";
-export interface Option {
-	label: string;
-	value: string;
-}
 
 /**
  *

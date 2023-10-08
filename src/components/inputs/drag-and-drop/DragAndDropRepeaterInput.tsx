@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Item } from "../interfaces/DragAndDrop";
+import { Item } from "../../../interfaces/components/inputs/drag-and-drop";
 import DragAndDropRepeater from "./DragAndDropRepeater";
 
 /**

@@ -26,18 +26,23 @@ export interface OrderedSymbolInterface extends SymbolInterface {
 export interface NewSymbolInterface {
 	name: string;
 }
-export interface ConfigInterface {
+
+export interface ConfigInterfaceRequired {
+	sellAtPercentile: number;
+	buyAtPercentile: number;
+	sellTrailingPercent: number;
+	buyTrailingPercent: number;
+	timeframeInDays: number;
+}
+export interface ConfigInterface extends ConfigInterfaceRequired {
 	id: number;
 	isActive: boolean;
 	createdAt: string;
 	symbols: OrderedSymbolInterface[];
-	sellAtPercentile: number;
-	buyAtPercentile: number;
 }
-export interface NewConfigInterface {
+export interface NewConfigInterface extends ConfigInterfaceRequired {
 	isActive?: boolean;
 	symbols?: OrderedSymbolInterface[];
-	sellAtPercentile: number;
 }
 export interface SymbolEndpointInterface {
 	get(): Promise<SymbolInterface[]>;

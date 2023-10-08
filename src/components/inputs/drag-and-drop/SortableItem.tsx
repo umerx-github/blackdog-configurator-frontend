@@ -1,7 +1,7 @@
 import { Draggable } from "react-beautiful-dnd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinusCircle } from "@fortawesome/free-solid-svg-icons";
-import { Item } from "../interfaces/DragAndDrop";
+import { Item } from "../../../interfaces/components/inputs/drag-and-drop";
 export default function SortableItem({
 	itemId,
 	itemValue,
