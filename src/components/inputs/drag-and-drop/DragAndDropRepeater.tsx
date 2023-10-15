@@ -61,8 +61,12 @@ export default function DragAndDropRepeater({
 						};
 					})}
 					onChange={(option) => {
-						onNewItemValueChange(option?.value || "");
+						onAdd({
+							itemValue: option?.label ?? "",
+							itemId: option?.value ?? "",
+						});
 					}}
+					onInputChange={(value) => onNewItemValueChange(value || "")}
 					onCreateOption={(inputValue) => onCreate(inputValue)}
 					isLoading={isLoading}
 					isDisabled={isLoading}
