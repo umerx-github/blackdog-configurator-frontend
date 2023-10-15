@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 import {
 	ConfigInterface,
-	NewConfigInterface,
+	NewConfigRequestInterface,
 	OrderedSymbolInterface,
 	SymbolInterface,
 } from "../interfaces/lib/backend/api";
@@ -30,7 +30,7 @@ export const loader: LoaderFunction<ConfigInterface> = async () => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
-	const newConfig = (await request.json()) as NewConfigInterface;
+	const newConfig = (await request.json()) as NewConfigRequestInterface;
 	// Make this the new active config
 	newConfig.isActive = true;
 	const body = await APIInstance.getConfigEndpoint().post(newConfig);
@@ -38,26 +38,9 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export const newConfigToSubmitTarget = function (
-	newConfig: NewConfigInterface
+	newConfig: NewConfigRequestInterface
 ): SubmitTarget {
-	return {
-		symbols: newConfig.symbols
-			? newConfig.symbols.map((symbol) => {
-					return {
-						name: symbol.name,
-						id: symbol.id,
-						order: symbol.order,
-					};
-			  })
-			: [],
-		sellAtPercentile: newConfig.sellAtPercentile,
-		buyAtPercentile: newConfig.buyAtPercentile,
-		sellTrailingPercent: newConfig.sellTrailingPercent,
-		buyTrailingPercent: newConfig.buyTrailingPercent,
-		timeframeInDays: newConfig.timeframeInDays,
-		alpacaApiKey: newConfig.alpacaApiKey,
-		alpacaApiSecret: newConfig.alpacaApiSecret,
-	};
+	return JSON.parse(JSON.stringify(newConfig));
 };
 
 const promiseOptions = async (
@@ -78,6 +61,9 @@ export default function ConfigForm() {
 	const [symbolOptions, setSymbolOptions] = useState<SymbolInterface[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedSymbols, setSelectedSymbols] = useState(data.symbols ?? []);
+	const [cashInDollars, setCashInDollars] = useState<string>(
+		data.cashInDollars?.toString() ?? ""
+	);
 	const [sellAtPercentile, setSellAtPercentile] = useState<string>(
 		data.sellAtPercentile?.toString() ?? ""
 	);
@@ -96,6 +82,7 @@ export default function ConfigForm() {
 	// Query to load inital config
 	useEffect(() => {
 		setSelectedSymbols(sortSymbols(data.symbols ?? []));
+		setCashInDollars(data.cashInDollars?.toString() ?? "");
 		setSellAtPercentile(data.sellAtPercentile?.toString() ?? "");
 		setBuyAtPercentile(data.buyAtPercentile?.toString() ?? "");
 		setSellTrailingPercent(data.sellTrailingPercent?.toString() ?? "");
@@ -128,8 +115,11 @@ export default function ConfigForm() {
 			onSubmit={(e) => {
 				e.preventDefault();
 				const formData = new FormData(e.currentTarget);
-				const newConfig: NewConfigInterface = {
+				const newConfig: NewConfigRequestInterface = {
 					symbols: selectedSymbols,
+					cashInDollars: Number(
+						formData.get("cashInDollars")?.toString() ?? ""
+					),
 					sellAtPercentile: Number(
 						formData.get("sellAtPercentile")?.toString() ?? ""
 					),
@@ -157,6 +147,15 @@ export default function ConfigForm() {
 				});
 			}}
 		>
+			<label htmlFor="cashInDollars">CashInDollars</label>
+			<FloatInput
+				name="cashInDollars"
+				value={cashInDollars}
+				title="Enter a valid number with up to 2 decimal places."
+				onChange={(value) => {
+					setCashInDollars(value);
+				}}
+			/>
 			<label htmlFor="sellAtPercentile">Sell At Percentile</label>
 			<FloatInput
 				name="sellAtPercentile"
