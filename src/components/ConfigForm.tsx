@@ -76,6 +76,9 @@ export default function ConfigForm() {
 	const [buyTrailingPercent, setBuyTrailingPercent] = useState<string>(
 		data.buyTrailingPercent?.toString() ?? ""
 	);
+	const [minimumGainPercent, setMinimumGainPercent] = useState<string>(
+		data.minimumGainPercent?.toString() ?? ""
+	);
 	const [timeframeInDays, setTimeframeInDays] = useState<string>(
 		data.timeframeInDays?.toString() ?? ""
 	);
@@ -87,6 +90,7 @@ export default function ConfigForm() {
 		setBuyAtPercentile(data.buyAtPercentile?.toString() ?? "");
 		setSellTrailingPercent(data.sellTrailingPercent?.toString() ?? "");
 		setBuyTrailingPercent(data.buyTrailingPercent?.toString() ?? "");
+		setMinimumGainPercent(data.minimumGainPercent?.toString() ?? "");
 		setTimeframeInDays(data.timeframeInDays?.toString() ?? "");
 	}, [data]);
 	// Query to load symbolOptions
@@ -131,6 +135,9 @@ export default function ConfigForm() {
 					),
 					buyTrailingPercent: Number(
 						formData.get("buyTrailingPercent")?.toString() ?? ""
+					),
+					minimumGainPercent: Number(
+						formData.get("minimumGainPercent")?.toString() ?? ""
 					),
 					timeframeInDays: Number(
 						formData.get("timeframeInDays")?.toString() ?? ""
@@ -187,6 +194,15 @@ export default function ConfigForm() {
 			<FloatInput
 				name="buyTrailingPercent"
 				value={buyTrailingPercent}
+				title="Enter a valid number with up to 2 decimal places."
+				onChange={(value) => {
+					setBuyTrailingPercent(value);
+				}}
+			/>
+			<label htmlFor="minimumGainPercent">Minimum Gain Percent</label>
+			<FloatInput
+				name="minimumGainPercent"
+				value={minimumGainPercent}
 				title="Enter a valid number with up to 2 decimal places."
 				onChange={(value) => {
 					setBuyTrailingPercent(value);

@@ -20,6 +20,7 @@ export interface NewConfigRequestInterface {
 	buyAtPercentile: number;
 	buyTrailingPercent: number;
 	sellTrailingPercent: number;
+	minimumGainPercent: number;
 	timeframeInDays: number;
 	alpacaApiKey: string;
 	alpacaApiSecret: string;
@@ -32,6 +33,7 @@ export interface NewConfigInterface {
 	buyAtPercentile?: number;
 	sellTrailingPercent?: number;
 	buyTrailingPercent?: number;
+	minimumGainPercent?: number;
 	timeframeInDays?: number;
 	alpacaApiKey?: string;
 	alpacaApiSecret?: string;
@@ -46,6 +48,7 @@ export interface ConfigInterface {
 	buyAtPercentile: number;
 	buyTrailingPercent: number;
 	sellTrailingPercent: number;
+	minimumGainPercent: number;
 	timeframeInDays: number;
 	alpacaApiKey: string;
 	alpacaApiSecret: string;
