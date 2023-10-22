@@ -8,6 +8,9 @@ import ConfigForm, {
 	loader as configFormLoader,
 	action as configFormAction,
 } from "./components/ConfigForm";
+import ConfigList, {
+	loader as configListLoader,
+} from "./components/ConfigList";
 
 const router = createBrowserRouter([
 	{
@@ -16,9 +19,23 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "/config",
-		element: <ConfigForm></ConfigForm>,
-		loader: configFormLoader,
-		action: configFormAction,
+		element: <ConfigList></ConfigList>,
+		loader: configListLoader,
+		// action: configListAction,
+		children: [
+			{
+				path: "new",
+				element: <ConfigForm></ConfigForm>,
+				loader: configFormLoader,
+				action: configFormAction,
+			},
+			{
+				path: ":id",
+				element: <ConfigForm></ConfigForm>,
+				loader: configFormLoader,
+				action: configFormAction,
+			},
+		],
 	},
 ]);
 
