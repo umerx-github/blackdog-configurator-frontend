@@ -1,10 +1,9 @@
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import APIInstance from "../lib/backend/api";
-import { ConfigInterface } from "../interfaces/lib/backend/api";
+import { ConfigInterface } from "../interfaces/lib/backend/api/common";
 
 export async function loader() {
-	const data = await APIInstance.getConfigEndpoint().get();
-	return data;
+	return await APIInstance.getConfigEndpoint().get();
 }
 
 export default function ConfigList() {
@@ -13,7 +12,11 @@ export default function ConfigList() {
 		<>
 			<ul>
 				{data.map((config) => {
-					return <li key={config.id}>{config.id}</li>;
+					return (
+						<li key={config.id}>
+							<Link to={config.id.toString()}>{config.id}</Link>
+						</li>
+					);
 				})}
 			</ul>
 		</>

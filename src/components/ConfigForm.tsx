@@ -1,44 +1,65 @@
 import { useEffect, useState } from "react";
-import APIInstance from "../lib/backend/api";
+import APIInstance, { API } from "../lib/backend/api";
 import {
 	Form,
 	useLoaderData,
 	ActionFunction,
 	LoaderFunction,
 	useSubmit,
+	useParams,
 } from "react-router-dom";
 import {
 	ConfigInterface,
+	ConfigSymbolInterface,
 	NewConfigRequestInterface,
-	OrderedSymbolInterface,
+	NewConfigSymbolInterface,
 	SymbolInterface,
-} from "../interfaces/lib/backend/api";
+	UpdateConfigRequestInterface,
+} from "../interfaces/lib/backend/api/common";
 import FloatInput from "./inputs/FloatInput";
 import DragAndDropRepeaterInput from "./inputs/drag-and-drop/DragAndDropRepeaterInput";
 import { SubmitTarget } from "react-router-dom/dist/dom";
+import { APIInterface } from "../interfaces/lib/backend/api";
 
-const sortSymbols = function (symbols: OrderedSymbolInterface[]) {
+interface ConfigSymbolWithNameInterface extends NewConfigSymbolInterface {
+	name: string;
+}
+
+const sortSymbols = function (symbols: ConfigSymbolInterface[]) {
 	return [...symbols].sort((a, b) => {
 		return a.order - b.order;
 	});
 };
 
-export const loader: LoaderFunction<ConfigInterface> = async () => {
-	const config = await APIInstance.getConfigEndpoint().getActive();
-	config.symbols = sortSymbols(config.symbols);
+export const loader: LoaderFunction = async ({ params }) => {
+	if (undefined === params.id) {
+		throw new Response("Not Found", { status: 404 });
+	}
+	const id = parseInt(params.id);
+	if (isNaN(id)) {
+		throw new Response("Not Found", { status: 404 });
+	}
+	const config = await APIInstance.getConfigEndpoint().getById(id);
 	return config;
 };
 
-export const action: ActionFunction = async ({ request }) => {
-	const newConfig = (await request.json()) as NewConfigRequestInterface;
+export const action: ActionFunction = async ({ params, request }) => {
+	if (undefined === params.id) {
+		throw new Response("Not Found", { status: 404 });
+	}
+	const id = parseInt(params.id);
+	if (isNaN(id)) {
+		throw new Response("Not Found", { status: 404 });
+	}
+	const newConfig = (await request.json()) as UpdateConfigRequestInterface;
 	// Make this the new active config
 	newConfig.isActive = true;
-	const body = await APIInstance.getConfigEndpoint().post(newConfig);
+	const body = await APIInstance.getConfigEndpoint().patchById(id, newConfig);
 	return body;
 };
 
 export const newConfigToSubmitTarget = function (
-	newConfig: NewConfigRequestInterface
+	newConfig: UpdateConfigRequestInterface
 ): SubmitTarget {
 	return JSON.parse(JSON.stringify(newConfig));
 };
@@ -55,12 +76,87 @@ const promiseOptions = async (
 	return selectedSymbols;
 };
 
+const onCreateSymbol = async (
+	name: string,
+	configId: number,
+	totalKnownSymbols: SymbolInterface[],
+	setTotalKnownSymbols: React.Dispatch<
+		React.SetStateAction<SymbolInterface[]>
+	>,
+	selectedSymbols: ConfigSymbolWithNameInterface[],
+	setSelectedSymbols: React.Dispatch<
+		React.SetStateAction<ConfigSymbolWithNameInterface[]>
+	>,
+	APIInstance: APIInterface
+) => {
+	const order = totalKnownSymbols.length;
+	let newSymbol: SymbolInterface | null = null;
+	try {
+		newSymbol = await APIInstance.getSymbolEndpoint().post({
+			name,
+		});
+	} catch (e) {
+		try {
+			newSymbol = await APIInstance.getSymbolEndpoint().getByName(name);
+		} catch (e) {
+			throw e;
+		}
+	}
+	if (null === newSymbol) {
+		throw Error(`Unable to create symbol with name: ${name}`);
+	}
+	setTotalKnownSymbols([...totalKnownSymbols, newSymbol]);
+	setSelectedSymbols([
+		...selectedSymbols,
+		{
+			name: newSymbol.name,
+			order,
+			configId,
+			symbolId: newSymbol.id,
+		},
+	]);
+};
+
+const loadTotalKnownSymbols = async (
+	setTotalKnownSymbols: React.Dispatch<
+		React.SetStateAction<SymbolInterface[]>
+	>,
+	APIInstance: APIInterface
+) => {
+	const symbols = await APIInstance.getSymbolEndpoint().get();
+	setTotalKnownSymbols(symbols);
+};
+
+const filterTotalAvailableSymbols = (
+	totalAvailableSymbols: SymbolInterface[],
+	inputValue: string
+) => {
+	if (inputValue) {
+		totalAvailableSymbols = totalAvailableSymbols.filter((symbol) => {
+			return symbol.name.toUpperCase().includes(inputValue.toUpperCase());
+		});
+	}
+	return totalAvailableSymbols;
+};
+
 export default function ConfigForm() {
 	const submit = useSubmit();
 	const data = useLoaderData() as ConfigInterface;
-	const [symbolOptions, setSymbolOptions] = useState<SymbolInterface[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-	const [selectedSymbols, setSelectedSymbols] = useState(data.symbols ?? []);
+	const { id } = useParams();
+	if (undefined === id) {
+		throw new Error(`Config ID is undefined`);
+	}
+	const configId = parseInt(id);
+	const [totalKnownSymbols, setTotalKnownSymbols] = useState<
+		SymbolInterface[]
+	>([]);
+	const [selectedSymbols, setSelectedSymbols] = useState<
+		ConfigSymbolWithNameInterface[]
+	>([]);
+	const [availableSymbolOptions, setAvailableSymbolOptions] = useState<
+		SymbolInterface[]
+	>([]);
+	const [isLoading, setIsLoading] = useState(false);
 	const [cashInDollars, setCashInDollars] = useState<string>(
 		data.cashInDollars?.toString() ?? ""
 	);
@@ -82,45 +178,99 @@ export default function ConfigForm() {
 	const [timeframeInDays, setTimeframeInDays] = useState<string>(
 		data.timeframeInDays?.toString() ?? ""
 	);
+	// Query to load totalKnownSymbols only 1x
+	useEffect(() => {
+		loadTotalKnownSymbols(setTotalKnownSymbols, APIInstance);
+	}, []);
 	// Query to load inital config
 	useEffect(() => {
-		setSelectedSymbols(sortSymbols(data.symbols ?? []));
-		setCashInDollars(data.cashInDollars?.toString() ?? "");
-		setSellAtPercentile(data.sellAtPercentile?.toString() ?? "");
-		setBuyAtPercentile(data.buyAtPercentile?.toString() ?? "");
-		setSellTrailingPercent(data.sellTrailingPercent?.toString() ?? "");
-		setBuyTrailingPercent(data.buyTrailingPercent?.toString() ?? "");
-		setMinimumGainPercent(data.minimumGainPercent?.toString() ?? "");
-		setTimeframeInDays(data.timeframeInDays?.toString() ?? "");
-	}, [data]);
-	// Query to load symbolOptions
-	useEffect(() => {
 		(async () => {
-			setIsLoading(true);
-			const symbolOptions = await promiseOptions("");
-			// Filter out symbolOptions that are already in selectedSymbols
-			const filteredOptions = symbolOptions.filter((option) => {
-				return (
-					selectedSymbols.findIndex(
-						(symbol) =>
-							symbol.id.toString() === option.id.toString()
-					) === -1
-				);
-			});
-			setSymbolOptions(filteredOptions);
-			setIsLoading(false);
+			setCashInDollars(data.cashInDollars?.toString() ?? "");
+			setSellAtPercentile(data.sellAtPercentile?.toString() ?? "");
+			setBuyAtPercentile(data.buyAtPercentile?.toString() ?? "");
+			setSellTrailingPercent(data.sellTrailingPercent?.toString() ?? "");
+			setBuyTrailingPercent(data.buyTrailingPercent?.toString() ?? "");
+			setMinimumGainPercent(data.minimumGainPercent?.toString() ?? "");
+			setTimeframeInDays(data.timeframeInDays?.toString() ?? "");
 		})();
-	}, []);
+	}, [data]);
+	// Query to load selectedSymbols
+	useEffect(() => {
+		let validConfigSymbols = data.configSymbols.filter((configSymbol) => {
+			return totalKnownSymbols.findIndex((symbol) => {
+				return symbol.id === configSymbol.symbolId;
+			});
+		});
+		validConfigSymbols = sortSymbols(validConfigSymbols);
+		const configSymbolsWithName: ConfigSymbolWithNameInterface[] =
+			validConfigSymbols.map((configSymbol) => {
+				const symbolIndex = totalKnownSymbols.findIndex((symbol) => {
+					return symbol.id === configSymbol.symbolId;
+				});
+				const symbol = totalKnownSymbols[symbolIndex];
+				const configSymbolWithName: ConfigSymbolWithNameInterface = {
+					configId: configSymbol.configId,
+					symbolId: configSymbol.symbolId,
+					order: configSymbol.order,
+					name: symbol.name,
+				};
+				return configSymbolWithName;
+			});
+		// set selected symbols
+		setSelectedSymbols(configSymbolsWithName);
+	}, [data, totalKnownSymbols]);
+	// Query to load availableSymbolOptions
+	// useEffect(() => {
+	// 	(async () => {
+	// 		setIsLoading(true);
+	// 		const fetchSymbolOptions = await promiseOptions("");
+	// 		// Filter out fetchSymbolOptions that are already in
+	// 		const filteredOptions = fetchSymbolOptions.filter((option) => {
+	// 			return (
+	// 				selectedSymbols.findIndex(
+	// 					(symbol) =>
+	// 						symbol.symbolId.toString() === option.id.toString()
+	// 				) === -1
+	// 			);
+	// 		});
+	// 		console.log({
+	// 			availableSymbolOptions,
+	// 			selectedSymbols,
+	// 			fetchSymbolOptions,
+	// 			filteredOptions,
+	// 		});
+	// 		setAvailableSymbolOptions(filteredOptions);
+	// 		setIsLoading(false);
+	// 	})();
+	// }, [selectedSymbols]);
+	// Set Available Symbol Options
+	useEffect(() => {
+		setIsLoading(true);
+		setAvailableSymbolOptions(
+			totalKnownSymbols.filter((knownSymbol) => {
+				return (
+					-1 ===
+					selectedSymbols.findIndex(
+						(selectedSymbol) =>
+							selectedSymbol.symbolId === knownSymbol.id
+					)
+				);
+			})
+		);
+		setIsLoading(false);
+	}, [totalKnownSymbols, selectedSymbols]);
+	console.log({ availableSymbolOptions });
 	return (
 		// You have to make sure your Form has defined the `method` and `action` props and that your invokation of submit() uses the same values for `method` and `action` in the SubmitOptions
 		<Form
 			method="post"
-			action="/config"
+			action={`${configId}`}
 			onSubmit={(e) => {
 				e.preventDefault();
 				const formData = new FormData(e.currentTarget);
-				const newConfig: NewConfigRequestInterface = {
-					symbols: selectedSymbols,
+				const newConfig: UpdateConfigRequestInterface = {
+					isActive: true,
+					configSymbols: selectedSymbols,
 					cashInDollars: Number(
 						formData.get("cashInDollars")?.toString() ?? ""
 					),
@@ -149,7 +299,7 @@ export default function ConfigForm() {
 				};
 				submit(newConfigToSubmitTarget(newConfig), {
 					method: "post",
-					action: "/config",
+					action: ``,
 					encType: "application/json",
 				});
 			}}
@@ -233,11 +383,11 @@ export default function ConfigForm() {
 				droppableId="selectedSymbols"
 				selectedItems={selectedSymbols.map((symbol) => {
 					return {
-						itemId: symbol.id.toString(),
+						itemId: symbol.symbolId.toString(),
 						itemValue: symbol.name,
 					};
 				})}
-				availableItems={symbolOptions.map((option) => {
+				availableItems={availableSymbolOptions.map((option) => {
 					return {
 						itemId: option.id.toString(),
 						itemValue: option.name,
@@ -245,10 +395,12 @@ export default function ConfigForm() {
 				})}
 				isLoading={isLoading}
 				onReorder={(items) => {
-					const selectedSymbolsReordered: SymbolInterface[] = [];
+					const selectedSymbolsReordered: ConfigSymbolWithNameInterface[] =
+						[];
 					items.forEach((item) => {
 						const symbolIndex = selectedSymbols.findIndex(
-							(symbol) => symbol.id.toString() === item.itemId
+							(symbol) =>
+								symbol.symbolId.toString() === item.itemId
 						);
 						if (symbolIndex !== -1) {
 							selectedSymbolsReordered.push(
@@ -256,65 +408,74 @@ export default function ConfigForm() {
 							);
 						}
 					});
-					setSelectedSymbols(
-						selectedSymbolsReordered.map((symbol, index) => {
+					const newSelectedSymbols = selectedSymbolsReordered.map(
+						(symbol, index) => {
 							return {
 								...symbol,
+								configId,
+								symbolId: symbol.symbolId,
 								order: index,
 							};
-						})
+						}
 					);
+					setSelectedSymbols(newSelectedSymbols);
 				}}
 				onAdd={(item) => {
-					const optionIndex = symbolOptions.findIndex(
+					const optionIndex = availableSymbolOptions.findIndex(
 						(option) => option.id.toString() === item.itemId
 					);
-					const option = symbolOptions[optionIndex];
-					const newOptions = [...symbolOptions];
+					const option = availableSymbolOptions[optionIndex];
+					const newOptions = [...availableSymbolOptions];
 					newOptions.splice(optionIndex, 1);
-					setSymbolOptions(newOptions);
-					setSelectedSymbols(
-						[...selectedSymbols, option].map((symbol, index) => {
-							return {
-								...symbol,
-								order: index,
-							};
-						})
-					);
+					setAvailableSymbolOptions(newOptions);
+					const newSelectedSymbols: ConfigSymbolWithNameInterface[] =
+						[
+							...selectedSymbols,
+							{
+								...option,
+								configId,
+								symbolId: option.id,
+								order: selectedSymbols.length,
+							},
+						];
+					setSelectedSymbols(newSelectedSymbols);
 				}}
 				onDelete={(item) => {
+					/*
 					const symbolIndex = selectedSymbols.findIndex(
-						(symbol) => symbol.id.toString() === item.itemId
+						(symbol) => symbol.symbolId.toString() === item.itemId
 					);
 					const symbol = selectedSymbols[symbolIndex];
 					const newSymbols = [...selectedSymbols];
 					newSymbols.splice(symbolIndex, 1);
-					setSelectedSymbols(
-						newSymbols.map((symbol, index) => {
+					const newSelectedSymbols = newSymbols.map(
+						(symbol, index) => {
 							return {
 								...symbol,
 								order: index,
 							};
-						})
+						}
 					);
-					setSymbolOptions([...symbolOptions, symbol]);
+					setSelectedSymbols(newSelectedSymbols);
+					const newOptions: SymbolInterface = [
+						...availableSymbolOptions,
+						symbol,
+					];
+					console.log({ newOptions });
+					setAvailableSymbolOptions(newOptions);
+					*/
 				}}
 				onCreate={(inputValue) => {
 					(async () => {
 						setIsLoading(true);
-						const response =
-							await APIInstance.getSymbolEndpoint().post({
-								name: inputValue,
-							});
-						setSelectedSymbols(
-							[...selectedSymbols, response].map(
-								(symbol, index) => {
-									return {
-										...symbol,
-										order: index,
-									};
-								}
-							)
+						await onCreateSymbol(
+							inputValue,
+							configId,
+							totalKnownSymbols,
+							setTotalKnownSymbols,
+							selectedSymbols,
+							setSelectedSymbols,
+							APIInstance
 						);
 						setIsLoading(false);
 					})();

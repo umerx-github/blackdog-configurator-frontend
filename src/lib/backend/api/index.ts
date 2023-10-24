@@ -2,7 +2,7 @@ import Credential from "./credential.js";
 import {
 	APIInterface,
 	CredentialInterface,
-} from "../../../interfaces/lib/backend/api/index.js";
+} from "../../../interfaces/lib/backend/api";
 import SymbolEndpoint from "./symbol.js";
 import ConfigEndpoint from "./config.js";
 export class API implements APIInterface {

@@ -1,6 +1,9 @@
-export type ResponseBase<T> =
-	| { status: "success"; message: string; data: T }
-	| { status: "error"; message: string };
+import {
+	ConfigInterface,
+	NewConfigRequestInterface,
+	NewSymbolInterface,
+	SymbolInterface,
+} from "./common";
 
 export interface APIInterface {
 	getURL(): string;
@@ -13,71 +16,13 @@ export interface CredentialInterface {
 	port: number | null;
 	getURL(): string;
 }
-export interface NewConfigRequestInterface {
-	isActive?: boolean;
-	symbols?: OrderedSymbolInterface[];
-	sellAtPercentile: number;
-	buyAtPercentile: number;
-	buyTrailingPercent: number;
-	sellTrailingPercent: number;
-	minimumGainPercent: number;
-	timeframeInDays: number;
-	alpacaApiKey: string;
-	alpacaApiSecret: string;
-	cashInDollars: number;
-}
-export interface NewConfigInterface {
-	isActive?: boolean;
-	symbols?: OrderedSymbolInterface[];
-	sellAtPercentile?: number;
-	buyAtPercentile?: number;
-	sellTrailingPercent?: number;
-	buyTrailingPercent?: number;
-	minimumGainPercent?: number;
-	timeframeInDays?: number;
-	alpacaApiKey?: string;
-	alpacaApiSecret?: string;
-	cashInCents?: number;
-}
-export interface ConfigInterface {
-	id: number;
-	createdAt: string;
-	isActive: boolean;
-	symbols: OrderedSymbolInterface[];
-	sellAtPercentile: number;
-	buyAtPercentile: number;
-	buyTrailingPercent: number;
-	sellTrailingPercent: number;
-	minimumGainPercent: number;
-	timeframeInDays: number;
-	alpacaApiKey: string;
-	alpacaApiSecret: string;
-	cashInCents: number;
-	cashInDollars: number;
-}
 export interface SymbolEndpointInterface {
 	get(): Promise<SymbolInterface[]>;
+	getByName(name: string): Promise<SymbolInterface>;
 	post(symbol: NewSymbolInterface): Promise<SymbolInterface>;
 }
 export interface ConfigEndpointInterface {
 	get(): Promise<ConfigInterface[]>;
 	getActive(): Promise<ConfigInterface>;
-	post(config: NewConfigInterface): Promise<ConfigInterface>;
-}
-
-export interface NewSymbolRequestInterface {
-	name: string;
-}
-export interface NewSymbolInterface {
-	name: string;
-}
-
-export interface SymbolInterface {
-	id: number;
-	createdAt: string;
-	name: string;
-}
-
-export interface OrderedSymbolInterface extends SymbolInterface {
-	order: number;
+	post(config: NewConfigRequestInterface): Promise<ConfigInterface>;
 }

@@ -2,7 +2,7 @@ import * as React from "react";
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import "./App.css";
 import ConfigForm, {
 	loader as configFormLoader,
@@ -15,25 +15,30 @@ import ConfigList, {
 const router = createBrowserRouter([
 	{
 		path: "/",
-		element: <Home />,
-	},
-	{
-		path: "/config",
-		element: <ConfigList></ConfigList>,
-		loader: configListLoader,
-		// action: configListAction,
+		element: <Outlet></Outlet>,
 		children: [
 			{
-				path: "new",
-				element: <ConfigForm></ConfigForm>,
-				loader: configFormLoader,
-				action: configFormAction,
-			},
-			{
-				path: ":id",
-				element: <ConfigForm></ConfigForm>,
-				loader: configFormLoader,
-				action: configFormAction,
+				path: "config",
+				// action: configListAction,
+				children: [
+					{
+						path: "",
+						element: <ConfigList></ConfigList>,
+						loader: configListLoader,
+					},
+					{
+						path: "new",
+						element: <ConfigForm></ConfigForm>,
+						loader: configFormLoader,
+						action: configFormAction,
+					},
+					{
+						path: ":id",
+						element: <ConfigForm></ConfigForm>,
+						loader: configFormLoader,
+						action: configFormAction,
+					},
+				],
 			},
 		],
 	},
