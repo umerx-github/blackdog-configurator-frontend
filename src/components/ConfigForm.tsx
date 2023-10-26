@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import APIInstance, { API } from "../lib/backend/api";
 import {
 	Form,
@@ -105,8 +105,9 @@ const onCreateSymbol = async (
 	if (null === newSymbol) {
 		throw Error(`Unable to create symbol with name: ${name}`);
 	}
-	setTotalKnownSymbols([...totalKnownSymbols, newSymbol]);
-	setSelectedSymbols([
+	const newTotalKnownSymbols = [...totalKnownSymbols, newSymbol]
+	setTotalKnownSymbols(newTotalKnownSymbols);
+	const newSelectedSymbols = [
 		...selectedSymbols,
 		{
 			name: newSymbol.name,
@@ -114,7 +115,9 @@ const onCreateSymbol = async (
 			configId,
 			symbolId: newSymbol.id,
 		},
-	]);
+	];
+	console.log({newTotalKnownSymbols, newSelectedSymbols})
+	setSelectedSymbols(newSelectedSymbols);
 };
 
 const loadTotalKnownSymbols = async (
@@ -125,6 +128,66 @@ const loadTotalKnownSymbols = async (
 ) => {
 	const symbols = await APIInstance.getSymbolEndpoint().get();
 	setTotalKnownSymbols(symbols);
+};
+
+const onAddSymbol = (
+	addedSymbolId: number,
+	configId: number,
+	availableSymbolOptions: SymbolInterface[],
+	setAvailableSymbolOptions: React.Dispatch<
+		React.SetStateAction<SymbolInterface[]>
+	>,
+	selectedSymbols: ConfigSymbolWithNameInterface[],
+	setSelectedSymbols: React.Dispatch<
+		React.SetStateAction<ConfigSymbolWithNameInterface[]>
+	>
+) => {
+	const availableSymbolOptionsIndex = availableSymbolOptions.findIndex(
+		(availableSymbolOption) => availableSymbolOption.id === addedSymbolId
+	);
+	const availableSymbolOption =
+		availableSymbolOptions[availableSymbolOptionsIndex];
+	const newAvailableSymbolOptions = [...availableSymbolOptions];
+	newAvailableSymbolOptions.splice(availableSymbolOptionsIndex, 1);
+	setAvailableSymbolOptions(newAvailableSymbolOptions);
+	const symbolToAdd: ConfigSymbolWithNameInterface = {
+		configId: configId,
+		symbolId: addedSymbolId,
+		order: selectedSymbols.length,
+		name: availableSymbolOption.name,
+	};
+	setSelectedSymbols([...selectedSymbols, symbolToAdd]);
+};
+
+const onDeleteSymbol = (
+	deletedSymbolId: number,
+	availableSymbolOptions: SymbolInterface[],
+	setAvailableSymbolOptions: React.Dispatch<
+		React.SetStateAction<SymbolInterface[]>
+	>,
+	selectedSymbols: ConfigSymbolWithNameInterface[],
+	setSelectedSymbols: React.Dispatch<
+		React.SetStateAction<ConfigSymbolWithNameInterface[]>
+	>,
+	totalKnownSymbols: SymbolInterface[]
+) => {
+	const totalKnownSymbolsIndex = totalKnownSymbols.findIndex(
+		(totalKnownSymbol) => {
+			return totalKnownSymbol.id === deletedSymbolId;
+		}
+	);
+	const totalKnownSymbol = totalKnownSymbols[totalKnownSymbolsIndex];
+	const selectedSymbolsIndex = selectedSymbols.findIndex((selectedSymbol) => {
+		return selectedSymbol.symbolId === deletedSymbolId;
+	});
+	const newSelectedSymbols = [...selectedSymbols];
+	newSelectedSymbols.splice(selectedSymbolsIndex, 1);
+	setSelectedSymbols(newSelectedSymbols);
+	const newAvailableSymbolOption: SymbolInterface = totalKnownSymbol;
+	setAvailableSymbolOptions([
+		...availableSymbolOptions,
+		newAvailableSymbolOption,
+	]);
 };
 
 const filterTotalAvailableSymbols = (
@@ -219,31 +282,6 @@ export default function ConfigForm() {
 		// set selected symbols
 		setSelectedSymbols(configSymbolsWithName);
 	}, [data, totalKnownSymbols]);
-	// Query to load availableSymbolOptions
-	// useEffect(() => {
-	// 	(async () => {
-	// 		setIsLoading(true);
-	// 		const fetchSymbolOptions = await promiseOptions("");
-	// 		// Filter out fetchSymbolOptions that are already in
-	// 		const filteredOptions = fetchSymbolOptions.filter((option) => {
-	// 			return (
-	// 				selectedSymbols.findIndex(
-	// 					(symbol) =>
-	// 						symbol.symbolId.toString() === option.id.toString()
-	// 				) === -1
-	// 			);
-	// 		});
-	// 		console.log({
-	// 			availableSymbolOptions,
-	// 			selectedSymbols,
-	// 			fetchSymbolOptions,
-	// 			filteredOptions,
-	// 		});
-	// 		setAvailableSymbolOptions(filteredOptions);
-	// 		setIsLoading(false);
-	// 	})();
-	// }, [selectedSymbols]);
-	// Set Available Symbol Options
 	useEffect(() => {
 		setIsLoading(true);
 		setAvailableSymbolOptions(
@@ -259,7 +297,6 @@ export default function ConfigForm() {
 		);
 		setIsLoading(false);
 	}, [totalKnownSymbols, selectedSymbols]);
-	console.log({ availableSymbolOptions });
 	return (
 		// You have to make sure your Form has defined the `method` and `action` props and that your invokation of submit() uses the same values for `method` and `action` in the SubmitOptions
 		<Form
@@ -395,6 +432,7 @@ export default function ConfigForm() {
 				})}
 				isLoading={isLoading}
 				onReorder={(items) => {
+					/*
 					const selectedSymbolsReordered: ConfigSymbolWithNameInterface[] =
 						[];
 					items.forEach((item) => {
@@ -419,51 +457,27 @@ export default function ConfigForm() {
 						}
 					);
 					setSelectedSymbols(newSelectedSymbols);
+					*/
 				}}
 				onAdd={(item) => {
-					const optionIndex = availableSymbolOptions.findIndex(
-						(option) => option.id.toString() === item.itemId
+					onAddSymbol(
+						parseInt(item.itemId),
+						configId,
+						availableSymbolOptions,
+						setAvailableSymbolOptions,
+						selectedSymbols,
+						setSelectedSymbols
 					);
-					const option = availableSymbolOptions[optionIndex];
-					const newOptions = [...availableSymbolOptions];
-					newOptions.splice(optionIndex, 1);
-					setAvailableSymbolOptions(newOptions);
-					const newSelectedSymbols: ConfigSymbolWithNameInterface[] =
-						[
-							...selectedSymbols,
-							{
-								...option,
-								configId,
-								symbolId: option.id,
-								order: selectedSymbols.length,
-							},
-						];
-					setSelectedSymbols(newSelectedSymbols);
 				}}
 				onDelete={(item) => {
-					/*
-					const symbolIndex = selectedSymbols.findIndex(
-						(symbol) => symbol.symbolId.toString() === item.itemId
+					onDeleteSymbol(
+						parseInt(item.itemId),
+						availableSymbolOptions,
+						setAvailableSymbolOptions,
+						selectedSymbols,
+						setSelectedSymbols,
+						totalKnownSymbols
 					);
-					const symbol = selectedSymbols[symbolIndex];
-					const newSymbols = [...selectedSymbols];
-					newSymbols.splice(symbolIndex, 1);
-					const newSelectedSymbols = newSymbols.map(
-						(symbol, index) => {
-							return {
-								...symbol,
-								order: index,
-							};
-						}
-					);
-					setSelectedSymbols(newSelectedSymbols);
-					const newOptions: SymbolInterface = [
-						...availableSymbolOptions,
-						symbol,
-					];
-					console.log({ newOptions });
-					setAvailableSymbolOptions(newOptions);
-					*/
 				}}
 				onCreate={(inputValue) => {
 					(async () => {
