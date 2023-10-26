@@ -20,6 +20,7 @@ import FloatInput from "./inputs/FloatInput";
 import DragAndDropRepeaterInput from "./inputs/drag-and-drop/DragAndDropRepeaterInput";
 import { SubmitTarget } from "react-router-dom/dist/dom";
 import { APIInterface } from "../interfaces/lib/backend/api";
+import { Item } from "../interfaces/components/inputs/drag-and-drop";
 
 interface ConfigSymbolWithNameInterface extends NewConfigSymbolInterface {
 	name: string;
@@ -105,7 +106,7 @@ const onCreateSymbol = async (
 	if (null === newSymbol) {
 		throw Error(`Unable to create symbol with name: ${name}`);
 	}
-	const newTotalKnownSymbols = [...totalKnownSymbols, newSymbol]
+	const newTotalKnownSymbols = [...totalKnownSymbols, newSymbol];
 	setTotalKnownSymbols(newTotalKnownSymbols);
 	const newSelectedSymbols = [
 		...selectedSymbols,
@@ -116,7 +117,6 @@ const onCreateSymbol = async (
 			symbolId: newSymbol.id,
 		},
 	];
-	console.log({newTotalKnownSymbols, newSelectedSymbols})
 	setSelectedSymbols(newSelectedSymbols);
 };
 
@@ -149,14 +149,15 @@ const onAddSymbol = (
 		availableSymbolOptions[availableSymbolOptionsIndex];
 	const newAvailableSymbolOptions = [...availableSymbolOptions];
 	newAvailableSymbolOptions.splice(availableSymbolOptionsIndex, 1);
-	setAvailableSymbolOptions(newAvailableSymbolOptions);
+	// setAvailableSymbolOptions(newAvailableSymbolOptions);
 	const symbolToAdd: ConfigSymbolWithNameInterface = {
 		configId: configId,
 		symbolId: addedSymbolId,
 		order: selectedSymbols.length,
 		name: availableSymbolOption.name,
 	};
-	setSelectedSymbols([...selectedSymbols, symbolToAdd]);
+	const newSelectedSymbols = [...selectedSymbols, symbolToAdd];
+	setSelectedSymbols(newSelectedSymbols);
 };
 
 const onDeleteSymbol = (
@@ -183,11 +184,39 @@ const onDeleteSymbol = (
 	const newSelectedSymbols = [...selectedSymbols];
 	newSelectedSymbols.splice(selectedSymbolsIndex, 1);
 	setSelectedSymbols(newSelectedSymbols);
-	const newAvailableSymbolOption: SymbolInterface = totalKnownSymbol;
-	setAvailableSymbolOptions([
-		...availableSymbolOptions,
-		newAvailableSymbolOption,
-	]);
+	// const newAvailableSymbolOption: SymbolInterface = totalKnownSymbol;
+	// setAvailableSymbolOptions([
+	// 	...availableSymbolOptions,
+	// 	newAvailableSymbolOption,
+	// ]);
+};
+
+const onReorder = (
+	items: Item[],
+	configId: number,
+	selectedSymbols: ConfigSymbolWithNameInterface[],
+	setSelectedSymbols: React.Dispatch<
+		React.SetStateAction<ConfigSymbolWithNameInterface[]>
+	>
+) => {
+	const selectedSymbolsReordered: ConfigSymbolWithNameInterface[] = [];
+	items.forEach((item) => {
+		const symbolIndex = selectedSymbols.findIndex(
+			(symbol) => symbol.symbolId.toString() === item.itemId
+		);
+		if (symbolIndex !== -1) {
+			selectedSymbolsReordered.push(selectedSymbols[symbolIndex]);
+		}
+	});
+	const newSelectedSymbols = selectedSymbolsReordered.map((symbol, index) => {
+		return {
+			...symbol,
+			configId,
+			symbolId: symbol.symbolId,
+			order: index,
+		};
+	});
+	setSelectedSymbols(newSelectedSymbols);
 };
 
 const filterTotalAvailableSymbols = (
@@ -257,31 +286,43 @@ export default function ConfigForm() {
 			setTimeframeInDays(data.timeframeInDays?.toString() ?? "");
 		})();
 	}, [data]);
+
 	// Query to load selectedSymbols
 	useEffect(() => {
-		let validConfigSymbols = data.configSymbols.filter((configSymbol) => {
-			return totalKnownSymbols.findIndex((symbol) => {
-				return symbol.id === configSymbol.symbolId;
-			});
-		});
-		validConfigSymbols = sortSymbols(validConfigSymbols);
-		const configSymbolsWithName: ConfigSymbolWithNameInterface[] =
-			validConfigSymbols.map((configSymbol) => {
-				const symbolIndex = totalKnownSymbols.findIndex((symbol) => {
-					return symbol.id === configSymbol.symbolId;
+		// Only overwrite selectedSymbols from data if selectedSymbols not already populated from fetch.
+		if (0 === selectedSymbols.length) {
+			let validConfigSymbols = data.configSymbols.filter(
+				(configSymbol) => {
+					return (
+						-1 !==
+						totalKnownSymbols.findIndex((symbol) => {
+							return symbol.id === configSymbol.symbolId;
+						})
+					);
+				}
+			);
+			validConfigSymbols = sortSymbols(validConfigSymbols);
+			const configSymbolsWithName: ConfigSymbolWithNameInterface[] =
+				validConfigSymbols.map((configSymbol) => {
+					const symbolIndex = totalKnownSymbols.findIndex(
+						(symbol) => {
+							return symbol.id === configSymbol.symbolId;
+						}
+					);
+					const symbol = totalKnownSymbols[symbolIndex];
+					const configSymbolWithName: ConfigSymbolWithNameInterface =
+						{
+							configId: configSymbol.configId,
+							symbolId: configSymbol.symbolId,
+							order: configSymbol.order,
+							name: symbol.name,
+						};
+					return configSymbolWithName;
 				});
-				const symbol = totalKnownSymbols[symbolIndex];
-				const configSymbolWithName: ConfigSymbolWithNameInterface = {
-					configId: configSymbol.configId,
-					symbolId: configSymbol.symbolId,
-					order: configSymbol.order,
-					name: symbol.name,
-				};
-				return configSymbolWithName;
-			});
-		// set selected symbols
-		setSelectedSymbols(configSymbolsWithName);
+			setSelectedSymbols(configSymbolsWithName);
+		}
 	}, [data, totalKnownSymbols]);
+
 	useEffect(() => {
 		setIsLoading(true);
 		setAvailableSymbolOptions(
@@ -432,32 +473,12 @@ export default function ConfigForm() {
 				})}
 				isLoading={isLoading}
 				onReorder={(items) => {
-					/*
-					const selectedSymbolsReordered: ConfigSymbolWithNameInterface[] =
-						[];
-					items.forEach((item) => {
-						const symbolIndex = selectedSymbols.findIndex(
-							(symbol) =>
-								symbol.symbolId.toString() === item.itemId
-						);
-						if (symbolIndex !== -1) {
-							selectedSymbolsReordered.push(
-								selectedSymbols[symbolIndex]
-							);
-						}
-					});
-					const newSelectedSymbols = selectedSymbolsReordered.map(
-						(symbol, index) => {
-							return {
-								...symbol,
-								configId,
-								symbolId: symbol.symbolId,
-								order: index,
-							};
-						}
+					onReorder(
+						items,
+						configId,
+						selectedSymbols,
+						setSelectedSymbols
 					);
-					setSelectedSymbols(newSelectedSymbols);
-					*/
 				}}
 				onAdd={(item) => {
 					onAddSymbol(
