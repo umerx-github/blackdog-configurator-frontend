@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import "./index.css";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import { Symbol as SymbolTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
+import "./index.css";
+import DetailView from "./components/DetailView";
+import BlackDogHeader from "./components/BlackdogHeader";
 
 const blackdogConfiguratorClientScheme =
 	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_CLIENT_SCHEME ?? "";
@@ -38,15 +40,16 @@ function App() {
 			});
 	});
 	return (
-		<div className="border-black border-4 p-8">
-			<h1 className="text-4xl">Blackdog Configurator</h1>
-			<div>
+		<div className="configurator-app">
+			<BlackDogHeader />
+			{/* <div>
 				{symbols.map((symbol) => (
 					<div key={symbol.id}>
 						<h2>{symbol.name}</h2>
 					</div>
 				))}
-			</div>
+			</div> */}
+			<DetailView />
 		</div>
 	);
 }

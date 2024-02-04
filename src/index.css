@@ -1,3 +1,20 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+@import url("https://fonts.googleapis.com/css2?family=Chivo+Mono:ital,wght@0,100..900;1,100..900&family=Orbitron:wght@400..900&family=Spline+Sans+Mono:ital,wght@0,300..700;1,300..700&display=swap");
+
+#root {
+	min-height: 100vh;
+	padding: 1rem;
+}
+
+.orbitron {
+	font-family: "Orbitron", sans-serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+}
+
+.logo-dog {
+	font-size: 80%;
+	margin-bottom: 2px;
+}
