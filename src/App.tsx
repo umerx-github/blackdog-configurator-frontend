@@ -2,8 +2,13 @@ import { useEffect, useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import { Symbol as SymbolTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import "./index.css";
+import { ToggleState } from "./Interfaces/settings";
 import DetailView from "./components/DetailView";
 import BlackDogHeader from "./components/BlackdogHeader";
+import Toggle from "./components/Toggle";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSun, faMoon } from "@fortawesome/free-solid-svg-icons";
+import { DarkModeState } from "./Interfaces/settings";
 
 const blackdogConfiguratorClientScheme =
 	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_CLIENT_SCHEME ?? "";
@@ -24,6 +29,22 @@ const blackdogConfiguratorClient = new BlackdogConfiguratorClient.ClientImpl(
 	blackdogConfiguratorClientBaseUrl
 );
 
+// const darkModeStates: DarkModeState[] = [
+// 	{
+// 		toggleStateStatus: ToggleState.on,
+// 		display: <FontAwesomeIcon icon={faSun} />,
+// 	},
+// 	{
+// 		toggleStateStatus: ToggleState.off,
+// 		display: <FontAwesomeIcon icon={faMoon} />,
+// 	},
+// ];
+
+const darkModeStateDisplays = {
+	[ToggleState.off]: <FontAwesomeIcon icon={faMoon} />,
+	[ToggleState.on]: <FontAwesomeIcon icon={faSun} />,
+};
+
 function App() {
 	const [symbols, setSymbols] = useState<
 		SymbolTypes.SymbolResponseBodyDataInstance[]
@@ -39,9 +60,20 @@ function App() {
 				console.error(error);
 			});
 	});
+
+	const [darkModeState, setDarkModeState] = useState<ToggleState>(
+		ToggleState.on
+	);
+
 	return (
-		<div className="configurator-app">
+		<div className="configurator-app min-h-screen p-4 bg-zinc-900 text-white">
 			<BlackDogHeader />
+			<Toggle
+				toggleState={darkModeState}
+				display={darkModeStateDisplays[darkModeState]}
+				labelText="Display Mode"
+			/>
+
 			{/* <div>
 				{symbols.map((symbol) => (
 					<div key={symbol.id}>
