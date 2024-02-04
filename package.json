@@ -8,7 +8,9 @@
 		"build": "tsc && vite build",
 		"build:css": "postcss src/index.css -o src/tailwind.css",
 		"lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"dev:update:umerx:types": "npm cache clean --force && npm update @umerx/umerx-blackdog-configurator-types-typescript",
+		"dev:update:umerx:client": "npm cache clean --force && npm update @umerx/umerx-blackdog-configurator-client-typescript"
 	},
 	"dependencies": {
 		"@fortawesome/fontawesome-svg-core": "^6.4.2",
@@ -18,7 +20,8 @@
 		"react-beautiful-dnd": "^13.1.1",
 		"react-dom": "^18.2.0",
 		"react-router-dom": "^6.16.0",
-		"react-select": "^5.7.5"
+		"react-select": "^5.7.5",
+		"@umerx/umerx-blackdog-configurator-client-typescript": "*"
 	},
 	"devDependencies": {
 		"@types/node": "^20.7.1",
@@ -27,7 +30,7 @@
 		"@types/react-dom": "^18.2.7",
 		"@typescript-eslint/eslint-plugin": "^6.0.0",
 		"@typescript-eslint/parser": "^6.0.0",
-		"@umerx/umerx-blackdog-configurator-client-typescript": "^0.0.8",
+		"@umerx/umerx-blackdog-configurator-types-typescript": "*",
 		"@vitejs/plugin-react-swc": "^3.3.2",
 		"autoprefixer": "^10.4.17",
 		"eslint": "^8.45.0",
