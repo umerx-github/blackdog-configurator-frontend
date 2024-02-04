@@ -18,7 +18,9 @@ Blackdog Configurator is a web application written in [React](https://reactjs.or
 
 2. Run `npm install` in the project directory.
 
-3. Copy the `.env.example` file and rename it to `.env`. This file contains environment variables that are used by the project. The `.env` file is ignored by git, so you can safely store sensitive information in it.
+3. Copy the `/.devcontainer/.env.example` file and rename it to `.env`. This file contains environment variables that are used by the project. The `.env` file is ignored by git, so you can safely store sensitive information in it.
+
+4. Similarly, copy the `/src/.env.local.example` file and rename it to `.env.local`. This file contains additional environment variables needed for local development.
 
 ### Running
 
