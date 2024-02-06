@@ -17,3 +17,7 @@
 	font-size: 80%;
 	margin-bottom: 2px;
 }
+
+.toggle-transform {
+	transform: translate(1.75rem, 0px);
+}

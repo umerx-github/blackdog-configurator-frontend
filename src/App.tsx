@@ -8,7 +8,6 @@ import BlackDogHeader from "./components/BlackdogHeader";
 import Toggle from "./components/Toggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun, faMoon } from "@fortawesome/free-solid-svg-icons";
-import { DarkModeState } from "./Interfaces/settings";
 
 const blackdogConfiguratorClientScheme =
 	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_CLIENT_SCHEME ?? "";
@@ -41,8 +40,8 @@ const blackdogConfiguratorClient = new BlackdogConfiguratorClient.ClientImpl(
 // ];
 
 const darkModeStateDisplays = {
-	[ToggleState.off]: <FontAwesomeIcon icon={faMoon} />,
-	[ToggleState.on]: <FontAwesomeIcon icon={faSun} />,
+	[ToggleState.on]: <FontAwesomeIcon icon={faMoon} />,
+	[ToggleState.off]: <FontAwesomeIcon icon={faSun} />,
 };
 
 function App() {
@@ -65,6 +64,10 @@ function App() {
 		ToggleState.on
 	);
 
+	const toggleDarkMode = (newState: ToggleState) => {
+		setDarkModeState(newState);
+	};
+
 	return (
 		<div className="configurator-app min-h-screen p-4 bg-zinc-900 text-white">
 			<BlackDogHeader />
@@ -72,6 +75,7 @@ function App() {
 				toggleState={darkModeState}
 				display={darkModeStateDisplays[darkModeState]}
 				labelText="Display Mode"
+				onToggle={toggleDarkMode}
 			/>
 
 			{/* <div>
