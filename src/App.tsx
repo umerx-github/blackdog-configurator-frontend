@@ -40,8 +40,18 @@ const blackdogConfiguratorClient = new BlackdogConfiguratorClient.ClientImpl(
 // ];
 
 const darkModeStateDisplays = {
-	[ToggleState.on]: <FontAwesomeIcon icon={faMoon} />,
-	[ToggleState.off]: <FontAwesomeIcon icon={faSun} />,
+	[ToggleState.on]: (
+		<FontAwesomeIcon
+			icon={faMoon}
+			className="dark:text-zinc-900 transition-all duration-1000"
+		/>
+	),
+	[ToggleState.off]: (
+		<FontAwesomeIcon
+			icon={faSun}
+			className="text-white transition-all duration-1000"
+		/>
+	),
 };
 
 function App() {
@@ -61,7 +71,7 @@ function App() {
 	});
 
 	const [darkModeState, setDarkModeState] = useState<ToggleState>(
-		ToggleState.on
+		ToggleState.off
 	);
 
 	const toggleDarkMode = (newState: ToggleState) => {
@@ -69,23 +79,31 @@ function App() {
 	};
 
 	return (
-		<div className="configurator-app min-h-screen p-4 bg-zinc-900 text-white">
-			<BlackDogHeader />
-			<Toggle
-				toggleState={darkModeState}
-				display={darkModeStateDisplays[darkModeState]}
-				labelText="Display Mode"
-				onToggle={toggleDarkMode}
-			/>
+		<div
+			className={`configurator-app ${
+				darkModeState === ToggleState.on ? "dark" : ""
+			}`}
+		>
+			<div className="p-4 min-h-screen dark:bg-zinc-900 dark:text-white transition-all duration-1000">
+				<div className="flex justify-between">
+					<BlackDogHeader />
+					<Toggle
+						toggleState={darkModeState}
+						display={darkModeStateDisplays[darkModeState]}
+						labelText="Display Mode"
+						onToggle={toggleDarkMode}
+					/>
+				</div>
 
-			{/* <div>
+				{/* <div>
 				{symbols.map((symbol) => (
 					<div key={symbol.id}>
 						<h2>{symbol.name}</h2>
 					</div>
 				))}
 			</div> */}
-			<DetailView />
+				<DetailView />
+			</div>
 		</div>
 	);
 }

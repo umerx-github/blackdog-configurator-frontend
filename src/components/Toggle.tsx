@@ -25,12 +25,12 @@ const Toggle: React.FC<ToggleProps> = ({
 			<div className="relative cursor-pointer">
 				<div
 					onClick={handleToggle}
-					className="w-14 h-7 bg-zinc-200 inline-flex items-center px-0.5"
+					className="w-16 bg-zinc-300 dark:bg-zinc-600 inline-flex items-center p-1"
 				>
 					<button
 						className={`${
 							toggleState === "ON" ? "toggle-transform" : ""
-						} w-6 h-6 bg-zinc-600 text-sm font-medium flex justify-center items-center transition-all`}
+						} w-6 h-6 bg-zinc-600 dark:bg-zinc-300 text-sm font-medium flex justify-center items-center transition-all duration-1000`}
 					>
 						{display}
 					</button>
