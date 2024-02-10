@@ -1,14 +1,14 @@
 {
-    "name": "umerx-blackdog-configurator-frontend",
+	"name": "umerx-blackdog-configurator-frontend",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "umerx_blackdog_configurator_frontend",
 	"workspaceFolder": "/workspace",
-    "postCreateCommand": "npm ci",
+	"postCreateCommand": "npm ci",
 	// https://tjtelan.com/blog/how-to-link-multiple-docker-compose-via-network/
 	// https://containers.dev/guide/dockerfile
 	// https://github.com/microsoft/vscode-remote-release/issues/2485
 	"initializeCommand": "docker network create umerx_blackdog || echo 'Already exists'",
-    "customizations": {
+	"customizations": {
 		"vscode": {
 			"settings": {
 				"terminal.integrated.shellArgs.osx": [],
@@ -134,40 +134,54 @@
 					"**/.git": false
 				},
 				"window.zoomLevel": -1,
+				"todo-tree.highlights.defaultHighlight": {
+					"icon": "alert",
+					"type": "whole-line",
+					"opacity": 20,
+					"borderRadius": "10px",
+					"gutterIcon": true
+				},
 				"todo-tree.highlights.customHighlight": {
 					"TODO": {
-					  "icon": "check",
-					  "foreground": "#b7a4f3",
-					  "background": "#7560bc"
+						"icon": "check",
+						"foreground": "#b7a4f3",
+						"background": "#7560bc"
 					},
 					"FLAG": {
-					  "icon": "report",
-					  "foreground": "#e7a34c",
-					  "background": "#a06a23"
+						"icon": "report",
+						"foreground": "#e7a34c",
+						"background": "#a06a23"
 					},
 					"BUG": {
-					  "icon": "bug",
-					  "foreground": "#f4afaf",
-					  "background": "#bf6767"
+						"icon": "bug",
+						"foreground": "#f4afaf",
+						"background": "#bf6767"
 					},
 					"HACK": {
-					  "icon": "tools"
+						"icon": "tools"
 					},
 					"FIXME": {
-					  "icon": "flame"
+						"icon": "flame"
 					},
 					"XXX": {
-					  "icon": "x"
+						"icon": "x"
 					},
 					"[ ]": {
-					  "icon": "issue-draft"
+						"icon": "issue-draft"
 					},
 					"[x]": {
-					  "icon": "issue-closed"
+						"icon": "issue-closed"
 					}
-				  },
-				  "todo-tree.general.tags": [
+				},
+				"todo-tree.general.tagGroups": {
+					"TODO": [
+						"TODO",
+						"@todo"
+					]
+				},
+				"todo-tree.general.tags": [
 					"TODO",
+					"@todo",
 					"FLAG",
 					"BUG",
 					"HACK",
@@ -175,8 +189,14 @@
 					"XXX",
 					"[ ]",
 					"[x]"
-				  ],
-				  "todo-tree.tree.expanded": true
+				],
+				"todo-tree.tree.expanded": true,
+				"todo-tree.general.showIconsInsteadOfTagsInStatusBar": true,
+				"todo-tree.regex.regex": "(//|/*|#|<!--|;|/\\*|^|^[ \\t]*(-|\\d+.))\\s*($TAGS)",
+				"todo-tree.filtering.excludeGlobs": [
+					"**/*.json",
+					"**/.devcontainer/**"
+				]
 			},
 			"extensions": [
 				"adpyke.vscode-sql-formatter",
