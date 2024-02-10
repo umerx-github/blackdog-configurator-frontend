@@ -133,7 +133,50 @@
 				"files.exclude": {
 					"**/.git": false
 				},
-				"window.zoomLevel": -1
+				"window.zoomLevel": -1,
+				"todo-tree.highlights.customHighlight": {
+					"TODO": {
+					  "icon": "check",
+					  "foreground": "#b7a4f3",
+					  "background": "#7560bc"
+					},
+					"FLAG": {
+					  "icon": "report",
+					  "foreground": "#e7a34c",
+					  "background": "#a06a23"
+					},
+					"BUG": {
+					  "icon": "bug",
+					  "foreground": "#f4afaf",
+					  "background": "#bf6767"
+					},
+					"HACK": {
+					  "icon": "tools"
+					},
+					"FIXME": {
+					  "icon": "flame"
+					},
+					"XXX": {
+					  "icon": "x"
+					},
+					"[ ]": {
+					  "icon": "issue-draft"
+					},
+					"[x]": {
+					  "icon": "issue-closed"
+					}
+				  },
+				  "todo-tree.general.tags": [
+					"TODO",
+					"FLAG",
+					"BUG",
+					"HACK",
+					"FIXME",
+					"XXX",
+					"[ ]",
+					"[x]"
+				  ],
+				  "todo-tree.tree.expanded": true
 			},
 			"extensions": [
 				"adpyke.vscode-sql-formatter",
@@ -211,7 +254,8 @@
 				"wingrunr21.vscode-ruby",
 				"wongjn.php-sniffer",
 				"wordpresstoolbox.wordpress-toolbox",
-				"yzhang.markdown-all-in-one"
+				"yzhang.markdown-all-in-one",
+				"gruntfuggly.todo-tree"
 			]
 		}
 	}
