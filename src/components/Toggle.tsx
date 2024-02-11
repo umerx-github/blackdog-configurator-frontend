@@ -21,20 +21,31 @@ const Toggle: React.FC<ToggleProps> = ({
 	};
 
 	return (
-		<div>
-			<div className="relative cursor-pointer">
-				<div
-					onClick={handleToggle}
-					className="w-16 bg-zinc-300 dark:bg-zinc-600 inline-flex items-center p-1"
+		<div
+			className="relative cursor-pointer flex justify-between"
+			// className={`${
+			// 	!labelText ? "" : "mt-2"
+			// } relative cursor-pointer flex justify-between`}
+		>
+			{labelText && (
+				<label
+					htmlFor="toggle"
+					className="block text-sm font-medium text-zinc-900 dark:text-white max-width-75"
 				>
-					<button
-						className={`${
-							toggleState === "ON" ? "toggle-transform" : ""
-						} w-6 h-6 bg-zinc-600 dark:bg-zinc-300 text-sm font-medium flex justify-center items-center transition-all duration-1000`}
-					>
-						{display}
-					</button>
-				</div>
+					{labelText}
+				</label>
+			)}
+			<div
+				onClick={handleToggle}
+				className="w-16 bg-white dark:bg-zinc-700 inline-flex items-center p-1 h-8"
+			>
+				<button
+					className={`${
+						toggleState === "ON" ? "toggle-transform" : ""
+					} w-6 h-6 bg-zinc-200 dark:bg-zinc-900 text-zinc-900 dark:text-white text-sm font-medium flex justify-center items-center transition-transform duration-1000`}
+				>
+					{display}
+				</button>
 			</div>
 		</div>
 	);

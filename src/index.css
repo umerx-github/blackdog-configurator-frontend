@@ -18,6 +18,14 @@
 	margin-bottom: 2px;
 }
 
+.max-width-75 {
+	max-width: 75%;
+}
+
 .toggle-transform {
 	transform: translate(2rem, 0px);
+}
+
+.transition-bg {
+	transition-property: background-color;
 }

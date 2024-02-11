@@ -9,6 +9,7 @@
 		"build:css": "postcss src/index.css -o src/tailwind.css",
 		"lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
 		"preview": "vite preview",
+		"dev:update:umerx:all": "npm run dev:update:umerx:types && npm run dev:update:umerx:client",
 		"dev:update:umerx:types": "npm cache clean --force && npm update @umerx/umerx-blackdog-configurator-types-typescript",
 		"dev:update:umerx:client": "npm cache clean --force && npm update @umerx/umerx-blackdog-configurator-client-typescript"
 	},
