@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import { Symbol as SymbolTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
-import { Strategy as StrategyTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import "./index.css";
 import { ToggleState } from "./Interfaces/settings";
 import DetailView from "./components/DetailView";
@@ -9,6 +8,7 @@ import BlackDogHeader from "./components/BlackdogHeader";
 import Toggle from "./components/Toggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun, faMoon } from "@fortawesome/free-solid-svg-icons";
+import StrategiesList from "./components/StrategiesList";
 
 const blackdogConfiguratorClientScheme =
 	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_CLIENT_SCHEME ?? "";
@@ -44,21 +44,9 @@ const darkModeStateDisplays = {
 	),
 };
 
-const testToggleStateDisplays = {
-	[ToggleState.on]: (
-		<span className="text-xs transition-bg duration-1000">ON</span>
-	),
-	[ToggleState.off]: (
-		<span className="text-xs transition-bg duration-1000">OFF</span>
-	),
-};
-
 function App() {
 	const [symbols, setSymbols] = useState<
 		SymbolTypes.SymbolResponseBodyDataInstance[]
-	>([]);
-	const [strategies, setStrategies] = useState<
-		StrategyTypes.StrategyGetResponseBodyDataInstance[]
 	>([]);
 	useEffect(() => {
 		blackdogConfiguratorClient
@@ -71,30 +59,12 @@ function App() {
 				console.error(error);
 			});
 	});
-	useEffect(() => {
-		blackdogConfiguratorClient
-			.strategy()
-			.getMany({})
-			.then((response) => {
-				setStrategies(response);
-			})
-			.catch((error) => {
-				console.error(error);
-			});
-	});
 
 	const [darkModeState, setDarkModeState] = useState<ToggleState>(
 		ToggleState.off
 	);
 	const toggleDarkMode = (newState: ToggleState) => {
 		setDarkModeState(newState);
-	};
-
-	const [testToggleState, setTestToggleState] = useState<ToggleState>(
-		ToggleState.on
-	);
-	const toggleTestState = (newState: ToggleState) => {
-		setTestToggleState(newState);
 	};
 
 	return (
@@ -117,33 +87,11 @@ function App() {
 
 				<div className="blackdog-main-content">
 					<div className="p-4">
-						{/* {symbols.map((symbol) => (
-						<Toggle
-							key={symbol.id}
-							toggleState={testToggleState}
-							display={testToggleStateDisplays[testToggleState]}
-							labelText={symbol.name}
-							onToggle={toggleTestState}
+						<StrategiesList
+							blackdogConfiguratorClient={
+								blackdogConfiguratorClient
+							}
 						/>
-					))} */}
-
-						{strategies.map((strategy) => (
-							<div className="my-4">
-								<div className="p-2 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
-									<Toggle
-										key={strategy.id}
-										toggleState={testToggleState}
-										display={
-											testToggleStateDisplays[
-												testToggleState
-											]
-										}
-										labelText={strategy.title}
-										onToggle={toggleTestState}
-									/>
-								</div>
-							</div>
-						))}
 					</div>
 				</div>
 			</div>
