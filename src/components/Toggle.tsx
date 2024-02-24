@@ -21,12 +21,7 @@ const Toggle: React.FC<ToggleProps> = ({
 	};
 
 	return (
-		<div
-			className="relative cursor-pointer flex justify-between"
-			// className={`${
-			// 	!labelText ? "" : "mt-2"
-			// } relative cursor-pointer flex justify-between`}
-		>
+		<div className="relative cursor-pointer flex justify-between">
 			{labelText && (
 				<label
 					htmlFor="toggle"

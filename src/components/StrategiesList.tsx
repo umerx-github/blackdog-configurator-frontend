@@ -3,6 +3,8 @@ import { ToggleState } from "../Interfaces/settings";
 import { Strategy as StrategyTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import Toggle from "./Toggle";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 
 interface StrategiesListProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -68,24 +70,34 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 	}, [blackdogConfiguratorClient]);
 
 	return (
-		<div className="relative cursor-pointer flex justify-between flex-wrap">
-			{strategies.map((strategy) => (
-				<div className="my-4 w-full" key={strategy.id}>
-					<div className="p-2 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
-						<Toggle
-							key={strategy.id}
-							toggleState={toggleStates[strategy.id]}
-							display={
-								toggleStateDisplays[toggleStates[strategy.id]]
-							}
-							labelText={strategy.title}
-							onToggle={(newState) =>
-								toggleState(strategy.id, newState)
-							}
-						/>
+		<div>
+			<div className="relative cursor-pointer flex justify-between flex-wrap">
+				{strategies.map((strategy) => (
+					<div className="my-4 w-full" key={strategy.id}>
+						<div className="p-2 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
+							<Toggle
+								key={strategy.id}
+								toggleState={toggleStates[strategy.id]}
+								display={
+									toggleStateDisplays[
+										toggleStates[strategy.id]
+									]
+								}
+								labelText={strategy.title}
+								onToggle={(newState) =>
+									toggleState(strategy.id, newState)
+								}
+							/>
+						</div>
 					</div>
-				</div>
-			))}
+				))}
+			</div>
+			<div className="absolute bottom-4 right-4">
+				<FontAwesomeIcon
+					icon={faPlus}
+					className="text-4xl text-zinc-900 dark:text-white"
+				/>
+			</div>
 		</div>
 	);
 };
