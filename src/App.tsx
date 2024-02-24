@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
-import { Symbol as SymbolTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
+//import { Symbol as SymbolTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import "./index.css";
 import { ToggleState } from "./Interfaces/settings";
-import DetailView from "./components/DetailView";
 import BlackDogHeader from "./components/BlackdogHeader";
 import Toggle from "./components/Toggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -45,21 +44,6 @@ const darkModeStateDisplays = {
 };
 
 function App() {
-	const [symbols, setSymbols] = useState<
-		SymbolTypes.SymbolResponseBodyDataInstance[]
-	>([]);
-	useEffect(() => {
-		blackdogConfiguratorClient
-			.symbol()
-			.getMany({})
-			.then((response) => {
-				setSymbols(response);
-			})
-			.catch((error) => {
-				console.error(error);
-			});
-	});
-
 	const [darkModeState, setDarkModeState] = useState<ToggleState>(
 		ToggleState.off
 	);

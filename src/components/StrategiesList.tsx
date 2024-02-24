@@ -26,11 +26,26 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 	const [toggleStates, setToggleStates] = useState<
 		Record<string, ToggleState>
 	>({});
+
 	const toggleState = (id: number, newState: ToggleState) => {
 		setToggleStates((prevStates) => ({
 			...prevStates,
 			[id]: newState,
 		}));
+		updateStrategy(id, newState);
+	};
+
+	const updateStrategy = async (id: number, newState: ToggleState) => {
+		try {
+			await blackdogConfiguratorClient.strategy().patchSingle(
+				{ id },
+				{
+					status: newState === ToggleState.on ? "active" : "inactive",
+				}
+			);
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	useEffect(() => {
@@ -41,7 +56,9 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 				setStrategies(response);
 				const initialToggleStates: Record<string, ToggleState> = {};
 				response.forEach((strategy) => {
-					initialToggleStates[strategy.id] = ToggleState.off;
+					strategy.status === "active"
+						? (initialToggleStates[strategy.id] = ToggleState.on)
+						: (initialToggleStates[strategy.id] = ToggleState.off);
 				});
 				setToggleStates(initialToggleStates);
 			})
