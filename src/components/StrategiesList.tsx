@@ -102,4 +102,6 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 	);
 };
 
+// TODO: Make clicking the plus button navigate to the add route using react-router-dom's Link component
+
 export default StrategiesList;

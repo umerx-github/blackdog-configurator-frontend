@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
-//import { Symbol as SymbolTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import "./index.css";
+import { Route, Routes } from "react-router-dom";
+import Home from "./components/Home";
+import StrategiesList from "./components/StrategiesList";
 import { ToggleState } from "./Interfaces/settings";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMoon } from "@fortawesome/free-solid-svg-icons/faMoon";
+import { faSun } from "@fortawesome/free-solid-svg-icons/faSun";
 import BlackDogHeader from "./components/BlackdogHeader";
 import Toggle from "./components/Toggle";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSun, faMoon } from "@fortawesome/free-solid-svg-icons";
-import StrategiesList from "./components/StrategiesList";
 
 const blackdogConfiguratorClientScheme =
 	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_CLIENT_SCHEME ?? "";
@@ -68,14 +70,21 @@ function App() {
 						/>
 					</div>
 				</div>
-
 				<div className="blackdog-main-content">
 					<div className="p-4">
-						<StrategiesList
-							blackdogConfiguratorClient={
-								blackdogConfiguratorClient
-							}
-						/>
+						<Routes>
+							<Route path="/" element={<Home />}></Route>
+							<Route
+								path="/strategies"
+								element={
+									<StrategiesList
+										blackdogConfiguratorClient={
+											blackdogConfiguratorClient
+										}
+									/>
+								}
+							></Route>
+						</Routes>
 					</div>
 				</div>
 			</div>
