@@ -8,7 +8,7 @@ interface StrategiesListProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
 }
 
-const testToggleStateDisplays = {
+const toggleStateDisplays = {
 	[ToggleState.on]: (
 		<span className="text-xs transition-bg duration-1000">ON</span>
 	),
@@ -23,11 +23,14 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 	const [strategies, setStrategies] = useState<
 		StrategyTypes.StrategyGetResponseBodyDataInstance[]
 	>([]);
-	const [testToggleState, setTestToggleState] = useState<ToggleState>(
-		ToggleState.on
-	);
-	const toggleTestState = (newState: ToggleState) => {
-		setTestToggleState(newState);
+	const [toggleStates, setToggleStates] = useState<
+		Record<string, ToggleState>
+	>({});
+	const toggleState = (id: number, newState: ToggleState) => {
+		setToggleStates((prevStates) => ({
+			...prevStates,
+			[id]: newState,
+		}));
 	};
 
 	useEffect(() => {
@@ -36,11 +39,16 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 			.getMany({})
 			.then((response) => {
 				setStrategies(response);
+				const initialToggleStates: Record<string, ToggleState> = {};
+				response.forEach((strategy) => {
+					initialToggleStates[strategy.id] = ToggleState.off;
+				});
+				setToggleStates(initialToggleStates);
 			})
 			.catch((error) => {
 				console.error(error);
 			});
-	});
+	}, [blackdogConfiguratorClient]);
 
 	return (
 		<div className="relative cursor-pointer flex justify-between flex-wrap">
@@ -49,10 +57,14 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 					<div className="p-2 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
 						<Toggle
 							key={strategy.id}
-							toggleState={testToggleState}
-							display={testToggleStateDisplays[testToggleState]}
+							toggleState={toggleStates[strategy.id]}
+							display={
+								toggleStateDisplays[toggleStates[strategy.id]]
+							}
 							labelText={strategy.title}
-							onToggle={toggleTestState}
+							onToggle={(newState) =>
+								toggleState(strategy.id, newState)
+							}
 						/>
 					</div>
 				</div>
