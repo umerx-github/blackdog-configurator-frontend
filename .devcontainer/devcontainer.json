@@ -195,7 +195,8 @@
 				"todo-tree.regex.regex": "(//|/*|#|<!--|;|/\\*|^|^[ \\t]*(-|\\d+.))\\s*($TAGS)",
 				"todo-tree.filtering.excludeGlobs": [
 					"**/*.json",
-					"**/.devcontainer/**"
+					"**/.devcontainer/**",
+					"**/node_modules/**"
 				]
 			},
 			"extensions": [
