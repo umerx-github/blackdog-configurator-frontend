@@ -50,6 +50,7 @@ const darkModeStateDisplays = {
 };
 
 function App() {
+	// TODO: Move darkMode toggle to new "settings" page
 	const [darkModeState, setDarkModeState] = useState<ToggleState>(
 		ToggleState.off
 	);
@@ -83,7 +84,7 @@ function App() {
 							<Routes>
 								<Route path="/" element={<Home />} />
 								<Route
-									path="/Strategy"
+									path="/strategy"
 									element={
 										<StrategiesList
 											blackdogConfiguratorClient={
@@ -93,10 +94,12 @@ function App() {
 									}
 								/>
 								<Route
-									path="/Strategy/:strategyId"
+									path="/strategy/:strategyId"
 									element={
 										<StrategyDetail
-											viewState={ViewState.view}
+											blackdogConfiguratorClient={
+												blackdogConfiguratorClient
+											}
 										/>
 									}
 								/>

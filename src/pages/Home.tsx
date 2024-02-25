@@ -17,7 +17,7 @@ const Home: React.FC = () => {
 	}, [setBreadcrumbs]);
 
 	return (
-		<Link to="/Strategy">
+		<Link to="/strategy">
 			<LargeButton icon={faChess} text="Strategies" />
 		</Link>
 	);
