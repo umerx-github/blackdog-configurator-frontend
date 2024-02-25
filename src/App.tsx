@@ -10,6 +10,8 @@ import { faMoon } from "@fortawesome/free-solid-svg-icons/faMoon";
 import { faSun } from "@fortawesome/free-solid-svg-icons/faSun";
 import BlackDogHeader from "./components/BlackdogHeader";
 import Toggle from "./components/Toggle";
+import StrategyDetail from "./components/StrategyDetail";
+import { ViewState } from "./Interfaces/viewState";
 
 const blackdogConfiguratorClientScheme =
 	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_CLIENT_SCHEME ?? "";
@@ -73,9 +75,9 @@ function App() {
 				<div className="blackdog-main-content">
 					<div className="p-4">
 						<Routes>
-							<Route path="/" element={<Home />}></Route>
+							<Route path="/" element={<Home />} />
 							<Route
-								path="/strategies"
+								path="/strategy"
 								element={
 									<StrategiesList
 										blackdogConfiguratorClient={
@@ -83,7 +85,15 @@ function App() {
 										}
 									/>
 								}
-							></Route>
+							/>
+							<Route
+								path="/strategy/:strategyId"
+								element={
+									<StrategyDetail
+										viewState={ViewState.view}
+									/>
+								}
+							/>
 						</Routes>
 					</div>
 				</div>

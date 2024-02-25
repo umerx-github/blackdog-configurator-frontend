@@ -5,6 +5,9 @@ import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-conf
 import Toggle from "./Toggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
+import { Link, Route, Routes } from "react-router-dom";
+import { ViewState } from "../Interfaces/viewState";
+import StrategyDetail from "./StrategyDetail";
 
 interface StrategiesListProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -93,15 +96,15 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 				))}
 			</div>
 			<div className="absolute bottom-4 right-4">
-				<FontAwesomeIcon
-					icon={faPlus}
-					className="text-4xl text-zinc-900 dark:text-white"
-				/>
+				<Link to="0">
+					<FontAwesomeIcon
+						icon={faPlus}
+						className="text-4xl text-zinc-900 dark:text-white"
+					/>
+				</Link>
 			</div>
 		</div>
 	);
 };
-
-// TODO: Make clicking the plus button navigate to the add route using react-router-dom's Link component
 
 export default StrategiesList;
