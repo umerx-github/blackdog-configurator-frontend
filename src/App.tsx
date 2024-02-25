@@ -15,23 +15,23 @@ import Home from "./pages/Home";
 import StrategiesList from "./pages/StrategiesList";
 import StrategyDetail from "./pages/StrategyDetail";
 
-const blackdogConfiguratorClientScheme =
-	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_CLIENT_SCHEME ?? "";
-const blackdogConfiguratorClientHost =
-	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_CLIENT_HOST ?? "";
-const blackdogConfiguratorClientPort =
-	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_CLIENT_PORT ?? "";
-const blackdogConfiguratorClientPath =
-	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_CLIENT_PATH ?? "";
+const blackdogConfiguratorBackendScheme =
+	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_BACKEND_SCHEME ?? "";
+const blackdogConfiguratorBackendHost =
+	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_BACKEND_HOST ?? "";
+const blackdogConfiguratorBackendPort =
+	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_BACKEND_PORT ?? "";
+const blackdogConfiguratorBackendPath =
+	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_BACKEND_PATH ?? "";
 
-const blackdogConfiguratorClientBaseUrl = `${blackdogConfiguratorClientScheme}://${blackdogConfiguratorClientHost}${
-	"" === blackdogConfiguratorClientPort
+const blackdogConfiguratorBackendBaseUrl = `${blackdogConfiguratorBackendScheme}://${blackdogConfiguratorBackendHost}${
+	"" === blackdogConfiguratorBackendPort
 		? ""
-		: `:${blackdogConfiguratorClientPort}`
-}${blackdogConfiguratorClientPath}`;
+		: `:${blackdogConfiguratorBackendPort}`
+}${blackdogConfiguratorBackendPath}`;
 
 const blackdogConfiguratorClient = new BlackdogConfiguratorClient.ClientImpl(
-	blackdogConfiguratorClientBaseUrl
+	blackdogConfiguratorBackendBaseUrl
 );
 
 const darkModeStateDisplays = {

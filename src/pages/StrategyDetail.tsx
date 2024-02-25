@@ -7,6 +7,7 @@ interface StrategyDetailProps {
 }
 
 const StrategyDetail: React.FC<StrategyDetailProps> = (viewState) => {
+	console.log(viewState);
 	const { setBreadcrumbs } = useContext(BreadcrumbsContext);
 	useEffect(() => {
 		setBreadcrumbs([

@@ -2,11 +2,11 @@ version: "3.8"
 services:
     umerx_blackdog_configurator_frontend:
         build:
-            context: .
+            context: ./.devcontainer
             dockerfile: Dockerfile
         command: sleep infinity
         volumes:
-            - ./..:/workspace
+            - ./:/workspace
         ports:
             - ${BLACKDOG_CONFIGURATOR_FRONTEND_INTERFACE}:${BLACKDOG_CONFIGURATOR_FRONTEND_PORT}:${BLACKDOG_CONFIGURATOR_FRONTEND_VITE_PORT}
         environment:

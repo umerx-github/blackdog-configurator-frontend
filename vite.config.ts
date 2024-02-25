@@ -6,8 +6,8 @@ export default defineConfig({
 	plugins: [react()],
 	server: {
 		host: process.env.BLACKDOG_CONFIGURATOR_FRONTEND_VITE_HOST || "0.0.0.0",
-		port:
-			Number(process.env.BLACKDOG_CONFIGURATOR_FRONTEND_VITE_PORT) ||
-			5137,
+		port: process.env.BLACKDOG_CONFIGURATOR_FRONTEND_VITE_PORT
+			? Number(process.env.BLACKDOG_CONFIGURATOR_FRONTEND_VITE_PORT)
+			: 5137,
 	},
 });

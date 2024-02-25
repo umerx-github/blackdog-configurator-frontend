@@ -1,9 +1,11 @@
 {
 	"name": "umerx-blackdog-configurator-frontend",
-	"dockerComposeFile": "docker-compose.yml",
+	"dockerComposeFile": [
+		"../docker-compose.yml",
+		"docker-compose.yml"
+	],
 	"service": "umerx_blackdog_configurator_frontend",
 	"workspaceFolder": "/workspace",
-	"postCreateCommand": "npm ci",
 	// https://tjtelan.com/blog/how-to-link-multiple-docker-compose-via-network/
 	// https://containers.dev/guide/dockerfile
 	// https://github.com/microsoft/vscode-remote-release/issues/2485

@@ -1,0 +1,13 @@
+.devcontainer
+.git
+dist
+node_modules
+.env
+.env.example
+.env.local
+.env.local.example
+.gitignore
+docker-compose.yml
+Dockerfile
+.dockerignore
+README.node_modules
