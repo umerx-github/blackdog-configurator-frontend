@@ -25,7 +25,7 @@ const Toggle: React.FC<ToggleProps> = ({
 			{labelText && (
 				<label
 					htmlFor="toggle"
-					className="block text-sm font-medium text-zinc-900 dark:text-white max-width-75"
+					className="block text-sm font-light font-medium text-zinc-900 dark:text-white max-width-75"
 				>
 					{labelText}
 				</label>

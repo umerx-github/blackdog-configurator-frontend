@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { ToggleState } from "../Interfaces/settings";
 import { Strategy as StrategyTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
-import Toggle from "./Toggle";
+import Toggle from "../components/Toggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
-import { Link, Route, Routes } from "react-router-dom";
-import { ViewState } from "../Interfaces/viewState";
-import StrategyDetail from "./StrategyDetail";
+import { Link } from "react-router-dom";
+import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
+import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
+import BreadcrumbsContext from "../components/BreadcrumbsContext";
 
 interface StrategiesListProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -15,10 +16,16 @@ interface StrategiesListProps {
 
 const toggleStateDisplays = {
 	[ToggleState.on]: (
-		<span className="text-xs transition-bg duration-1000">ON</span>
+		<FontAwesomeIcon
+			icon={faCheck}
+			className="text-sm transition-bg duration-1000"
+		/>
 	),
 	[ToggleState.off]: (
-		<span className="text-xs transition-bg duration-1000">OFF</span>
+		<FontAwesomeIcon
+			icon={faTimes}
+			className="text-sm transition-bg duration-1000"
+		/>
 	),
 };
 
@@ -72,12 +79,26 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 			});
 	}, [blackdogConfiguratorClient]);
 
+	const { setBreadcrumbs } = useContext(BreadcrumbsContext);
+	useEffect(() => {
+		setBreadcrumbs([
+			{
+				label: "Home",
+				path: "/",
+			},
+			{
+				label: "Strategies",
+				path: "/Strategy",
+			},
+		]);
+	}, [setBreadcrumbs]);
+
 	return (
 		<div>
 			<div className="relative cursor-pointer flex justify-between flex-wrap">
 				{strategies.map((strategy) => (
-					<div className="my-4 w-full" key={strategy.id}>
-						<div className="p-2 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
+					<div className="mb-4 w-full" key={strategy.id}>
+						<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
 							<Toggle
 								key={strategy.id}
 								toggleState={toggleStates[strategy.id]}
@@ -99,7 +120,7 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 				<Link to="0">
 					<FontAwesomeIcon
 						icon={faPlus}
-						className="text-4xl text-zinc-900 dark:text-white"
+						className="text-4xl text-zinc-600 dark:text-zinc-400 transition-bg duration-1000"
 					/>
 				</Link>
 			</div>
