@@ -8,7 +8,6 @@ import { faMoon } from "@fortawesome/free-solid-svg-icons/faMoon";
 import { faSun } from "@fortawesome/free-solid-svg-icons/faSun";
 import BlackDogHeader from "./components/BlackdogHeader";
 import Toggle from "./components/Toggle";
-import { ViewState } from "./Interfaces/viewState";
 import Breadcrumbs from "./components/Breadcrumbs";
 import BreadcrumbsProvider from "./components/BreadcrumbsProvider";
 import Home from "./pages/Home";
