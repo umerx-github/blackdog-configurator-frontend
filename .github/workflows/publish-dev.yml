@@ -41,7 +41,7 @@ jobs:
                   images: |
                       ghcr.io/${{ env.DOCKER_IMAGE_REPO }}
                   tags: |
-                    type=raw,value=dev
+                      type=raw,value=dev
             - name: Build and push Docker image
               uses: docker/build-push-action@v5
               with:
@@ -52,3 +52,5 @@ jobs:
                   platforms: linux/arm64
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
+                  build-args: |
+                      ENVIRONMENT=development
