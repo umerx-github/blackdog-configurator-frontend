@@ -5,6 +5,8 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build",
+		"build:production": "tsc && vite build --mode production",
+		"build:development": "tsc && vite build --mode development",
 		"build:css": "postcss src/index.css -o src/tailwind.css",
 		"lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
 		"preview": "vite preview",
