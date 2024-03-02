@@ -13,6 +13,8 @@ import BreadcrumbsProvider from "./components/BreadcrumbsProvider";
 import Home from "./pages/Home";
 import StrategiesList from "./pages/StrategiesList";
 import StrategyDetail from "./pages/StrategyDetail";
+import { ViewState } from "./Interfaces/viewState";
+import PageNotFound from "./pages/PageNotFound";
 
 const blackdogConfiguratorBackendScheme =
 	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_BACKEND_SCHEME ?? "";
@@ -56,6 +58,11 @@ function App() {
 	const toggleDarkMode = (newState: ToggleState) => {
 		setDarkModeState(newState);
 	};
+	const strategyDetailRoutes = {
+		"/strategy/read/:strategyId": ViewState.read,
+		"/strategy/edit/:strategyId": ViewState.edit,
+		"/strategy/add": ViewState.add,
+	};
 
 	return (
 		<div
@@ -92,16 +99,23 @@ function App() {
 										/>
 									}
 								/>
-								<Route
-									path="/strategy/:strategyId"
-									element={
-										<StrategyDetail
-											blackdogConfiguratorClient={
-												blackdogConfiguratorClient
+								{Object.entries(strategyDetailRoutes).map(
+									([path, viewState]) => (
+										<Route
+											key={path}
+											path={path}
+											element={
+												<StrategyDetail
+													blackdogConfiguratorClient={
+														blackdogConfiguratorClient
+													}
+													viewState={viewState}
+												/>
 											}
 										/>
-									}
-								/>
+									)
+								)}
+								<Route path="*" element={<PageNotFound />} />
 							</Routes>
 						</div>
 					</div>

@@ -12,10 +12,8 @@ import { ToggleState } from "../Interfaces/settings";
 
 interface StrategyDetailProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
-	viewState?: ViewState;
+	viewState: ViewState;
 }
-
-// TODO: Move 'viewState' to URL param
 
 const statusStateDisplays = {
 	[ToggleState.on]: (
@@ -34,7 +32,7 @@ const statusStateDisplays = {
 
 const StrategyDetail: React.FC<StrategyDetailProps> = ({
 	blackdogConfiguratorClient,
-	viewState = ViewState.view,
+	viewState = ViewState.read,
 }) => {
 	const { setBreadcrumbs } = useContext(BreadcrumbsContext);
 	useEffect(() => {
