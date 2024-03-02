@@ -97,27 +97,33 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 		<div>
 			<div className="relative cursor-pointer flex justify-between flex-wrap">
 				{strategies.map((strategy) => (
-					<div className="mb-4 w-full" key={strategy.id}>
-						<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
-							<Toggle
-								key={strategy.id}
-								toggleState={toggleStates[strategy.id]}
-								display={
-									toggleStateDisplays[
-										toggleStates[strategy.id]
-									]
-								}
-								labelText={strategy.title}
-								onToggle={(newState) =>
-									toggleState(strategy.id, newState)
-								}
-							/>
+					<Link
+						to={`/strategy/read/${strategy.id}`}
+						key={strategy.id}
+						className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-2 transition-bg duration-1000"
+					>
+						<div className="mb-4 w-full" key={strategy.id}>
+							<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
+								<Toggle
+									key={strategy.id}
+									toggleState={toggleStates[strategy.id]}
+									display={
+										toggleStateDisplays[
+											toggleStates[strategy.id]
+										]
+									}
+									labelText={strategy.title}
+									onToggle={(newState) =>
+										toggleState(strategy.id, newState)
+									}
+								/>
+							</div>
 						</div>
-					</div>
+					</Link>
 				))}
 			</div>
 			<div className="absolute bottom-4 right-4">
-				<Link to="0">
+				<Link to="/strategy/add">
 					<FontAwesomeIcon
 						icon={faPlus}
 						className="text-4xl text-zinc-600 dark:text-zinc-400 transition-bg duration-1000"

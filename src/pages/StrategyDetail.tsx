@@ -2,6 +2,7 @@ import { ViewState } from "../Interfaces/viewState";
 import React, { useEffect, useContext, useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import { Strategy as StrategyTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
+import { StrategyTemplate } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import BreadcrumbsContext from "../components/BreadcrumbsContext";
 import { useParams } from "react-router-dom";
 import Toggle from "../components/Toggle";
@@ -62,46 +63,58 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 
 	const { strategyId } = useParams();
 
+	const templates: StrategyTemplate.StrategyTemplateName[] = [
+		"SeaDogDiscountScheme",
+	];
+
 	useEffect(() => {
-		if (!strategyId || strategyId === "0") {
-			return;
-		}
 		blackdogConfiguratorClient
-			.strategy()
-			.getSingle({
-				id: parseInt(strategyId, 10),
-			})
-			.then((response) => {
-				setStrategy(response);
-			})
-			.catch((error) => {
-				console.error(error);
-			});
+			.strategyTemplateSeaDogDiscountScheme()
+			.getMany({});
+		if (strategyId) {
+			blackdogConfiguratorClient
+				.strategy()
+				.getSingle({
+					id: parseInt(strategyId, 10),
+				})
+				.then((response) => {
+					setStrategy(response);
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+		}
 	}, [blackdogConfiguratorClient]);
 
 	return (
 		<div>
 			<dl>
 				<dt>Title</dt>
-				<dd>{strategy?.title}</dd>
+				<dd>
+					<input type="text" defaultValue={strategy?.title} />
+				</dd>
 
 				<dt>Template</dt>
-				<dd>{strategy?.strategyTemplateName}</dd>
+				<dd>
+					<select defaultValue={strategy?.strategyTemplateName}>
+						{templates.map((template) => (
+							<option key={template} value={template}>
+								{template}
+							</option>
+						))}
+					</select>
+				</dd>
 
-				{viewState !== ViewState.add ? (
-					<div className="mb-4 w-full">
-						<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
-							<Toggle
-								toggleState={statusState}
-								display={statusStateDisplays[statusState]}
-								labelText="Active?"
-								onToggle={toggleStatusState}
-							/>
-						</div>
+				<div className="mb-4 w-full">
+					<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
+						<Toggle
+							toggleState={statusState}
+							display={statusStateDisplays[statusState]}
+							labelText="Active?"
+							onToggle={toggleStatusState}
+						/>
 					</div>
-				) : (
-					<></>
-				)}
+				</div>
 			</dl>
 		</div>
 	);
