@@ -40,7 +40,7 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 		setBreadcrumbs([
 			{
 				label: "Home",
-				path: "/home",
+				path: "",
 			},
 			{
 				label: "Strategies",
@@ -88,10 +88,15 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 
 	return (
 		<div>
+			<p>{viewState}</p>
 			<dl>
 				<dt>Title</dt>
 				<dd>
-					<input type="text" defaultValue={strategy?.title} />
+					<input
+						type="text"
+						defaultValue={strategy?.title}
+						className="w-full"
+					/>
 				</dd>
 
 				<dt>Template</dt>

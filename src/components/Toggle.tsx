@@ -14,7 +14,9 @@ const Toggle: React.FC<ToggleProps> = ({
 	labelText,
 	onToggle,
 }) => {
-	const handleToggle = () => {
+	const handleToggle = (e: React.MouseEvent<HTMLDivElement>) => {
+		console.log("handleToggle");
+		e.preventDefault();
 		const newState =
 			toggleState === ToggleState.on ? ToggleState.off : ToggleState.on;
 		onToggle(newState);
@@ -31,7 +33,9 @@ const Toggle: React.FC<ToggleProps> = ({
 				</label>
 			)}
 			<div
-				onClick={handleToggle}
+				onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+					handleToggle(e);
+				}}
 				className="w-16 bg-white dark:bg-zinc-700 inline-flex items-center p-1 h-8"
 			>
 				<button

@@ -1,14 +1,18 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { ToggleState } from "../Interfaces/settings";
-import { Strategy as StrategyTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import Toggle from "../components/Toggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
-import { Link } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import BreadcrumbsContext from "../components/BreadcrumbsContext";
+import { blackdogConfiguratorClient } from "../main";
+import {
+	StrategyGetManyResponseBodyData,
+	StrategyPatchSingleRequestBody,
+} from "@umerx/umerx-blackdog-configurator-types-typescript/build/src/strategy";
 
 interface StrategiesListProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -29,62 +33,44 @@ const toggleStateDisplays = {
 	),
 };
 
+export async function loader() {
+	return await blackdogConfiguratorClient.strategy().getMany({});
+}
+
 const StrategiesList: React.FC<StrategiesListProps> = ({
 	blackdogConfiguratorClient,
 }) => {
-	const [strategies, setStrategies] = useState<
-		StrategyTypes.StrategyGetResponseBodyDataInstance[]
-	>([]);
-	const [toggleStates, setToggleStates] = useState<
-		Record<string, ToggleState>
-	>({});
+	const strategiesLoaded = useLoaderData() as StrategyGetManyResponseBodyData;
+	const [strategies, setStrategies] =
+		useState<StrategyGetManyResponseBodyData>(strategiesLoaded);
 
-	const toggleState = (id: number, newState: ToggleState) => {
-		setToggleStates((prevStates) => ({
-			...prevStates,
-			[id]: newState,
-		}));
-		updateStrategy(id, newState);
-	};
-
-	const updateStrategy = async (id: number, newState: ToggleState) => {
+	const patchStrategy = async (
+		id: number,
+		strategy: StrategyPatchSingleRequestBody
+	) => {
 		try {
-			await blackdogConfiguratorClient.strategy().patchSingle(
-				{ id },
-				{
-					status: newState === ToggleState.on ? "active" : "inactive",
+			const newStrategy = await blackdogConfiguratorClient
+				.strategy()
+				.patchSingle({ id }, strategy);
+			// Create a new array of strategies with the updated strategy
+			const updatedStrategies = strategies.map((s) => {
+				if (s.id === id) {
+					return { ...s, ...newStrategy };
 				}
-			);
+				return s;
+			});
+			setStrategies(updatedStrategies);
 		} catch (error) {
 			console.error(error);
 		}
 	};
-
-	useEffect(() => {
-		blackdogConfiguratorClient
-			.strategy()
-			.getMany({})
-			.then((response) => {
-				setStrategies(response);
-				const initialToggleStates: Record<string, ToggleState> = {};
-				response.forEach((strategy) => {
-					strategy.status === "active"
-						? (initialToggleStates[strategy.id] = ToggleState.on)
-						: (initialToggleStates[strategy.id] = ToggleState.off);
-				});
-				setToggleStates(initialToggleStates);
-			})
-			.catch((error) => {
-				console.error(error);
-			});
-	}, [blackdogConfiguratorClient]);
 
 	const { setBreadcrumbs } = useContext(BreadcrumbsContext);
 	useEffect(() => {
 		setBreadcrumbs([
 			{
 				label: "Home",
-				path: "/home",
+				path: "",
 			},
 			{
 				label: "Strategies",
@@ -106,15 +92,26 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 							<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
 								<Toggle
 									key={strategy.id}
-									toggleState={toggleStates[strategy.id]}
+									toggleState={
+										strategy.status === "active"
+											? ToggleState.on
+											: ToggleState.off
+									}
 									display={
 										toggleStateDisplays[
-											toggleStates[strategy.id]
+											strategy.status === "active"
+												? ToggleState.on
+												: ToggleState.off
 										]
 									}
 									labelText={strategy.title}
 									onToggle={(newState) =>
-										toggleState(strategy.id, newState)
+										patchStrategy(strategy.id, {
+											status:
+												newState === ToggleState.on
+													? "active"
+													: "inactive",
+										})
 									}
 								/>
 							</div>

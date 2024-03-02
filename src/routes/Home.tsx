@@ -11,7 +11,7 @@ const Home: React.FC = () => {
 		setBreadcrumbs([
 			{
 				label: "Home",
-				path: "/home",
+				path: "",
 			},
 		]);
 	}, [setBreadcrumbs]);

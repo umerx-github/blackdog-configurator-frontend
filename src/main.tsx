@@ -5,7 +5,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import Root from "./routes/root";
 import ErrorPage from "./ErrorPage.tsx";
-import StrategiesList from "./routes/StrategiesList.tsx";
+import StrategiesList, {
+	loader as strategiesListLoader,
+} from "./routes/StrategiesList.tsx";
 import StrategyDetail from "./routes/StrategyDetail.tsx";
 import { ViewState } from "./Interfaces/viewState";
 import Home from "./routes/Home.tsx";
@@ -25,9 +27,10 @@ const blackdogConfiguratorBackendBaseUrl = `${blackdogConfiguratorBackendScheme}
 		: `:${blackdogConfiguratorBackendPort}`
 }${blackdogConfiguratorBackendPath}`;
 
-const blackdogConfiguratorClient = new BlackdogConfiguratorClient.ClientImpl(
-	blackdogConfiguratorBackendBaseUrl
-);
+export const blackdogConfiguratorClient =
+	new BlackdogConfiguratorClient.ClientImpl(
+		blackdogConfiguratorBackendBaseUrl
+	);
 
 const router = createBrowserRouter([
 	{
@@ -36,12 +39,13 @@ const router = createBrowserRouter([
 		errorElement: <ErrorPage />,
 		children: [
 			{
-				path: "home",
+				path: "",
 				element: <Home />,
 				errorElement: <ErrorPage />,
 			},
 			{
 				path: "strategy",
+				loader: strategiesListLoader,
 				element: (
 					<StrategiesList
 						blackdogConfiguratorClient={blackdogConfiguratorClient}
@@ -58,6 +62,11 @@ const router = createBrowserRouter([
 						viewState={ViewState.read}
 					/>
 				),
+				loader: async () => {
+					return blackdogConfiguratorClient
+						.strategyTemplateSeaDogDiscountScheme()
+						.getMany({});
+				},
 				errorElement: <ErrorPage />,
 			},
 			{
