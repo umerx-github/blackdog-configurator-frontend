@@ -40,11 +40,11 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 		setBreadcrumbs([
 			{
 				label: "Home",
-				path: "/",
+				path: "/home",
 			},
 			{
 				label: "Strategies",
-				path: "/Strategy",
+				path: "/strategy",
 			},
 		]);
 	}, [setBreadcrumbs]);
@@ -103,6 +103,15 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 							</option>
 						))}
 					</select>
+				</dd>
+
+				<dt>Designated Funds</dt>
+				<dd>
+					$
+					<input
+						type="number"
+						defaultValue={strategy ? strategy.cashInCents / 100 : 0}
+					/>
 				</dd>
 
 				<div className="mb-4 w-full">

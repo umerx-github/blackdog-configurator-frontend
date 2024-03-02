@@ -84,11 +84,11 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 		setBreadcrumbs([
 			{
 				label: "Home",
-				path: "/",
+				path: "/home",
 			},
 			{
 				label: "Strategies",
-				path: "/Strategy",
+				path: "/strategy",
 			},
 		]);
 	}, [setBreadcrumbs]);
