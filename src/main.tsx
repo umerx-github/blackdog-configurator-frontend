@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
-import Root from "./routes/root";
+import Root from "./routes/Root";
 import ErrorPage from "./ErrorPage.tsx";
 import StrategiesList, {
 	loader as strategiesListLoader,
