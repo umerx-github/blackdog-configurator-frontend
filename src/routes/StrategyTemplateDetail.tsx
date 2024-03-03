@@ -13,11 +13,13 @@ import {
 // import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 // import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import BreadcrumbsContext from "../components/BreadcrumbsContext";
-import { StrategyGetSingleResponseBodyData } from "@umerx/umerx-blackdog-configurator-types-typescript/build/src/strategy";
+import { Strategy as StrategyTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import z from "zod";
-import StrategyTemplateSeaDogDiscountSchemeList from "./StrategyTemplateSeaDogDiscountSchemeList";
-interface StrategyTemplateListProps {
+import StrategyTemplateSeaDogDiscountSchemeDetail from "./StrategyTemplateSeaDogDiscountSchemeDetail";
+import { ViewState } from "../Interfaces/viewState";
+interface StrategyTemplateDetailProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
+	viewState: ViewState;
 }
 
 // const toggleStateDisplays = {
@@ -35,30 +37,36 @@ interface StrategyTemplateListProps {
 // 	),
 // };
 
-interface StrategyTemplateListParams {
+interface StrategyTemplateDetailParams {
 	strategyId: number;
+	strategyTemplateId: number;
 }
 
-const StrategyTemplateListParamsExpected = z.object({
+const StrategyTemplateDetailParamsExpected = z.object({
 	strategyId: z.string().regex(/^\d+$/),
+	strategyTemplateId: z.string().regex(/^\d+$/),
 });
 
-function StrategyTemplateListParamsFromRaw(
+function StrategyTemplateDetailParamsFromRaw(
 	raw: any
-): StrategyTemplateListParams {
-	const parsed = StrategyTemplateListParamsExpected.parse(raw);
+): StrategyTemplateDetailParams {
+	const parsed = StrategyTemplateDetailParamsExpected.parse(raw);
 	return {
 		strategyId: parseInt(parsed.strategyId, 10),
+		strategyTemplateId: parseInt(parsed.strategyTemplateId, 10),
 	};
 }
 
-const StrategyTemplateList: React.FC<StrategyTemplateListProps> = ({
+const StrategyTemplateDetail: React.FC<StrategyTemplateDetailProps> = ({
 	blackdogConfiguratorClient,
+	viewState,
 }) => {
+	console.log(viewState);
 	const params = useParams();
-	const { strategyId } = StrategyTemplateListParamsFromRaw(params);
+	const { strategyId, strategyTemplateId } =
+		StrategyTemplateDetailParamsFromRaw(params);
 	const [strategy, setStrategy] =
-		useState<StrategyGetSingleResponseBodyData | null>(null);
+		useState<StrategyTypes.StrategyGetSingleResponseBodyData | null>(null);
 	const { setBreadcrumbs } = useContext(BreadcrumbsContext);
 	useEffect(() => {
 		if (!strategy) {
@@ -81,8 +89,12 @@ const StrategyTemplateList: React.FC<StrategyTemplateListProps> = ({
 				label: "Templates",
 				path: `strategy/${strategy.id}/strategyTemplate`,
 			},
+			{
+				label: `${strategyTemplateId}`,
+				path: `strategy/${strategy.id}/strategyTemplate/${strategyTemplateId}`,
+			},
 		]);
-	}, [setBreadcrumbs, strategy]);
+	}, [strategy, strategyTemplateId, setBreadcrumbs]);
 	useEffect(() => {
 		(async () => {
 			const strategy = await blackdogConfiguratorClient
@@ -90,7 +102,7 @@ const StrategyTemplateList: React.FC<StrategyTemplateListProps> = ({
 				.getSingle({ id: strategyId });
 			setStrategy(strategy);
 		})();
-	}, [strategyId]);
+	}, [setBreadcrumbs, strategyId]);
 
 	if (!strategy) {
 		return <></>;
@@ -98,10 +110,12 @@ const StrategyTemplateList: React.FC<StrategyTemplateListProps> = ({
 	switch (strategy.strategyTemplateName) {
 		case "SeaDogDiscountScheme":
 			return (
-				<StrategyTemplateSeaDogDiscountSchemeList
+				<StrategyTemplateSeaDogDiscountSchemeDetail
 					blackdogConfiguratorClient={blackdogConfiguratorClient}
 					strategy={strategy}
-				></StrategyTemplateSeaDogDiscountSchemeList>
+					strategyTemplateId={strategyTemplateId}
+					viewState={viewState}
+				></StrategyTemplateSeaDogDiscountSchemeDetail>
 			);
 		default:
 			return (
@@ -112,4 +126,4 @@ const StrategyTemplateList: React.FC<StrategyTemplateListProps> = ({
 	}
 };
 
-export default StrategyTemplateList;
+export default StrategyTemplateDetail;

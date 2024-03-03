@@ -123,7 +123,7 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 				path: `strategy/${strategy.id}`,
 			},
 		]);
-	}, [strategy]);
+	}, [setBreadcrumbs, strategy]);
 
 	return (
 		<>
