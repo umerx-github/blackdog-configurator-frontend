@@ -14,6 +14,7 @@ import StrategyDetail, {
 } from "./routes/StrategyDetail.tsx";
 import { ViewState } from "./Interfaces/viewState";
 import Home from "./routes/Home.tsx";
+import StrategyTemplateList from "./routes/StrategyTemplateList.tsx";
 
 const blackdogConfiguratorBackendScheme =
 	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_BACKEND_SCHEME ?? "";
@@ -91,6 +92,16 @@ const router = createBrowserRouter([
 								loader: strategyDetailLoader,
 								errorElement: <ErrorPage />,
 							},
+							{
+								path: "strategyTemplate",
+								element: (
+									<StrategyTemplateList
+										blackdogConfiguratorClient={
+											blackdogConfiguratorClient
+										}
+									/>
+								),
+							}
 						],
 					},
 					{
