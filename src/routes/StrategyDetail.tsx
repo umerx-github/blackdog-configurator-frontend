@@ -15,6 +15,8 @@ import {
 	StrategyGetSingleResponseBodyData,
 	StrategyPatchSingleRequestBody,
 } from "@umerx/umerx-blackdog-configurator-types-typescript/build/src/strategy";
+import TextInput from "../components/TextInput";
+import CurrencyInput from "../components/CurrencyInput";
 
 interface StrategyDetailProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -125,79 +127,69 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 
 	return (
 		<>
-			<Form method="post">
-				<p>{viewState}</p>
-				<dl>
-					<dt>Title</dt>
-					<dd>
-						<input
-							type="text"
-							defaultValue={strategy?.title}
-							className="w-full"
-						/>
-					</dd>
+			<Form method="post" className="flex flex-col gap-4">
+				<TextInput
+					label="Title"
+					name="title"
+					ariaLabel="Title"
+					defaultValue={strategy?.title}
+					isEditable={viewState !== ViewState.view}
+				/>
 
-					<dt>Template</dt>
-					<dd>
-						<select defaultValue={strategy?.strategyTemplateName}>
-							{templates.map((template) => (
-								<option key={template} value={template}>
-									{template}
-								</option>
-							))}
-						</select>
-					</dd>
+				<dt>Template</dt>
+				<dd>
+					<select defaultValue={strategy?.strategyTemplateName}>
+						{templates.map((template) => (
+							<option key={template} value={template}>
+								{template}
+							</option>
+						))}
+					</select>
+				</dd>
 
-					<dt>Designated Funds</dt>
-					<dd>
-						$
-						<input
-							type="number"
-							defaultValue={
-								strategy ? strategy.cashInCents / 100 : 0
-							}
-						/>
-					</dd>
+				<CurrencyInput
+					label="Designated Funds"
+					name="cash"
+					ariaLabel="Cash"
+					placeholder={0}
+					defaultValue={strategy ? strategy.cashInCents / 100 : 0}
+					isEditable={viewState !== ViewState.view}
+				/>
 
-					<div className="mb-4 w-full">
-						<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
-							{viewState === ViewState.create ? (
-								<Toggle
-									toggleState={statusState}
-									display={statusStateDisplays[statusState]}
-									labelText="Active?"
-									onToggle={toggleStatusState}
-								/>
-							) : (
-								<Toggle
-									toggleState={
-										strategy.status === "active"
-											? ToggleState.on
-											: ToggleState.off
-									}
-									display={
-										strategy.status === "active"
-											? statusStateDisplays[
-													ToggleState.on
-											  ]
-											: statusStateDisplays[
-													ToggleState.off
-											  ]
-									}
-									labelText="Active?"
-									onToggle={(newState) =>
-										patchStrategy(strategy.id, {
-											status:
-												newState === ToggleState.on
-													? "active"
-													: "inactive",
-										})
-									}
-								/>
-							)}
-						</div>
+				<div className="mb-4 w-full">
+					<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
+						{viewState === ViewState.create ? (
+							<Toggle
+								toggleState={statusState}
+								display={statusStateDisplays[statusState]}
+								labelText="Active?"
+								onToggle={toggleStatusState}
+							/>
+						) : (
+							<Toggle
+								toggleState={
+									strategy.status === "active"
+										? ToggleState.on
+										: ToggleState.off
+								}
+								display={
+									strategy.status === "active"
+										? statusStateDisplays[ToggleState.on]
+										: statusStateDisplays[ToggleState.off]
+								}
+								labelText="Active?"
+								onToggle={(newState) =>
+									patchStrategy(strategy.id, {
+										status:
+											newState === ToggleState.on
+												? "active"
+												: "inactive",
+									})
+								}
+							/>
+						)}
 					</div>
-				</dl>
+				</div>
 			</Form>
 		</>
 	);
