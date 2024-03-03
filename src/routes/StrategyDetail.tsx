@@ -116,8 +116,12 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 				label: "Strategies",
 				path: "strategy",
 			},
+			{
+				label: `${strategy.title}`,
+				path: `strategy/${strategy.id}`,
+			},
 		]);
-	}, [setBreadcrumbs]);
+	}, [strategy]);
 
 	return (
 		<>
