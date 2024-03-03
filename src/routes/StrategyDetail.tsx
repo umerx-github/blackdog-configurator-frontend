@@ -40,8 +40,6 @@ const statusStateDisplays = {
 	),
 };
 
-//const { strategyId } = useParams();
-
 const StrategyDetailParamsExpected = z.object({
 	strategyId: z.string().regex(/^\d+$/),
 });
@@ -78,10 +76,12 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 	blackdogConfiguratorClient,
 	viewState = ViewState.view,
 }) => {
-	// const [strategy, setStrategy] =
-	// 	useState<StrategyTypes.StrategyGetResponseBodyDataInstance | null>(
-	// 		null
-	// 	);
+	const [statusState, setStatusState] = useState<ToggleState>(
+		ToggleState.off
+	);
+	const toggleStatusState = (newState: ToggleState) => {
+		setStatusState(newState);
+	};
 
 	const strategyLoaded = useLoaderData() as StrategyGetSingleResponseBodyData;
 	const [strategy, setStrategy] =
@@ -92,45 +92,18 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 		strategy: StrategyPatchSingleRequestBody
 	) => {
 		try {
-			const newStrategy = await blackdogConfiguratorClient
+			const updatedStrategy = await blackdogConfiguratorClient
 				.strategy()
 				.patchSingle({ id }, strategy);
-			setStrategy(newStrategy);
+			setStrategy(updatedStrategy);
 		} catch (error) {
 			console.error(error);
 		}
 	};
 
-	const [statusState, setStatusState] = useState<ToggleState>(
-		ToggleState.off
-	);
-	const toggleStatusState = (newState: ToggleState) => {
-		setStatusState(newState);
-	};
-	console.log(toggleStatusState);
-
 	const templates: StrategyTemplate.StrategyTemplateName[] = [
 		"SeaDogDiscountScheme",
 	];
-
-	// useEffect(() => {
-	// 	blackdogConfiguratorClient
-	// 		.strategyTemplateSeaDogDiscountScheme()
-	// 		.getMany({});
-	// 	if (strategyId) {
-	// 		blackdogConfiguratorClient
-	// 			.strategy()
-	// 			.getSingle({
-	// 				id: parseInt(strategyId, 10),
-	// 			})
-	// 			.then((response) => {
-	// 				setStrategy(response);
-	// 			})
-	// 			.catch((error) => {
-	// 				console.error(error);
-	// 			});
-	// 	}
-	// }, [blackdogConfiguratorClient]);
 
 	const { setBreadcrumbs } = useContext(BreadcrumbsContext);
 	useEffect(() => {
@@ -184,10 +157,29 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 
 					<div className="mb-4 w-full">
 						<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
-							{strategy ? (
+							{viewState === ViewState.create ? (
 								<Toggle
 									toggleState={statusState}
 									display={statusStateDisplays[statusState]}
+									labelText="Active?"
+									onToggle={toggleStatusState}
+								/>
+							) : (
+								<Toggle
+									toggleState={
+										strategy.status === "active"
+											? ToggleState.on
+											: ToggleState.off
+									}
+									display={
+										strategy.status === "active"
+											? statusStateDisplays[
+													ToggleState.on
+											  ]
+											: statusStateDisplays[
+													ToggleState.off
+											  ]
+									}
 									labelText="Active?"
 									onToggle={(newState) =>
 										patchStrategy(strategy.id, {
@@ -198,8 +190,6 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 										})
 									}
 								/>
-							) : (
-								<></>
 							)}
 						</div>
 					</div>

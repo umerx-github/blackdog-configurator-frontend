@@ -15,7 +15,6 @@ const Toggle: React.FC<ToggleProps> = ({
 	onToggle,
 }) => {
 	const handleToggle = (e: React.MouseEvent<HTMLDivElement>) => {
-		console.log("handleToggle");
 		e.preventDefault();
 		const newState =
 			toggleState === ToggleState.on ? ToggleState.off : ToggleState.on;
