@@ -3,7 +3,7 @@ import React, { useEffect, useContext, useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import { StrategyTemplate } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import BreadcrumbsContext from "../components/BreadcrumbsContext";
-import { Form, LoaderFunction, useLoaderData } from "react-router-dom";
+import { Form, Link, LoaderFunction, useLoaderData } from "react-router-dom";
 import Toggle from "../components/Toggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
@@ -15,6 +15,8 @@ import {
 	StrategyGetSingleResponseBodyData,
 	StrategyPatchSingleRequestBody,
 } from "@umerx/umerx-blackdog-configurator-types-typescript/build/src/strategy";
+import LargeButton from "../components/LargeButton";
+import { faFileLines } from "@fortawesome/free-solid-svg-icons/faFileLines";
 
 interface StrategyDetailProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -199,6 +201,9 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 					</div>
 				</dl>
 			</Form>
+			<Link to="strategyTemplate">
+				<LargeButton icon={faFileLines} text="Templates" />
+			</Link>
 		</>
 	);
 };

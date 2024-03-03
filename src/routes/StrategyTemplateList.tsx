@@ -15,6 +15,7 @@ import {
 import BreadcrumbsContext from "../components/BreadcrumbsContext";
 import { StrategyGetSingleResponseBodyData } from "@umerx/umerx-blackdog-configurator-types-typescript/build/src/strategy";
 import z from "zod";
+import StrategyTemplateSeaDogDiscountSchemeList from "./StrategyTemplateSeaDogDiscountSchemeList";
 interface StrategyTemplateListProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
 }
@@ -92,13 +93,15 @@ const StrategyTemplateList: React.FC<StrategyTemplateListProps> = ({
 	}, [strategyId]);
 
 	if (!strategy) {
-		return <div>Loading...</div>;
+		return <></>;
 	}
 	switch (strategy.strategyTemplateName) {
 		case "SeaDogDiscountScheme":
-			return <div>Sea</div>;
+			return (
+				<StrategyTemplateSeaDogDiscountSchemeList blackdogConfiguratorClient={blackdogConfiguratorClient} strategy={strategy}></StrategyTemplateSeaDogDiscountSchemeList>
+			);
 		default:
-			return <div>Unknown strategy template</div>;
+			return <><p>Unknown strategy template</p></>;
 	}
 };
 
