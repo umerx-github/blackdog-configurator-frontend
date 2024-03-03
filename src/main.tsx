@@ -15,6 +15,7 @@ import StrategyDetail, {
 import { ViewState } from "./Interfaces/viewState";
 import Home from "./routes/Home.tsx";
 import StrategyTemplateList from "./routes/StrategyTemplateList.tsx";
+import StrategyTemplateDetail from "./routes/StrategyTemplateDetail.tsx";
 
 const blackdogConfiguratorBackendScheme =
 	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_BACKEND_SCHEME ?? "";
@@ -94,14 +95,67 @@ const router = createBrowserRouter([
 							},
 							{
 								path: "strategyTemplate",
-								element: (
-									<StrategyTemplateList
-										blackdogConfiguratorClient={
-											blackdogConfiguratorClient
-										}
-									/>
-								),
-							}
+								children: [
+									{
+										path: "",
+										element: (
+											<StrategyTemplateList
+												blackdogConfiguratorClient={
+													blackdogConfiguratorClient
+												}
+											/>
+										),
+									},
+									{
+										path: ":strategyTemplateId",
+										children: [
+											{
+												path: "",
+												element: (
+													<StrategyTemplateDetail
+														blackdogConfiguratorClient={
+															blackdogConfiguratorClient
+														}
+														viewState={
+															ViewState.view
+														}
+													/>
+												),
+												loader: strategyDetailLoader,
+												errorElement: <ErrorPage />,
+											},
+											{
+												path: "edit",
+												element: (
+													<StrategyTemplateDetail
+														blackdogConfiguratorClient={
+															blackdogConfiguratorClient
+														}
+														viewState={
+															ViewState.edit
+														}
+													/>
+												),
+												loader: strategyDetailLoader,
+												errorElement: <ErrorPage />,
+											},
+										],
+									},
+									{
+										path: "create",
+										element: (
+											<StrategyTemplateDetail
+												blackdogConfiguratorClient={
+													blackdogConfiguratorClient
+												}
+												viewState={ViewState.create}
+											/>
+										),
+										action: strategyDetailCreate,
+										errorElement: <ErrorPage />,
+									},
+								],
+							},
 						],
 					},
 					{
