@@ -8,7 +8,10 @@ import ErrorPage from "./ErrorPage.tsx";
 import StrategiesList, {
 	loader as strategiesListLoader,
 } from "./routes/StrategiesList.tsx";
-import StrategyDetail from "./routes/StrategyDetail.tsx";
+import StrategyDetail, {
+	loader as strategyDetailLoader,
+	action as strategyDetailCreate,
+} from "./routes/StrategyDetail.tsx";
 import { ViewState } from "./Interfaces/viewState";
 import Home from "./routes/Home.tsx";
 
@@ -42,52 +45,68 @@ const router = createBrowserRouter([
 				path: "",
 				element: <Home />,
 				errorElement: <ErrorPage />,
-			},
-			{
-				path: "strategy",
-				loader: strategiesListLoader,
-				element: (
-					<StrategiesList
-						blackdogConfiguratorClient={blackdogConfiguratorClient}
-					/>
-				),
-				errorElement: <ErrorPage />,
 				children: [],
 			},
 			{
-				path: "strategy/read/:strategyId",
-				element: (
-					<StrategyDetail
-						blackdogConfiguratorClient={blackdogConfiguratorClient}
-						viewState={ViewState.read}
-					/>
-				),
-				loader: async () => {
-					return blackdogConfiguratorClient
-						.strategyTemplateSeaDogDiscountScheme()
-						.getMany({});
-				},
-				errorElement: <ErrorPage />,
-			},
-			{
-				path: "strategy/edit/:strategyId",
-				element: (
-					<StrategyDetail
-						blackdogConfiguratorClient={blackdogConfiguratorClient}
-						viewState={ViewState.edit}
-					/>
-				),
-				errorElement: <ErrorPage />,
-			},
-			{
-				path: "strategy/add",
-				element: (
-					<StrategyDetail
-						blackdogConfiguratorClient={blackdogConfiguratorClient}
-						viewState={ViewState.add}
-					/>
-				),
-				errorElement: <ErrorPage />,
+				path: "strategy",
+				children: [
+					{
+						path: "",
+						element: (
+							<StrategiesList
+								blackdogConfiguratorClient={
+									blackdogConfiguratorClient
+								}
+							/>
+						),
+						loader: strategiesListLoader,
+						errorElement: <ErrorPage />,
+					},
+					{
+						path: ":strategyId",
+						children: [
+							{
+								path: "",
+								element: (
+									<StrategyDetail
+										blackdogConfiguratorClient={
+											blackdogConfiguratorClient
+										}
+										viewState={ViewState.view}
+									/>
+								),
+								loader: strategyDetailLoader,
+								errorElement: <ErrorPage />,
+							},
+							{
+								path: "edit",
+								element: (
+									<StrategyDetail
+										blackdogConfiguratorClient={
+											blackdogConfiguratorClient
+										}
+										viewState={ViewState.edit}
+									/>
+								),
+								loader: strategyDetailLoader,
+								errorElement: <ErrorPage />,
+							},
+						],
+					},
+					{
+						path: "create",
+						element: (
+							<StrategyDetail
+								blackdogConfiguratorClient={
+									blackdogConfiguratorClient
+								}
+								viewState={ViewState.create}
+							/>
+						),
+						action: strategyDetailCreate,
+						errorElement: <ErrorPage />,
+					},
+				],
 			},
 		],
 	},
