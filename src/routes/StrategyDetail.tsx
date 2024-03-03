@@ -1,19 +1,28 @@
 import { ViewState } from "../Interfaces/viewState";
 import React, { useEffect, useContext, useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
-import { Strategy as StrategyTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import { StrategyTemplate } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import BreadcrumbsContext from "../components/BreadcrumbsContext";
-import { useParams } from "react-router-dom";
+import { Form, LoaderFunction, useLoaderData } from "react-router-dom";
 import Toggle from "../components/Toggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import { ToggleState } from "../Interfaces/settings";
+import { blackdogConfiguratorClient } from "../main";
+import z from "zod";
+import {
+	StrategyGetSingleResponseBodyData,
+	StrategyPatchSingleRequestBody,
+} from "@umerx/umerx-blackdog-configurator-types-typescript/build/src/strategy";
 
 interface StrategyDetailProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
 	viewState: ViewState;
+}
+
+interface StrategyDetailParams {
+	strategyId: number;
 }
 
 const statusStateDisplays = {
@@ -31,10 +40,98 @@ const statusStateDisplays = {
 	),
 };
 
+//const { strategyId } = useParams();
+
+const StrategyDetailParamsExpected = z.object({
+	strategyId: z.string().regex(/^\d+$/),
+});
+
+function StrategyDetailParamsFromRaw(raw: any): StrategyDetailParams {
+	const parsed = StrategyDetailParamsExpected.parse(raw);
+	return {
+		strategyId: parseInt(parsed.strategyId, 10),
+	};
+}
+
+export const loader: LoaderFunction = async ({ params }) => {
+	const strategyDetailParams = StrategyDetailParamsFromRaw(params);
+	return await blackdogConfiguratorClient
+		.strategy()
+		.getSingle({ id: strategyDetailParams.strategyId });
+};
+
+export async function action() {
+	const strategy = await createStrategy();
+	return { strategy };
+}
+
+function createStrategy() {
+	return {
+		title: "New Strategy",
+		strategyTemplateName: "SeaDogDiscountScheme",
+		cashInCents: 0,
+		status: "inactive",
+	};
+}
+
 const StrategyDetail: React.FC<StrategyDetailProps> = ({
 	blackdogConfiguratorClient,
-	viewState = ViewState.read,
+	viewState = ViewState.view,
 }) => {
+	// const [strategy, setStrategy] =
+	// 	useState<StrategyTypes.StrategyGetResponseBodyDataInstance | null>(
+	// 		null
+	// 	);
+
+	const strategyLoaded = useLoaderData() as StrategyGetSingleResponseBodyData;
+	const [strategy, setStrategy] =
+		useState<StrategyGetSingleResponseBodyData>(strategyLoaded);
+
+	const patchStrategy = async (
+		id: number,
+		strategy: StrategyPatchSingleRequestBody
+	) => {
+		try {
+			const newStrategy = await blackdogConfiguratorClient
+				.strategy()
+				.patchSingle({ id }, strategy);
+			setStrategy(newStrategy);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const [statusState, setStatusState] = useState<ToggleState>(
+		ToggleState.off
+	);
+	const toggleStatusState = (newState: ToggleState) => {
+		setStatusState(newState);
+	};
+	console.log(toggleStatusState);
+
+	const templates: StrategyTemplate.StrategyTemplateName[] = [
+		"SeaDogDiscountScheme",
+	];
+
+	// useEffect(() => {
+	// 	blackdogConfiguratorClient
+	// 		.strategyTemplateSeaDogDiscountScheme()
+	// 		.getMany({});
+	// 	if (strategyId) {
+	// 		blackdogConfiguratorClient
+	// 			.strategy()
+	// 			.getSingle({
+	// 				id: parseInt(strategyId, 10),
+	// 			})
+	// 			.then((response) => {
+	// 				setStrategy(response);
+	// 			})
+	// 			.catch((error) => {
+	// 				console.error(error);
+	// 			});
+	// 	}
+	// }, [blackdogConfiguratorClient]);
+
 	const { setBreadcrumbs } = useContext(BreadcrumbsContext);
 	useEffect(() => {
 		setBreadcrumbs([
@@ -44,93 +141,71 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 			},
 			{
 				label: "Strategies",
-				path: "/strategy",
+				path: "strategy",
 			},
 		]);
 	}, [setBreadcrumbs]);
 
-	const [statusState, setStatusState] = useState<ToggleState>(
-		ToggleState.off
-	);
-	const toggleStatusState = (newState: ToggleState) => {
-		setStatusState(newState);
-	};
-
-	const [strategy, setStrategy] =
-		useState<StrategyTypes.StrategyGetResponseBodyDataInstance | null>(
-			null
-		);
-
-	const { strategyId } = useParams();
-
-	const templates: StrategyTemplate.StrategyTemplateName[] = [
-		"SeaDogDiscountScheme",
-	];
-
-	useEffect(() => {
-		blackdogConfiguratorClient
-			.strategyTemplateSeaDogDiscountScheme()
-			.getMany({});
-		if (strategyId) {
-			blackdogConfiguratorClient
-				.strategy()
-				.getSingle({
-					id: parseInt(strategyId, 10),
-				})
-				.then((response) => {
-					setStrategy(response);
-				})
-				.catch((error) => {
-					console.error(error);
-				});
-		}
-	}, [blackdogConfiguratorClient]);
-
 	return (
-		<div>
-			<p>{viewState}</p>
-			<dl>
-				<dt>Title</dt>
-				<dd>
-					<input
-						type="text"
-						defaultValue={strategy?.title}
-						className="w-full"
-					/>
-				</dd>
-
-				<dt>Template</dt>
-				<dd>
-					<select defaultValue={strategy?.strategyTemplateName}>
-						{templates.map((template) => (
-							<option key={template} value={template}>
-								{template}
-							</option>
-						))}
-					</select>
-				</dd>
-
-				<dt>Designated Funds</dt>
-				<dd>
-					$
-					<input
-						type="number"
-						defaultValue={strategy ? strategy.cashInCents / 100 : 0}
-					/>
-				</dd>
-
-				<div className="mb-4 w-full">
-					<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
-						<Toggle
-							toggleState={statusState}
-							display={statusStateDisplays[statusState]}
-							labelText="Active?"
-							onToggle={toggleStatusState}
+		<>
+			<Form method="post">
+				<p>{viewState}</p>
+				<dl>
+					<dt>Title</dt>
+					<dd>
+						<input
+							type="text"
+							defaultValue={strategy?.title}
+							className="w-full"
 						/>
+					</dd>
+
+					<dt>Template</dt>
+					<dd>
+						<select defaultValue={strategy?.strategyTemplateName}>
+							{templates.map((template) => (
+								<option key={template} value={template}>
+									{template}
+								</option>
+							))}
+						</select>
+					</dd>
+
+					<dt>Designated Funds</dt>
+					<dd>
+						$
+						<input
+							type="number"
+							defaultValue={
+								strategy ? strategy.cashInCents / 100 : 0
+							}
+						/>
+					</dd>
+
+					<div className="mb-4 w-full">
+						<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
+							{strategy ? (
+								<Toggle
+									toggleState={statusState}
+									display={statusStateDisplays[statusState]}
+									labelText="Active?"
+									onToggle={(newState) =>
+										patchStrategy(strategy.id, {
+											status:
+												newState === ToggleState.on
+													? "active"
+													: "inactive",
+										})
+									}
+								/>
+							) : (
+								<></>
+							)}
+						</div>
 					</div>
-				</div>
-			</dl>
-		</div>
+				</dl>
+			</Form>
+		</>
 	);
 };
 

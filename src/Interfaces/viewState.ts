@@ -1,5 +1,5 @@
 export enum ViewState {
-	read = "READ",
+	view = "VIEW",
 	edit = "EDIT",
-	add = "ADD",
+	create = "CREATE",
 }

@@ -74,7 +74,7 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 			},
 			{
 				label: "Strategies",
-				path: "/strategy",
+				path: "strategy",
 			},
 		]);
 	}, [setBreadcrumbs]);
@@ -84,7 +84,7 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 			<div className="relative cursor-pointer flex justify-between flex-wrap">
 				{strategies.map((strategy) => (
 					<Link
-						to={`/strategy/read/${strategy.id}`}
+						to={`${strategy.id}`}
 						key={strategy.id}
 						className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-2 transition-bg duration-1000"
 					>
@@ -120,7 +120,7 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 				))}
 			</div>
 			<div className="absolute bottom-4 right-4">
-				<Link to="/strategy/add">
+				<Link to="create">
 					<FontAwesomeIcon
 						icon={faPlus}
 						className="text-4xl text-zinc-600 dark:text-zinc-400 transition-bg duration-1000"
