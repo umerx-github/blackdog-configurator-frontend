@@ -63,7 +63,6 @@ const StrategyTemplateDetail: React.FC<StrategyTemplateDetailProps> = ({
 	blackdogConfiguratorClient,
 	viewState,
 }) => {
-	console.log(viewState);
 	const params = useParams();
 	const { strategyId, strategyTemplateId } =
 		StrategyTemplateDetailParamsFromRaw(params);
