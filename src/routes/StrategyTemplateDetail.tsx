@@ -39,12 +39,12 @@ interface StrategyTemplateDetailProps {
 
 interface StrategyTemplateDetailParams {
 	strategyId: number;
-	strategyTemplateId: number;
+	strategyTemplateId: number | null;
 }
 
 const StrategyTemplateDetailParamsExpected = z.object({
 	strategyId: z.string().regex(/^\d+$/),
-	strategyTemplateId: z.string().regex(/^\d+$/),
+	strategyTemplateId: z.string().regex(/^\d+$/).optional(),
 });
 
 function StrategyTemplateDetailParamsFromRaw(
@@ -53,7 +53,9 @@ function StrategyTemplateDetailParamsFromRaw(
 	const parsed = StrategyTemplateDetailParamsExpected.parse(raw);
 	return {
 		strategyId: parseInt(parsed.strategyId, 10),
-		strategyTemplateId: parseInt(parsed.strategyTemplateId, 10),
+		strategyTemplateId: parsed.strategyTemplateId
+			? parseInt(parsed.strategyTemplateId, 10)
+			: null,
 	};
 }
 
@@ -72,7 +74,7 @@ const StrategyTemplateDetail: React.FC<StrategyTemplateDetailProps> = ({
 		if (!strategy) {
 			return;
 		}
-		setBreadcrumbs([
+		const breadcrumbs = [
 			{
 				label: "Home",
 				path: "",
@@ -89,12 +91,15 @@ const StrategyTemplateDetail: React.FC<StrategyTemplateDetailProps> = ({
 				label: "Templates",
 				path: `strategy/${strategy.id}/strategyTemplate`,
 			},
-			{
+		];
+		if (null !== strategyTemplateId) {
+			breadcrumbs.push({
 				label: `${strategyTemplateId}`,
 				path: `strategy/${strategy.id}/strategyTemplate/${strategyTemplateId}`,
-			},
-		]);
-	}, [strategy, strategyTemplateId, setBreadcrumbs]);
+			});
+		}
+		setBreadcrumbs(breadcrumbs);
+	}, [strategy, strategyTemplateId]);
 	useEffect(() => {
 		(async () => {
 			const strategy = await blackdogConfiguratorClient
@@ -102,7 +107,7 @@ const StrategyTemplateDetail: React.FC<StrategyTemplateDetailProps> = ({
 				.getSingle({ id: strategyId });
 			setStrategy(strategy);
 		})();
-	}, [setBreadcrumbs, strategyId]);
+	}, [strategyId]);
 
 	if (!strategy) {
 		return <></>;
