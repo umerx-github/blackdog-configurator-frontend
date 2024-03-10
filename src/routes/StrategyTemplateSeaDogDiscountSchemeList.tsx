@@ -96,17 +96,29 @@ const StrategyTemplateSeaDogDiscountSchemeList: React.FC<
 										]
 									}
 									labelText={strategyTemplate.id.toString()}
-									onToggle={(newState) =>
-										patchStrategyTemplate(
-											strategyTemplate.id,
-											{
-												status:
-													newState === ToggleState.on
-														? "active"
-														: "inactive",
-											}
-										)
-									}
+									onToggle={(newState) => {
+										(async () => {
+											await patchStrategyTemplate(
+												strategyTemplate.id,
+												{
+													status:
+														newState ===
+														ToggleState.on
+															? "active"
+															: "inactive",
+												}
+											);
+											const strategyTemplateResponse =
+												await blackdogConfiguratorClient
+													.strategyTemplateSeaDogDiscountScheme()
+													.getMany({
+														strategyId: strategy.id,
+													});
+											setStrategyTemplates(
+												strategyTemplateResponse
+											);
+										})();
+									}}
 								/>
 							</div>
 						</div>
