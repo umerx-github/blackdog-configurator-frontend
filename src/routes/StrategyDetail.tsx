@@ -19,6 +19,7 @@ import LargeButton from "../components/LargeButton";
 import { faFileLines } from "@fortawesome/free-solid-svg-icons/faFileLines";
 import TextInput from "../components/TextInput";
 import CurrencyInput from "../components/CurrencyInput";
+import DropdownInput from "../components/DropdownInput";
 
 interface StrategyDetailProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -138,16 +139,15 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 					isEditable={viewState !== ViewState.view}
 				/>
 
-				<dt>Template</dt>
-				<dd>
-					<select defaultValue={strategy?.strategyTemplateName}>
-						{templates.map((template) => (
-							<option key={template} value={template}>
-								{template}
-							</option>
-						))}
-					</select>
-				</dd>
+				<DropdownInput
+					label="Template"
+					name="template"
+					ariaLabel="Template"
+					options={templates}
+					placeholder="Select a template"
+					defaultValue={strategy?.strategyTemplateName}
+					isEditable={viewState !== ViewState.view}
+				/>
 
 				<CurrencyInput
 					label="Designated Funds"
