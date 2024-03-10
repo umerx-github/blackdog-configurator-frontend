@@ -195,11 +195,13 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 					</div>
 				</div>
 			</Form>
-			<div className="buttons grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-				<Link to="strategyTemplate">
-					<LargeButton icon={faFileLines} text="Templates" />
-				</Link>
-			</div>
+			{viewState === ViewState.view ? (
+				<div className="buttons grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+					<Link to="strategyTemplate">
+						<LargeButton icon={faFileLines} text="Templates" />
+					</Link>
+				</div>
+			) : null}
 		</>
 	);
 };
