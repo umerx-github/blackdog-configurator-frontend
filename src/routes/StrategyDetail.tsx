@@ -1,4 +1,4 @@
-import { ViewState } from "../Interfaces/viewState";
+import { ViewState } from "../interfaces/viewState";
 import React, { useEffect, useContext, useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import { StrategyTemplate } from "@umerx/umerx-blackdog-configurator-types-typescript";
@@ -8,7 +8,7 @@ import Toggle from "../components/Toggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
-import { ToggleState } from "../Interfaces/settings";
+import { ToggleState } from "../interfaces/settings";
 import { blackdogConfiguratorClient } from "../main";
 import z from "zod";
 import {

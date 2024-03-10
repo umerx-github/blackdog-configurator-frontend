@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
-// import { ToggleState } from "../Interfaces/settings";
+// import { ToggleState } from "../interfaces/settings";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 // import Toggle from "../components/Toggle";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,7 +16,7 @@ import BreadcrumbsContext from "../components/BreadcrumbsContext";
 import { Strategy as StrategyTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import z from "zod";
 import StrategyTemplateSeaDogDiscountSchemeDetail from "./StrategyTemplateSeaDogDiscountSchemeDetail";
-import { ViewState } from "../Interfaces/viewState";
+import { ViewState } from "../interfaces/viewState";
 interface StrategyTemplateDetailProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
 	viewState: ViewState;

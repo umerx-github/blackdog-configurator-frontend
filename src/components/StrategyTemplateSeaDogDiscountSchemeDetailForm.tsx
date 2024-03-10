@@ -1,5 +1,5 @@
 import React from "react";
-import { ViewState } from "../Interfaces/viewState";
+import { ViewState } from "../interfaces/viewState";
 import { StrategyTemplateSeaDogDiscountScheme as StrategyTemplateSeaDogDiscountSchemeTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

@@ -6,7 +6,7 @@ import {
 	Strategy as StrategyTypes,
 	StrategyTemplateSeaDogDiscountScheme as StrategyTemplateSeaDogDiscountSchemeTypes,
 } from "@umerx/umerx-blackdog-configurator-types-typescript";
-import { ViewState } from "../Interfaces/viewState";
+import { ViewState } from "../interfaces/viewState";
 import { useNavigate } from "react-router-dom";
 import StrategyTemplateSeaDogDiscountSchemeDetailForm from "../components/StrategyTemplateSeaDogDiscountSchemeDetailForm";
 import z, { ZodError } from "zod";
