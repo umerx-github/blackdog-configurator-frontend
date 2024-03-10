@@ -1,206 +1,261 @@
-import { ViewState } from "../interfaces/viewState";
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
-import { StrategyTemplate } from "@umerx/umerx-blackdog-configurator-types-typescript";
-import BreadcrumbsContext from "../components/BreadcrumbsContext";
-import { Form, Link, LoaderFunction, useLoaderData } from "react-router-dom";
-import Toggle from "../components/Toggle";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
-import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
-import { ToggleState } from "../interfaces/settings";
-import { blackdogConfiguratorClient } from "../main";
-import z from "zod";
-import {
-	StrategyGetSingleResponseBodyData,
-	StrategyPatchSingleRequestBody,
-} from "@umerx/umerx-blackdog-configurator-types-typescript/build/src/strategy";
-import LargeButton from "../components/LargeButton";
-import { faFileLines } from "@fortawesome/free-solid-svg-icons/faFileLines";
-import TextInput from "../components/TextInput";
-import CurrencyInput from "../components/CurrencyInput";
-import DropdownInput from "../components/DropdownInput";
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons/faPenToSquare";
+import { faX } from "@fortawesome/free-solid-svg-icons/faX";
+import { Strategy as StrategyTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
+import { ViewState } from "../interfaces/viewState";
+import { useNavigate, useParams } from "react-router-dom";
+import StrategyDetailForm from "../components/StrategyDetailForm";
+import z, { ZodError } from "zod";
 
 interface StrategyDetailProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
 	viewState: ViewState;
 }
 
-interface StrategyDetailParams {
-	strategyId: number;
-}
-
-const statusStateDisplays = {
-	[ToggleState.on]: (
-		<FontAwesomeIcon
-			icon={faCheck}
-			className="text-sm transition-bg duration-1000"
-		/>
-	),
-	[ToggleState.off]: (
-		<FontAwesomeIcon
-			icon={faTimes}
-			className="text-sm transition-bg duration-1000"
-		/>
-	),
-};
-
-const StrategyDetailParamsExpected = z.object({
-	strategyId: z.string().regex(/^\d+$/),
-});
-
-function StrategyDetailParamsFromRaw(raw: any): StrategyDetailParams {
-	const parsed = StrategyDetailParamsExpected.parse(raw);
-	return {
-		strategyId: parseInt(parsed.strategyId, 10),
-	};
-}
-
-export const loader: LoaderFunction = async ({ params }) => {
-	const strategyDetailParams = StrategyDetailParamsFromRaw(params);
-	return await blackdogConfiguratorClient
-		.strategy()
-		.getSingle({ id: strategyDetailParams.strategyId });
-};
-
-export async function action() {
-	const strategy = await createStrategy();
-	return { strategy };
-}
-
-function createStrategy() {
-	return {
-		title: "New Strategy",
-		strategyTemplateName: "SeaDogDiscountScheme",
-		cashInCents: 0,
-		status: "inactive",
-	};
-}
-
 const StrategyDetail: React.FC<StrategyDetailProps> = ({
 	blackdogConfiguratorClient,
-	viewState = ViewState.view,
+	viewState,
 }) => {
-	const [statusState, setStatusState] = useState<ToggleState>(
-		ToggleState.off
-	);
-	const toggleStatusState = (newState: ToggleState) => {
-		setStatusState(newState);
-	};
-
-	const strategyLoaded = useLoaderData() as StrategyGetSingleResponseBodyData;
+	const params = useParams();
+	const strategyId = params.strategyId ? parseInt(params.strategyId) : null;
+	const navigate = useNavigate();
 	const [strategy, setStrategy] =
-		useState<StrategyGetSingleResponseBodyData>(strategyLoaded);
-
-	const patchStrategy = async (
-		id: number,
-		strategy: StrategyPatchSingleRequestBody
-	) => {
-		try {
-			const updatedStrategy = await blackdogConfiguratorClient
-				.strategy()
-				.patchSingle({ id }, strategy);
-			setStrategy(updatedStrategy);
-		} catch (error) {
-			console.error(error);
-		}
-	};
-
-	const templates: StrategyTemplate.StrategyTemplateName[] = [
-		"SeaDogDiscountScheme",
-	];
-
-	const { setBreadcrumbs } = useContext(BreadcrumbsContext);
-	useEffect(() => {
-		setBreadcrumbs([
-			{
-				label: "Home",
-				path: "",
-			},
-			{
-				label: "Strategies",
-				path: "strategy",
-			},
-			{
-				label: `${strategy.title}`,
-				path: `strategy/${strategy.id}`,
-			},
-		]);
-	}, [setBreadcrumbs, strategy]);
-
-	return (
-		<>
-			<Form method="post" className="flex flex-col gap-4 w-full">
-				<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-					<TextInput
-						label="Title"
-						name="title"
-						ariaLabel="Title"
-						defaultValue={strategy?.title}
-						isEditable={viewState !== ViewState.view}
-					/>
-
-					<DropdownInput
-						label="Template"
-						options={templates}
-						defaultValue={strategy?.strategyTemplateName}
-						isEditable={viewState !== ViewState.view}
-					/>
-
-					<CurrencyInput
-						label="Designated Funds"
-						name="cash"
-						ariaLabel="Cash"
-						placeholder={0}
-						defaultValue={strategy ? strategy.cashInCents / 100 : 0}
-						isEditable={viewState !== ViewState.view}
-					/>
-				</div>
-
-				<div className="mb-4 w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-					<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
-						{viewState === ViewState.create ? (
-							<Toggle
-								toggleState={statusState}
-								display={statusStateDisplays[statusState]}
-								labelText="Active?"
-								onToggle={toggleStatusState}
-							/>
-						) : (
-							<Toggle
-								toggleState={
-									strategy.status === "active"
-										? ToggleState.on
-										: ToggleState.off
-								}
-								display={
-									strategy.status === "active"
-										? statusStateDisplays[ToggleState.on]
-										: statusStateDisplays[ToggleState.off]
-								}
-								labelText="Active?"
-								onToggle={(newState) =>
-									patchStrategy(strategy.id, {
-										status:
-											newState === ToggleState.on
-												? "active"
-												: "inactive",
-									})
-								}
-							/>
-						)}
-					</div>
-				</div>
-			</Form>
-			{viewState === ViewState.view ? (
-				<div className="buttons grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-					<Link to="strategyTemplate">
-						<LargeButton icon={faFileLines} text="Templates" />
-					</Link>
-				</div>
-			) : null}
-		</>
+		useState<StrategyTypes.StrategyResponseBodyDataInstance | null>(null);
+	const [generalError, setGeneralError] = useState<string | null>(null);
+	const [statusError, setStatusError] = useState<string | null>(null);
+	const [titleError, setTitleError] = useState<string | null>(null);
+	const [strategyTemplateNameError, setTemplateError] = useState<
+		string | null
+	>(null);
+	const [cashInCentsError, setCashInCentsError] = useState<string | null>(
+		null
 	);
+	useEffect(() => {
+		(async () => {
+			if (null !== strategyId) {
+				const strategyFetched = await blackdogConfiguratorClient
+					.strategy()
+					.getSingle({ id: strategyId });
+				console.log({ strategyFetched });
+				setStrategy(strategyFetched);
+			}
+		})();
+	}, [strategyId]);
+	switch (viewState) {
+		case ViewState.create:
+			return (
+				<>
+					<StrategyDetailForm
+						viewState={ViewState.create}
+						actionIcon={faX}
+						actionUrl={`/strategy`}
+						onSubmit={(data) => {
+							(async () => {
+								console.log("handling on submit");
+								console.log({ data });
+								try {
+									setStatusError(null);
+									setTitleError(null);
+									setTemplateError(null);
+									setCashInCentsError(null);
+									setGeneralError(null);
+									const dataParsed =
+										StrategyTypes.StrategyPostSingleRequestBodyFromRaw(
+											{
+												...data,
+											}
+										);
+									(async () => {
+										try {
+											const strategiesCreated =
+												await blackdogConfiguratorClient
+													.strategy()
+													.postMany([
+														{
+															...dataParsed,
+														},
+													]);
+											if (strategiesCreated.length < 1) {
+												throw new Error(
+													"Strategy strategyTemplateName not created."
+												);
+											}
+											navigate(
+												`/strategy/${strategiesCreated[0].id}`
+											);
+										} catch (e) {
+											console.error({ e });
+											// If e has a message and it is a string, set general error to e.message
+											if (
+												typeof e === "string" ||
+												e instanceof String
+											) {
+												console.error({ e });
+												setGeneralError(e.toString());
+												return;
+											}
+										}
+									})();
+								} catch (e) {
+									console.error({ e });
+									if (e instanceof ZodError) {
+										let generalErrors: string[] = [];
+										e.issues.forEach((issue) => {
+											switch (issue.path[0]) {
+												case "status":
+													setStatusError(
+														issue.message
+													);
+													break;
+												case "title":
+													setTitleError(
+														issue.message
+													);
+													break;
+												case "strategyTemplateName":
+													setTemplateError(
+														issue.message
+													);
+													break;
+												case "cashInCents":
+													setCashInCentsError(
+														issue.message
+													);
+													break;
+												default:
+													generalErrors.push(
+														`${issue.path} ${issue.message}`
+													);
+													break;
+											}
+										});
+										console.error({ generalErrors });
+										if (generalErrors.length > 0) {
+											setGeneralError(
+												generalErrors.join(" ")
+											);
+										}
+										return;
+									}
+									setGeneralError(`Error found. ${e}`);
+								}
+							})();
+						}}
+						generalError={generalError}
+						statusError={statusError}
+						titleError={titleError}
+						strategyTemplateNameError={strategyTemplateNameError}
+						cashInCentsError={cashInCentsError}
+					></StrategyDetailForm>
+				</>
+			);
+		case ViewState.edit:
+			if (!strategy) {
+				return <></>;
+			}
+			return (
+				<StrategyDetailForm
+					viewState={ViewState.edit}
+					actionIcon={faX}
+					actionUrl={`/strategy/${strategy.id}`}
+					onSubmit={(data) => {
+						(async () => {
+							try {
+								setStatusError(null);
+								setTitleError(null);
+								setTemplateError(null);
+								setCashInCentsError(null);
+								setGeneralError(null);
+								const dataParsed =
+									StrategyTypes.StrategyPutSingleRequestBodyFromRaw(
+										{
+											...data,
+										}
+									);
+								(async () => {
+									try {
+										const strategyCreated =
+											await blackdogConfiguratorClient
+												.strategy()
+												.patchSingle(
+													{ id: strategy.id },
+													{
+														...dataParsed,
+													}
+												);
+										navigate(
+											`/strategy/${strategyCreated.id}}`
+										);
+									} catch (e) {
+										console.error({ e });
+										// If e has a message and it is a string, set general error to e.message
+										if (
+											typeof e === "string" ||
+											e instanceof String
+										) {
+											console.error({ e });
+											setGeneralError(e.toString());
+											return;
+										}
+									}
+								})();
+							} catch (e) {
+								console.error({ e });
+								if (e instanceof ZodError) {
+									e.issues.forEach((issue) => {
+										switch (issue.path[0]) {
+											case "status":
+												setStatusError(issue.message);
+												break;
+											case "title":
+												setTitleError(issue.message);
+												break;
+											case "strategyTemplateName":
+												setTemplateError(issue.message);
+												break;
+											case "cashInCents":
+												setCashInCentsError(
+													issue.message
+												);
+												break;
+										}
+									});
+									return;
+								}
+								setGeneralError(`Error found. ${e}`);
+							}
+						})();
+					}}
+					status={strategy.status}
+					title={strategy.title}
+					strategyTemplateName={strategy.strategyTemplateName}
+					cashInCents={strategy.cashInCents}
+					generalError={generalError}
+					statusError={statusError}
+					titleError={titleError}
+					strategyTemplateNameError={strategyTemplateNameError}
+					cashInCentsError={cashInCentsError}
+				></StrategyDetailForm>
+			);
+		case ViewState.view:
+			if (!strategy) {
+				return <></>;
+			}
+			return (
+				<StrategyDetailForm
+					viewState={ViewState.view}
+					actionIcon={faPenToSquare}
+					actionUrl={`edit`}
+					status={strategy.status}
+					title={strategy.title}
+					strategyTemplateName={strategy.strategyTemplateName}
+					cashInCents={strategy.cashInCents}
+				></StrategyDetailForm>
+			);
+		default:
+			return <>Default</>;
+	}
 };
 
 export default StrategyDetail;

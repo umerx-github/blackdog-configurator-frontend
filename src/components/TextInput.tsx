@@ -1,10 +1,11 @@
+import { forwardRef } from "react";
 interface TextInputProps {
 	label: string;
 	name: string;
 	ariaLabel: string;
 	id?: string;
 	placeholder?: string;
-	defaultValue?: string;
+	defaultValue?: string | null;
 	isEditable?: boolean;
 	error?: string;
 }
@@ -21,16 +22,17 @@ interface TextInputProps {
  * @returns A text input with a label
  */
 
-const TextInput: React.FC<TextInputProps> = ({
-	label,
-	name,
-	ariaLabel,
-	id,
-	placeholder,
-	defaultValue,
-	isEditable = false,
-	error,
-}) => {
+const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(function (
+	{
+		label,
+		name,
+		ariaLabel,
+		placeholder,
+		defaultValue = null,
+		isEditable = false,
+	},
+	ref
+) {
 	return (
 		<label className="flex flex-col">
 			<span
@@ -45,22 +47,21 @@ const TextInput: React.FC<TextInputProps> = ({
 					isEditable ? "bg-zinc-100 dark:bg-zinc-800" : ""
 				}`}
 			>
-				{error ? <p>{error}</p> : null}
 				<input
 					type="text"
 					name={name}
 					aria-label={ariaLabel}
-					id={id ?? ""}
 					placeholder={placeholder ?? ""}
 					defaultValue={defaultValue ?? ""}
 					className={`bg-inherit w-full focus:outline-zinc-400 focus:outline-dashed focus:outline-offset-2 ${
 						isEditable ? "p-2" : ""
 					}`}
 					disabled={!isEditable}
+					ref={ref}
 				/>
 			</span>
 		</label>
 	);
-};
+});
 
 export default TextInput;

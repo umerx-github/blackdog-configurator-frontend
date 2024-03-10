@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { forwardRef, useState } from "react";
 
-interface CrrencyInputProps {
+interface CurrencyInputProps {
 	label: string;
 	name: string;
-	ariaLabel: string;
-	placeholder?: number;
-	defaultValue?: number;
+	ariaLabel?: string | null;
+	placeholder?: string | null;
+	defaultValue?: string | null;
 	isEditable?: boolean;
 }
 
@@ -19,49 +19,55 @@ interface CrrencyInputProps {
  * @returns A text input with a label
  */
 
-const CurrencyInput: React.FC<CrrencyInputProps> = ({
-	label,
-	name,
-	ariaLabel,
-	placeholder,
-	defaultValue,
-	isEditable = false,
-}) => {
-	const [isFocused, setIsFocused] = useState(false);
+const CurrencyInput = forwardRef<HTMLInputElement | null, CurrencyInputProps>(
+	function (
+		{
+			label,
+			name,
+			ariaLabel = null,
+			placeholder = null,
+			defaultValue = null,
+			isEditable = false,
+		},
+		ref
+	) {
+		const [isFocused, setIsFocused] = useState(false);
 
-	return (
-		<label className="flex flex-col">
-			<span
-				className={`text-zinc-500 dark:text-zinc-400 text-sm ${
-					isEditable ? "mb-2" : ""
-				}`}
-			>
-				{label}
-			</span>
-			<span
-				className={`w-full ${
-					isFocused
-						? "outline-zinc-400 outline-dashed outline-offset-2"
-						: ""
-				} ${isEditable ? "bg-zinc-100 dark:bg-zinc-800" : ""}`}
-			>
-				<span className="ml-2">$</span>
-				<input
-					type="currency"
-					name={name}
-					aria-label={ariaLabel}
-					placeholder={placeholder?.toString() ?? ""}
-					defaultValue={defaultValue?.toString() ?? ""}
-					className={`bg-inherit outline-none ${
-						isEditable ? "p-2 pl-1" : ""
+		return (
+			<label className="flex flex-col">
+				<span
+					className={`text-zinc-500 dark:text-zinc-400 text-sm ${
+						isEditable ? "mb-2" : ""
 					}`}
-					disabled={!isEditable}
-					onFocus={() => setIsFocused(true)}
-					onBlur={() => setIsFocused(false)}
-				/>
-			</span>
-		</label>
-	);
-};
+				>
+					{label}
+				</span>
+				<span
+					className={`w-full ${
+						isFocused
+							? "outline-zinc-400 outline-dashed outline-offset-2"
+							: ""
+					} ${isEditable ? "bg-zinc-100 dark:bg-zinc-800" : ""}`}
+				>
+					<span className="ml-2">$</span>
+					<input
+						ref={ref}
+						type="currency"
+						name={name}
+						aria-label={ariaLabel ?? ""}
+						placeholder={placeholder ?? ""}
+						defaultValue={defaultValue ?? ""}
+						className={`bg-inherit outline-none ${
+							isEditable ? "p-2 pl-1" : ""
+						}`}
+						disabled={!isEditable}
+						onFocus={() => setIsFocused(true)}
+						onBlur={() => setIsFocused(false)}
+					/>
+				</span>
+			</label>
+		);
+	}
+);
 
 export default CurrencyInput;
