@@ -1,6 +1,10 @@
 import React from "react";
 import { ViewState } from "../Interfaces/viewState";
 import { StrategyTemplateSeaDogDiscountScheme as StrategyTemplateSeaDogDiscountSchemeTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
+import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+
 interface StrategyTemplateSeaDogDiscountSchemeDetailFormProps {
 	viewState?: ViewState;
 	generalError?: string | null;
@@ -33,6 +37,8 @@ interface StrategyTemplateSeaDogDiscountSchemeDetailFormProps {
 		timeframeInDays: number | null;
 		symbolIds: number[];
 	}) => void;
+	actionIcon?: IconDefinition | null;
+	actionUrl?: string | null;
 }
 // "status": "active",
 // "alpacaAPIKey": "key",
@@ -71,6 +77,8 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 	symbolIds = [],
 	symbolIdsError = null,
 	onSubmit = () => {},
+	actionIcon = null,
+	actionUrl = null,
 }) => {
 	const statusInputRef = React.useRef<HTMLSelectElement>(null);
 	const alpacaAPIKeyInputRef = React.useRef<HTMLInputElement>(null);
@@ -278,6 +286,16 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 				</dl>
 				<button type="submit">Submit</button>
 			</form>
+			{actionIcon && actionUrl ? (
+				<div className="absolute bottom-4 right-4">
+					<Link to={actionUrl}>
+						<FontAwesomeIcon
+							icon={actionIcon}
+							className="text-4xl text-zinc-600 dark:text-zinc-400 transition-bg duration-1000"
+						/>
+					</Link>
+				</div>
+			) : null}
 		</>
 	);
 };
