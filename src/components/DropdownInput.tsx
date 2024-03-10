@@ -37,12 +37,18 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
 			>
 				{label}
 			</span>
-			<span className="">
+			<span
+				className={`w-full h-full ${
+					isEditable ? "bg-zinc-100 dark:bg-zinc-800" : ""
+				}`}
+			>
 				{isEditable ? (
 					<select
 						defaultValue={defaultValue}
 						disabled={!isEditable}
-						className="bg-inherit"
+						className={`bg-inherit w-full focus:outline-zinc-400 focus:outline-dashed focus:outline-offset-2 ${
+							isEditable ? "p-2" : ""
+						}`}
 					>
 						{options.map((option) => (
 							<option key={option} value={option}>

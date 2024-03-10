@@ -34,14 +34,20 @@ const TextInput: React.FC<TextInputProps> = ({
 			>
 				{label}
 			</span>
-			<span className="">
+			<span
+				className={`${
+					isEditable ? "bg-zinc-100 dark:bg-zinc-800" : ""
+				}`}
+			>
 				<input
 					type="text"
 					name={name}
 					aria-label={ariaLabel}
 					placeholder={placeholder ?? ""}
 					defaultValue={defaultValue ?? ""}
-					className="bg-inherit w-full"
+					className={`bg-inherit w-full focus:outline-zinc-400 focus:outline-dashed focus:outline-offset-2 ${
+						isEditable ? "p-2" : ""
+					}`}
 					disabled={!isEditable}
 				/>
 			</span>

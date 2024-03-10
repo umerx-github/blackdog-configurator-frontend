@@ -130,35 +130,37 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 
 	return (
 		<>
-			<Form method="post" className="flex flex-col gap-4">
-				<TextInput
-					label="Title"
-					name="title"
-					ariaLabel="Title"
-					defaultValue={strategy?.title}
-					isEditable={viewState !== ViewState.view}
-				/>
+			<Form method="post" className="flex flex-col gap-4 w-full">
+				<div className="form-inputs grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+					<TextInput
+						label="Title"
+						name="title"
+						ariaLabel="Title"
+						defaultValue={strategy?.title}
+						isEditable={viewState !== ViewState.view}
+					/>
 
-				<DropdownInput
-					label="Template"
-					name="template"
-					ariaLabel="Template"
-					options={templates}
-					placeholder="Select a template"
-					defaultValue={strategy?.strategyTemplateName}
-					isEditable={viewState !== ViewState.view}
-				/>
+					<DropdownInput
+						label="Template"
+						name="template"
+						ariaLabel="Template"
+						options={templates}
+						placeholder="Select a template"
+						defaultValue={strategy?.strategyTemplateName}
+						isEditable={viewState !== ViewState.view}
+					/>
 
-				<CurrencyInput
-					label="Designated Funds"
-					name="cash"
-					ariaLabel="Cash"
-					placeholder={0}
-					defaultValue={strategy ? strategy.cashInCents / 100 : 0}
-					isEditable={viewState !== ViewState.view}
-				/>
+					<CurrencyInput
+						label="Designated Funds"
+						name="cash"
+						ariaLabel="Cash"
+						placeholder={0}
+						defaultValue={strategy ? strategy.cashInCents / 100 : 0}
+						isEditable={viewState !== ViewState.view}
+					/>
+				</div>
 
-				<div className="mb-4 w-full">
+				<div className="form-toggles mb-4 w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
 					<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
 						{viewState === ViewState.create ? (
 							<Toggle
@@ -193,9 +195,11 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 					</div>
 				</div>
 			</Form>
-			<Link to="strategyTemplate">
-				<LargeButton icon={faFileLines} text="Templates" />
-			</Link>
+			<div className="buttons grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+				<Link to="strategyTemplate">
+					<LargeButton icon={faFileLines} text="Templates" />
+				</Link>
+			</div>
 		</>
 	);
 };
