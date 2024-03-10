@@ -70,6 +70,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 			return (
 				<>
 					<StrategyTemplateSeaDogDiscountSchemeDetailForm
+						blackdogConfiguratorClient={blackdogConfiguratorClient}
 						viewState={ViewState.create}
 						actionIcon={faX}
 						actionUrl={`/strategy/${strategy.id}/strategyTemplate`}
@@ -220,6 +221,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 			}
 			return (
 				<StrategyTemplateSeaDogDiscountSchemeDetailForm
+					blackdogConfiguratorClient={blackdogConfiguratorClient}
 					viewState={ViewState.edit}
 					actionIcon={faX}
 					actionUrl={`/strategy/${strategy.id}/strategyTemplate/${strategyTemplate.id}`}
@@ -358,6 +360,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 			}
 			return (
 				<StrategyTemplateSeaDogDiscountSchemeDetailForm
+					blackdogConfiguratorClient={blackdogConfiguratorClient}
 					viewState={ViewState.view}
 					actionIcon={faPenToSquare}
 					actionUrl={`/strategy/${strategy.id}/strategyTemplate/${strategyTemplate.id}/edit`}

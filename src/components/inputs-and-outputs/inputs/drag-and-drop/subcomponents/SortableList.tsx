@@ -1,6 +1,6 @@
 import StrictModeDroppable from "./StrictModeDroppable";
 import SortableItem from "./SortableItem";
-import { Item } from "../../../interfaces/components/inputs/drag-and-drop";
+import { Item } from "../../../../../interfaces/components/inputs/drag-and-drop";
 export default function SortableList({
 	droppableId,
 	items,

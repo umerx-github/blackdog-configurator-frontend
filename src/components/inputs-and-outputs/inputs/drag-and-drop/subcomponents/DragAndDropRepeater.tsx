@@ -2,7 +2,7 @@ import { DragDropContext, OnDragEndResponder } from "react-beautiful-dnd";
 import SortableList from "./SortableList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
-import { Item } from "../../../interfaces/components/inputs/drag-and-drop";
+import { Item } from "../../../../../interfaces/components/inputs/drag-and-drop";
 import CreatableSelect from "react-select/creatable";
 
 /**
@@ -70,12 +70,6 @@ export default function DragAndDropRepeater({
 					onCreateOption={(inputValue) => onCreate(inputValue)}
 					isLoading={isLoading}
 					isDisabled={isLoading}
-				/>
-				<FontAwesomeIcon
-					icon={faPlusCircle}
-					onClick={() => {
-						onAdd({ itemId: newItemId, itemValue: newItemValue });
-					}}
 				/>
 			</div>
 		</DragDropContext>
