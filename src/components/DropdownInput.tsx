@@ -1,10 +1,12 @@
+import { forwardRef } from "react";
+
 interface DropdownInputProps {
 	label: string;
 	name: string;
 	ariaLabel: string;
 	options: string[];
 	placeholder?: string;
-	defaultValue?: string;
+	defaultValue?: string | null;
 	isEditable?: boolean;
 }
 
@@ -19,49 +21,55 @@ interface DropdownInputProps {
  * @returns A text input with a label
  */
 
-const DropdownInput: React.FC<DropdownInputProps> = ({
-	label,
-	name,
-	ariaLabel,
-	options,
-	placeholder,
-	defaultValue,
-	isEditable = false,
-}) => {
-	return (
-		<label className="flex flex-col">
-			<span
-				className={`text-zinc-500 dark:text-zinc-400 text-sm ${
-					isEditable ? "mb-2" : ""
-				}`}
-			>
-				{label}
-			</span>
-			<span
-				className={`w-full h-full ${
-					isEditable ? "bg-zinc-100 dark:bg-zinc-800" : ""
-				}`}
-			>
-				{isEditable ? (
-					<select
-						defaultValue={defaultValue}
-						disabled={!isEditable}
-						className={`bg-inherit w-full focus:outline-zinc-400 focus:outline-dashed focus:outline-offset-2 ${
-							isEditable ? "p-2" : ""
-						}`}
-					>
-						{options.map((option) => (
-							<option key={option} value={option}>
-								{option}
-							</option>
-						))}
-					</select>
-				) : (
-					<span>{defaultValue}</span>
-				)}
-			</span>
-		</label>
-	);
-};
+const DropdownInput = forwardRef<HTMLSelectElement | null, DropdownInputProps>(
+	function (
+		{
+			label,
+			name,
+			ariaLabel,
+			options,
+			placeholder,
+			defaultValue = null,
+			isEditable = false,
+		},
+		ref
+	) {
+		return (
+			<label className="flex flex-col">
+				<span
+					className={`text-zinc-500 dark:text-zinc-400 text-sm ${
+						isEditable ? "mb-2" : ""
+					}`}
+				>
+					{label}
+				</span>
+				<span
+					className={`w-full h-full ${
+						isEditable ? "bg-zinc-100 dark:bg-zinc-800" : ""
+					}`}
+				>
+					{isEditable ? (
+						<select
+							ref={ref}
+							defaultValue={defaultValue ?? ""}
+							disabled={!isEditable}
+							className={`bg-inherit w-full focus:outline-zinc-400 focus:outline-dashed focus:outline-offset-2 ${
+								isEditable ? "p-2" : ""
+							}`}
+						>
+							{options.map((option) => (
+								<option key={option} value={option}>
+									{option}
+								</option>
+							))}
+						</select>
+					) : (
+						<span>{defaultValue ?? ""}</span>
+					)}
+				</span>
+			</label>
+		);
+	}
+);
 
 export default DropdownInput;

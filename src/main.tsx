@@ -8,10 +8,7 @@ import ErrorPage from "./ErrorPage.tsx";
 import StrategiesList, {
 	loader as strategiesListLoader,
 } from "./routes/StrategiesList.tsx";
-import StrategyDetail, {
-	loader as strategyDetailLoader,
-	action as strategyDetailCreate,
-} from "./routes/StrategyDetail.tsx";
+import StrategyDetail from "./routes/StrategyDetail.tsx";
 import { ViewState } from "./interfaces/viewState";
 import Home from "./routes/Home.tsx";
 import StrategyTemplateList from "./routes/StrategyTemplateList.tsx";
@@ -77,7 +74,6 @@ const router = createBrowserRouter([
 										viewState={ViewState.view}
 									/>
 								),
-								loader: strategyDetailLoader,
 								errorElement: <ErrorPage />,
 							},
 							{
@@ -90,7 +86,6 @@ const router = createBrowserRouter([
 										viewState={ViewState.edit}
 									/>
 								),
-								loader: strategyDetailLoader,
 								errorElement: <ErrorPage />,
 							},
 							{
@@ -121,7 +116,6 @@ const router = createBrowserRouter([
 														}
 													/>
 												),
-												loader: strategyDetailLoader,
 												errorElement: <ErrorPage />,
 											},
 											{
@@ -136,7 +130,6 @@ const router = createBrowserRouter([
 														}
 													/>
 												),
-												loader: strategyDetailLoader,
 												errorElement: <ErrorPage />,
 											},
 										],
@@ -151,7 +144,6 @@ const router = createBrowserRouter([
 												viewState={ViewState.create}
 											/>
 										),
-										action: strategyDetailCreate,
 										errorElement: <ErrorPage />,
 									},
 								],
@@ -168,7 +160,6 @@ const router = createBrowserRouter([
 								viewState={ViewState.create}
 							/>
 						),
-						action: strategyDetailCreate,
 						errorElement: <ErrorPage />,
 					},
 				],
