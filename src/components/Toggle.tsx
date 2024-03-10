@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { ToggleState } from "../Interfaces/settings";
+import { ToggleState } from "../interfaces/settings";
 
 interface ToggleProps {
 	toggleState: ToggleState;

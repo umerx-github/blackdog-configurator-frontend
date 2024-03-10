@@ -12,7 +12,7 @@ import StrategyDetail, {
 	loader as strategyDetailLoader,
 	action as strategyDetailCreate,
 } from "./routes/StrategyDetail.tsx";
-import { ViewState } from "./Interfaces/viewState";
+import { ViewState } from "./interfaces/viewState";
 import Home from "./routes/Home.tsx";
 import StrategyTemplateList from "./routes/StrategyTemplateList.tsx";
 import StrategyTemplateDetail from "./routes/StrategyTemplateDetail.tsx";

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ToggleState } from "../Interfaces/settings";
+import { ToggleState } from "../interfaces/settings";
 import BlackDogHeader from "../components/BlackdogHeader";
 import Toggle from "../components/Toggle";
 import BreadcrumbsProvider from "../components/BreadcrumbsProvider";

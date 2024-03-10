@@ -1,7 +1,14 @@
-import React from "react";
-import { ViewState } from "../Interfaces/viewState";
+import React, { useRef, useState } from "react";
+import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
+import { ViewState } from "../interfaces/viewState";
 import { StrategyTemplateSeaDogDiscountScheme as StrategyTemplateSeaDogDiscountSchemeTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
+import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import SymbolRepeater from "./inputs-and-outputs/SymbolRepeater";
+
 interface StrategyTemplateSeaDogDiscountSchemeDetailFormProps {
+	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
 	viewState?: ViewState;
 	generalError?: string | null;
 	status?: StrategyTemplateSeaDogDiscountSchemeTypes.Status;
@@ -33,6 +40,8 @@ interface StrategyTemplateSeaDogDiscountSchemeDetailFormProps {
 		timeframeInDays: number | null;
 		symbolIds: number[];
 	}) => void;
+	actionIcon?: IconDefinition | null;
+	actionUrl?: string | null;
 }
 // "status": "active",
 // "alpacaAPIKey": "key",
@@ -50,6 +59,7 @@ interface StrategyTemplateSeaDogDiscountSchemeDetailFormProps {
 const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 	StrategyTemplateSeaDogDiscountSchemeDetailFormProps
 > = ({
+	blackdogConfiguratorClient,
 	viewState = ViewState.view,
 	generalError = null,
 	status = "active",
@@ -71,22 +81,24 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 	symbolIds = [],
 	symbolIdsError = null,
 	onSubmit = () => {},
+	actionIcon = null,
+	actionUrl = null,
 }) => {
-	const statusInputRef = React.useRef<HTMLSelectElement>(null);
-	const alpacaAPIKeyInputRef = React.useRef<HTMLInputElement>(null);
-	const alpacaAPISecretInputRef = React.useRef<HTMLInputElement>(null);
-	const alpacaAPIPaperInputRef = React.useRef<HTMLInputElement>(null);
-	const buyAtPercentileInputRef = React.useRef<HTMLInputElement>(null);
-	const sellAtPercentileInputRef = React.useRef<HTMLInputElement>(null);
-	const minimumGainPercentInputRef = React.useRef<HTMLInputElement>(null);
-	const timeframeInDaysInputRef = React.useRef<HTMLInputElement>(null);
-	const symbolIdsInputRef = React.useRef<HTMLInputElement>(null);
+	const statusInputRef = useRef<HTMLSelectElement>(null);
+	const alpacaAPIKeyInputRef = useRef<HTMLInputElement>(null);
+	const alpacaAPISecretInputRef = useRef<HTMLInputElement>(null);
+	const alpacaAPIPaperInputRef = useRef<HTMLInputElement>(null);
+	const buyAtPercentileInputRef = useRef<HTMLInputElement>(null);
+	const sellAtPercentileInputRef = useRef<HTMLInputElement>(null);
+	const minimumGainPercentInputRef = useRef<HTMLInputElement>(null);
+	const timeframeInDaysInputRef = useRef<HTMLInputElement>(null);
+	const [symbolIdsInternal, setSymbolIdsInternal] =
+		useState<number[]>(symbolIds);
 	return (
 		<>
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
-					console.log("onSubmit");
 					onSubmit({
 						status: statusInputRef.current?.value ?? null,
 						alpacaAPIKey:
@@ -128,10 +140,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 										timeframeInDaysInputRef.current?.value
 								  )
 								: null,
-						symbolIds:
-							symbolIdsInputRef.current?.value
-								.split(",")
-								.map((id) => parseInt(id, 10)) ?? [],
+						symbolIds: symbolIdsInternal,
 					});
 				}}
 			>
@@ -266,18 +275,32 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 					<dt>Symbol IDs</dt>
 					<dd>
 						{symbolIdsError ? <p>{symbolIdsError}</p> : null}
-						<input
-							ref={symbolIdsInputRef}
-							type="text"
-							name="symbolIds"
-							id="symbolIds"
-							defaultValue={symbolIds.join(",")}
-							disabled={viewState === ViewState.view}
-						/>
+						<SymbolRepeater
+							viewState={viewState}
+							blackdogConfiguratorClient={
+								blackdogConfiguratorClient
+							}
+							symbolIds={symbolIdsInternal}
+							setSymbolIds={(newSymbolIds) => {
+								setSymbolIdsInternal(newSymbolIds);
+							}}
+						></SymbolRepeater>
 					</dd>
 				</dl>
-				<button type="submit">Submit</button>
+				{viewState !== ViewState.view ? (
+					<button type="submit">Submit</button>
+				) : null}
 			</form>
+			{actionIcon && actionUrl ? (
+				<div className="absolute bottom-4 right-4">
+					<Link to={actionUrl}>
+						<FontAwesomeIcon
+							icon={actionIcon}
+							className="text-4xl text-zinc-600 dark:text-zinc-400 transition-bg duration-1000"
+						/>
+					</Link>
+				</div>
+			) : null}
 		</>
 	);
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ToggleState } from "../Interfaces/settings";
+import { ToggleState } from "../interfaces/settings";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import Toggle from "../components/Toggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

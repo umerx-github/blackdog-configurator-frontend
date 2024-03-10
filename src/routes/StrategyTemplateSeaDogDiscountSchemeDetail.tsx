@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from "react";
-// import { ToggleState } from "../Interfaces/settings";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
-// import Toggle from "../components/Toggle";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
-// import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons/faPenToSquare";
+import { faX } from "@fortawesome/free-solid-svg-icons/faX";
 import {
 	Strategy as StrategyTypes,
 	StrategyTemplateSeaDogDiscountScheme as StrategyTemplateSeaDogDiscountSchemeTypes,
 } from "@umerx/umerx-blackdog-configurator-types-typescript";
-import { ViewState } from "../Interfaces/viewState";
-import { Form, redirect, useNavigate } from "react-router-dom";
-import StrategyTemplateSeaDogDiscountSchemeDetailForm from "./StrategyTemplateSeaDogDiscountSchemeDetailForm";
+import { ViewState } from "../interfaces/viewState";
+import { useNavigate } from "react-router-dom";
+import StrategyTemplateSeaDogDiscountSchemeDetailForm from "../components/StrategyTemplateSeaDogDiscountSchemeDetailForm";
 import z, { ZodError } from "zod";
-// import { Form } from "react-router-dom";
 
 interface StrategyTemplateSeaDogDiscountSchemeDetailProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -74,7 +70,10 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 			return (
 				<>
 					<StrategyTemplateSeaDogDiscountSchemeDetailForm
+						blackdogConfiguratorClient={blackdogConfiguratorClient}
 						viewState={ViewState.create}
+						actionIcon={faX}
+						actionUrl={`/strategy/${strategy.id}/strategyTemplate`}
 						onSubmit={(data) => {
 							(async () => {
 								console.log("handling on submit");
@@ -222,6 +221,10 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 			}
 			return (
 				<StrategyTemplateSeaDogDiscountSchemeDetailForm
+					blackdogConfiguratorClient={blackdogConfiguratorClient}
+					viewState={ViewState.edit}
+					actionIcon={faX}
+					actionUrl={`/strategy/${strategy.id}/strategyTemplate/${strategyTemplate.id}`}
 					onSubmit={(data) => {
 						console.log("handling on submit");
 						(async () => {
@@ -330,7 +333,6 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 							}
 						})();
 					}}
-					viewState={ViewState.view}
 					status={strategyTemplate.status}
 					alpacaAPIKey={strategyTemplate.alpacaAPIKey}
 					alpacaAPISecret={strategyTemplate.alpacaAPISecret}
@@ -358,7 +360,10 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 			}
 			return (
 				<StrategyTemplateSeaDogDiscountSchemeDetailForm
+					blackdogConfiguratorClient={blackdogConfiguratorClient}
 					viewState={ViewState.view}
+					actionIcon={faPenToSquare}
+					actionUrl={`/strategy/${strategy.id}/strategyTemplate/${strategyTemplate.id}/edit`}
 					status={strategyTemplate.status}
 					alpacaAPIKey={strategyTemplate.alpacaAPIKey}
 					alpacaAPISecret={strategyTemplate.alpacaAPISecret}
@@ -373,128 +378,6 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 		default:
 			return <>Default</>;
 	}
-	// const [statusState, setStatusState] = useState<ToggleState>(
-	// 	ToggleState.off
-	// );
-	// const toggleStatusState = (newState: ToggleState) => {
-	// 	setStatusState(newState);
-	// };
-
-	// const [strategyTemplate, setStrategyTemplate] =
-	// 	useState<StrategyTemplateSeaDogDiscountSchemeTypes.StrategyTemplateSeaDogDiscountSchemeResponseBodyDataInstance | null>(
-	// 		null
-	// 	);
-
-	// useEffect(() => {
-	// 	(async () => {
-	// 		if (viewState !== ViewState.create) {
-	// 			const strategyTemplate = await blackdogConfiguratorClient
-	// 				.strategyTemplateSeaDogDiscountScheme()
-	// 				.getSingle({ id: strategyTemplateId });
-	// 			setStrategyTemplate(strategyTemplate);
-	// 		}
-	// 	})();
-	// }, [strategyTemplateId, viewState]);
-
-	// const patchStrategyTemplate = async (
-	// 	id: number,
-	// 	strategyTemplate: StrategyTemplateSeaDogDiscountSchemeTypes.StrategyTemplateSeaDogDiscountSchemePatchRequestBodyDataInstance
-	// ) => {
-	// 	try {
-	// 		const updatedStrategyTemplate = await blackdogConfiguratorClient
-	// 			.strategyTemplateSeaDogDiscountScheme()
-	// 			.patchSingle({ id }, strategyTemplate);
-	// 		setStrategyTemplate(updatedStrategyTemplate);
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 	}
-	// };
-
-	// if (!strategyTemplate) {
-	// 	return <></>;
-	// }
-	// return (
-	// 	<>
-	// 		<Form method="post">
-	// 			<p>{viewState}</p>
-	// 			<dl>
-	// 				<dt>Alpaca API Key</dt>
-	// 				<dd>
-	// 					<input
-	// 						type="text"
-	// 						defaultValue={""}
-	// 						className="w-full"
-	// 					/>
-	// 				</dd>
-	// 				<dt>Alpaca Secret Key</dt>
-	// 				<dd>
-	// 					<input
-	// 						type="text"
-	// 						defaultValue={""}
-	// 						className="w-full"
-	// 					/>
-	// 				</dd>
-	// 				<dt>Timeframe in Days</dt>
-	// 				<dd>
-	// 					<input
-	// 						type="number"
-	// 						defaultValue={""}
-	// 						className="w-full"
-	// 					/>
-	// 				</dd>
-	// 				<div className="mb-4 w-full">
-	// 					<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
-	// 						{viewState === ViewState.create ? (
-	// 							<Toggle
-	// 								toggleState={statusState}
-	// 								display={
-	// 									strategy.status === "active"
-	// 										? toggleStateDisplays[
-	// 												ToggleState.on
-	// 										  ]
-	// 										: toggleStateDisplays[
-	// 												ToggleState.off
-	// 										  ]
-	// 								}
-	// 								labelText="Active?"
-	// 								onToggle={toggleStatusState}
-	// 							/>
-	// 						) : (
-	// 							<Toggle
-	// 								toggleState={
-	// 									strategy.status === "active"
-	// 										? ToggleState.on
-	// 										: ToggleState.off
-	// 								}
-	// 								display={
-	// 									strategy.status === "active"
-	// 										? toggleStateDisplays[
-	// 												ToggleState.on
-	// 										  ]
-	// 										: toggleStateDisplays[
-	// 												ToggleState.off
-	// 										  ]
-	// 								}
-	// 								labelText="Active?"
-	// 								onToggle={(newState) =>
-	// 									patchStrategyTemplate(
-	// 										strategyTemplate.id,
-	// 										{
-	// 											status:
-	// 												newState === ToggleState.on
-	// 													? "active"
-	// 													: "inactive",
-	// 										}
-	// 									)
-	// 								}
-	// 							/>
-	// 						)}
-	// 					</div>
-	// 				</div>
-	// 			</dl>
-	// 		</Form>
-	// 	</>
-	// );
 };
 
 export default StrategyTemplateSeaDogDiscountSchemeDetail;
