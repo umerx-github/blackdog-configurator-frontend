@@ -14,6 +14,8 @@ import Toggle from "./Toggle";
 import { ToggleState } from "../interfaces/settings";
 import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
+import LargeButton from "./LargeButton";
+import { faFileLines } from "@fortawesome/free-solid-svg-icons";
 
 interface StrategyDetailFormProps {
 	viewState?: ViewState;
@@ -159,6 +161,11 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 					<button type="submit">Submit</button>
 				) : null}
 			</form>
+			{viewState === ViewState.view ? (
+				<Link to="strategyTemplate">
+					<LargeButton icon={faFileLines} text="Templates" />
+				</Link>
+			) : null}
 			{actionIcon && actionUrl ? (
 				<div className="absolute bottom-4 right-4">
 					<Link to={actionUrl}>
