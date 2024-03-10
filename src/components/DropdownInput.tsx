@@ -1,7 +1,8 @@
-interface TextInputProps {
+interface DropdownInputProps {
 	label: string;
 	name: string;
 	ariaLabel: string;
+	options: string[];
 	placeholder?: string;
 	defaultValue?: string;
 	isEditable?: boolean;
@@ -11,16 +12,18 @@ interface TextInputProps {
  * @param label - The label for the input (required)
  * @param name - The name of the input (required)
  * @param ariaLabel - The aria-label for the input (required)
+ * @param options - The options for the dropdown (required)
  * @param placeholder - The placeholder for the input (optional)
  * @param defaultValue - The default value for the input (optional)
  * @param isEditable - Whether the input is editable (optional)
  * @returns A text input with a label
  */
 
-const TextInput: React.FC<TextInputProps> = ({
+const DropdownInput: React.FC<DropdownInputProps> = ({
 	label,
 	name,
 	ariaLabel,
+	options,
 	placeholder,
 	defaultValue,
 	isEditable = false,
@@ -35,24 +38,30 @@ const TextInput: React.FC<TextInputProps> = ({
 				{label}
 			</span>
 			<span
-				className={`${
+				className={`w-full h-full ${
 					isEditable ? "bg-zinc-100 dark:bg-zinc-800" : ""
 				}`}
 			>
-				<input
-					type="text"
-					name={name}
-					aria-label={ariaLabel}
-					placeholder={placeholder ?? ""}
-					defaultValue={defaultValue ?? ""}
-					className={`bg-inherit w-full focus:outline-zinc-400 focus:outline-dashed focus:outline-offset-2 ${
-						isEditable ? "p-2" : ""
-					}`}
-					disabled={!isEditable}
-				/>
+				{isEditable ? (
+					<select
+						defaultValue={defaultValue}
+						disabled={!isEditable}
+						className={`bg-inherit w-full focus:outline-zinc-400 focus:outline-dashed focus:outline-offset-2 ${
+							isEditable ? "p-2" : ""
+						}`}
+					>
+						{options.map((option) => (
+							<option key={option} value={option}>
+								{option}
+							</option>
+						))}
+					</select>
+				) : (
+					<span>{defaultValue}</span>
+				)}
 			</span>
 		</label>
 	);
 };
 
-export default TextInput;
+export default DropdownInput;

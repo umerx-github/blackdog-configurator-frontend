@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+
 interface CrrencyInputProps {
 	label: string;
 	name: string;
@@ -25,6 +27,8 @@ const CurrencyInput: React.FC<CrrencyInputProps> = ({
 	defaultValue,
 	isEditable = false,
 }) => {
+	const [isFocused, setIsFocused] = useState(false);
+
 	return (
 		<label className="flex flex-col">
 			<span
@@ -34,16 +38,26 @@ const CurrencyInput: React.FC<CrrencyInputProps> = ({
 			>
 				{label}
 			</span>
-			<span className="w-max">
-				<span className="mr-0.5">$</span>
+			<span
+				className={`w-full ${
+					isFocused
+						? "outline-zinc-400 outline-dashed outline-offset-2"
+						: ""
+				} ${isEditable ? "bg-zinc-100 dark:bg-zinc-800" : ""}`}
+			>
+				<span className="ml-2">$</span>
 				<input
 					type="currency"
 					name={name}
 					aria-label={ariaLabel}
 					placeholder={placeholder?.toString() ?? ""}
 					defaultValue={defaultValue?.toString() ?? ""}
-					className="bg-inherit"
+					className={`bg-inherit outline-none ${
+						isEditable ? "p-2 pl-1" : ""
+					}`}
 					disabled={!isEditable}
+					onFocus={() => setIsFocused(true)}
+					onBlur={() => setIsFocused(false)}
 				/>
 			</span>
 		</label>
