@@ -6,6 +6,13 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import SymbolRepeater from "./inputs-and-outputs/SymbolRepeater";
+import Toggle from "./Toggle";
+import { ToggleState } from "../interfaces/settings";
+import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
+import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
+import TextInput from "./TextInput";
+import CheckboxInput from "./CheckboxInput";
+import NumberInput from "./NumberInput";
 
 interface StrategyTemplateSeaDogDiscountSchemeDetailFormProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -56,6 +63,21 @@ interface StrategyTemplateSeaDogDiscountSchemeDetailFormProps {
 // 	2
 // ]
 
+const statusStateDisplays = {
+	[ToggleState.on]: (
+		<FontAwesomeIcon
+			icon={faCheck}
+			className="text-sm transition-bg duration-1000"
+		/>
+	),
+	[ToggleState.off]: (
+		<FontAwesomeIcon
+			icon={faTimes}
+			className="text-sm transition-bg duration-1000"
+		/>
+	),
+};
+
 const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 	StrategyTemplateSeaDogDiscountSchemeDetailFormProps
 > = ({
@@ -94,9 +116,17 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 	const timeframeInDaysInputRef = useRef<HTMLInputElement>(null);
 	const [symbolIdsInternal, setSymbolIdsInternal] =
 		useState<number[]>(symbolIds);
+	const [statusState, setStatusState] = useState<ToggleState>(
+		ToggleState.off
+	);
+	const toggleStatusState = (newState: ToggleState) => {
+		setStatusState(newState);
+	};
+
 	return (
 		<>
 			<form
+				className="flex flex-col gap-4 w-full"
 				onSubmit={(e) => {
 					e.preventDefault();
 					onSubmit({
@@ -145,148 +175,109 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 				}}
 			>
 				{generalError ? <p>{generalError}</p> : null}
-				<dl>
-					<dt>Status</dt>
-					<dd>
-						{statusError ? <p>{statusError}</p> : null}
-						<select
-							ref={statusInputRef}
-							name="status"
-							id="status"
-							defaultValue={status}
-							disabled={viewState === ViewState.view}
+				<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+					<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
+						<Toggle
+							toggleState={statusState}
+							display={statusStateDisplays[statusState]}
+							labelText="Active?"
+							onToggle={toggleStatusState}
+						/>
+					</div>
+					<TextInput
+						label="Alpaca API Key"
+						name="alpacaAPIKey"
+						ariaLabel="Alpaca API Key"
+						id="alpacaAPIKey"
+						defaultValue={alpacaAPIKey}
+						isEditable={viewState !== ViewState.view}
+						error={alpacaAPIKeyError ?? ""}
+					/>
+					<TextInput
+						label="Alpaca API Secret"
+						name="alpacaAPISecret"
+						ariaLabel="Alpaca API Secret"
+						id="alpacaAPISecret"
+						defaultValue={alpacaAPISecret}
+						isEditable={viewState !== ViewState.view}
+						error={alpacaAPISecretError ?? ""}
+					/>
+					<CheckboxInput
+						label="Alpaca API Paper"
+						name="alpacaAPIPaper"
+						ariaLabel="Alpaca API Paper"
+						defaultChecked={alpacaAPIPaper}
+						id="alpacaAPIPaper"
+						error={alpacaAPIPaperError ?? ""}
+						isEditable={viewState !== ViewState.view}
+					/>
+					<NumberInput
+						label="Buy At Percentile"
+						name="buyAtPercentile"
+						ariaLabel="Buy At Percentile"
+						id="buyAtPercentile"
+						placeholder={0}
+						defaultValue={buyAtPercentile ?? 0}
+						isEditable={viewState !== ViewState.view}
+						error={buyAtPercentileError ?? ""}
+					/>
+					<NumberInput
+						label="Sell At Percentile"
+						name="sellAtPercentile"
+						ariaLabel="Sell At Percentile"
+						id="sellAtPercentile"
+						placeholder={0}
+						defaultValue={sellAtPercentile ?? 0}
+						isEditable={viewState !== ViewState.view}
+						error={sellAtPercentileError ?? ""}
+					/>
+					<NumberInput
+						label="Minimum Gain Percent"
+						name="MinimumGainPercent"
+						ariaLabel="Minimum Gain Percent"
+						id="minimumGainPercent"
+						defaultValue={minimumGainPercent ?? 0}
+						isEditable={viewState !== ViewState.view}
+						error={minimumGainPercentError ?? ""}
+					/>
+					<NumberInput
+						label="Timeframe In Days"
+						name="timeframeInDays"
+						ariaLabel="Timeframe In Days"
+						id="timeframeInDays"
+						defaultValue={timeframeInDays ?? 0}
+						isEditable={viewState !== ViewState.view}
+						error={timeframeInDaysError ?? ""}
+					/>
+					<label className="flex flex-col">
+						<span
+							className={`text-zinc-500 dark:text-zinc-400 text-sm ${
+								viewState !== ViewState.view ? "mb-2" : ""
+							}`}
 						>
-							<option value="active">Active</option>
-							<option value="inactive">Inactive</option>
-						</select>
-					</dd>
-				</dl>
-				<dl>
-					<dt>Alpaca API Key</dt>
-					<dd>
-						{alpacaAPIKeyError ? <p>{alpacaAPIKeyError}</p> : null}
-						<input
-							ref={alpacaAPIKeyInputRef}
-							type="text"
-							name="alpacaAPIKey"
-							id="alpacaAPIKey"
-							defaultValue={alpacaAPIKey}
-							disabled={viewState === ViewState.view}
-						/>
-					</dd>
-				</dl>
-				<dl>
-					<dt>Alpaca API Secret</dt>
-					<dd>
-						{alpacaAPISecretError ? (
-							<p>{alpacaAPISecretError}</p>
-						) : null}
-						<input
-							ref={alpacaAPISecretInputRef}
-							type="text"
-							name="alpacaAPISecret"
-							id="alpacaAPISecret"
-							defaultValue={alpacaAPISecret}
-							disabled={viewState === ViewState.view}
-						/>
-					</dd>
-				</dl>
-				<dl>
-					<dt>Alpaca API Paper</dt>
-					<dd>
-						{alpacaAPIPaperError ? (
-							<p>{alpacaAPIPaperError}</p>
-						) : null}
-						<input
-							ref={alpacaAPIPaperInputRef}
-							type="checkbox"
-							name="alpacaAPIPaper"
-							id="alpacaAPIPaper"
-							defaultChecked={alpacaAPIPaper}
-							disabled={viewState === ViewState.view}
-						/>
-					</dd>
-				</dl>
-				<dl>
-					<dt>Buy At Percentile</dt>
-					<dd>
-						{buyAtPercentileError ? (
-							<p>{buyAtPercentileError}</p>
-						) : null}
-						<input
-							ref={buyAtPercentileInputRef}
-							type="number"
-							name="buyAtPercentile"
-							id="buyAtPercentile"
-							defaultValue={buyAtPercentile ?? ""}
-							disabled={viewState === ViewState.view}
-						/>
-					</dd>
-				</dl>
-				<dl>
-					<dt>Sell At Percentile</dt>
-					<dd>
-						{sellAtPercentileError ? (
-							<p>{sellAtPercentileError}</p>
-						) : null}
-						<input
-							ref={sellAtPercentileInputRef}
-							type="number"
-							name="sellAtPercentile"
-							id="sellAtPercentile"
-							defaultValue={sellAtPercentile ?? ""}
-							disabled={viewState === ViewState.view}
-						/>
-					</dd>
-				</dl>
-				<dl>
-					<dt>Minimum Gain Percent</dt>
-					<dd>
-						{minimumGainPercentError ? (
-							<p>{minimumGainPercentError}</p>
-						) : null}
-						<input
-							ref={minimumGainPercentInputRef}
-							type="number"
-							name="minimumGainPercent"
-							id="minimumGainPercent"
-							defaultValue={minimumGainPercent ?? ""}
-							disabled={viewState === ViewState.view}
-						/>
-					</dd>
-				</dl>
-				<dl>
-					<dt>Timeframe In Days</dt>
-					<dd>
-						{timeframeInDaysError ? (
-							<p>{timeframeInDaysError}</p>
-						) : null}
-						<input
-							ref={timeframeInDaysInputRef}
-							type="number"
-							name="timeframeInDays"
-							id="timeframeInDays"
-							defaultValue={timeframeInDays ?? ""}
-							disabled={viewState === ViewState.view}
-						/>
-					</dd>
-				</dl>
-				<dl>
-					<dt>Symbol IDs</dt>
-					<dd>
-						{symbolIdsError ? <p>{symbolIdsError}</p> : null}
-						<SymbolRepeater
-							viewState={viewState}
-							blackdogConfiguratorClient={
-								blackdogConfiguratorClient
-							}
-							symbolIds={symbolIdsInternal}
-							setSymbolIds={(newSymbolIds) => {
-								setSymbolIdsInternal(newSymbolIds);
-							}}
-						></SymbolRepeater>
-					</dd>
-				</dl>
+							Symbol IDs
+						</span>
+						<span
+							className={`${
+								viewState !== ViewState.view
+									? "bg-zinc-100 dark:bg-zinc-800"
+									: ""
+							}`}
+						>
+							{symbolIdsError ? <p>{symbolIdsError}</p> : null}
+							<SymbolRepeater
+								viewState={viewState}
+								blackdogConfiguratorClient={
+									blackdogConfiguratorClient
+								}
+								symbolIds={symbolIdsInternal}
+								setSymbolIds={(newSymbolIds) => {
+									setSymbolIdsInternal(newSymbolIds);
+								}}
+							></SymbolRepeater>
+						</span>
+					</label>
+				</div>
 				{viewState !== ViewState.view ? (
 					<button type="submit">Submit</button>
 				) : null}

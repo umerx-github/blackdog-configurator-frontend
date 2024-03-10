@@ -1,19 +1,13 @@
 interface DropdownInputProps {
 	label: string;
-	name: string;
-	ariaLabel: string;
 	options: string[];
-	placeholder?: string;
 	defaultValue?: string;
 	isEditable?: boolean;
 }
 
 /**
  * @param label - The label for the input (required)
- * @param name - The name of the input (required)
- * @param ariaLabel - The aria-label for the input (required)
  * @param options - The options for the dropdown (required)
- * @param placeholder - The placeholder for the input (optional)
  * @param defaultValue - The default value for the input (optional)
  * @param isEditable - Whether the input is editable (optional)
  * @returns A text input with a label
@@ -21,10 +15,7 @@ interface DropdownInputProps {
 
 const DropdownInput: React.FC<DropdownInputProps> = ({
 	label,
-	name,
-	ariaLabel,
 	options,
-	placeholder,
 	defaultValue,
 	isEditable = false,
 }) => {

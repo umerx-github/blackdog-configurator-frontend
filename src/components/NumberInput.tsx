@@ -1,10 +1,12 @@
-interface TextInputProps {
+import React, { useState } from "react";
+
+interface NumberInputProps {
 	label: string;
 	name: string;
 	ariaLabel: string;
 	id?: string;
-	placeholder?: string;
-	defaultValue?: string;
+	placeholder?: number;
+	defaultValue?: number;
 	isEditable?: boolean;
 	error?: string;
 }
@@ -21,7 +23,7 @@ interface TextInputProps {
  * @returns A text input with a label
  */
 
-const TextInput: React.FC<TextInputProps> = ({
+const NumberInput: React.FC<NumberInputProps> = ({
 	label,
 	name,
 	ariaLabel,
@@ -47,14 +49,14 @@ const TextInput: React.FC<TextInputProps> = ({
 			>
 				{error ? <p>{error}</p> : null}
 				<input
-					type="text"
+					type="number"
 					name={name}
 					aria-label={ariaLabel}
 					id={id ?? ""}
-					placeholder={placeholder ?? ""}
-					defaultValue={defaultValue ?? ""}
-					className={`bg-inherit w-full focus:outline-zinc-400 focus:outline-dashed focus:outline-offset-2 ${
-						isEditable ? "p-2" : ""
+					placeholder={placeholder?.toString() ?? ""}
+					defaultValue={defaultValue?.toString() ?? ""}
+					className={`bg-inherit focus:outline-zinc-400 focus:outline-dashed focus:outline-offset-2 w-full ${
+						isEditable ? "p-2 pl-1" : ""
 					}`}
 					disabled={!isEditable}
 				/>
@@ -63,4 +65,4 @@ const TextInput: React.FC<TextInputProps> = ({
 	);
 };
 
-export default TextInput;
+export default NumberInput;
