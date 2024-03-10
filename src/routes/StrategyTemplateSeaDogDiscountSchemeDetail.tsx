@@ -8,7 +8,7 @@ import {
 } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import { ViewState } from "../Interfaces/viewState";
 import { useNavigate } from "react-router-dom";
-import StrategyTemplateSeaDogDiscountSchemeDetailForm from "./StrategyTemplateSeaDogDiscountSchemeDetailForm";
+import StrategyTemplateSeaDogDiscountSchemeDetailForm from "../components/StrategyTemplateSeaDogDiscountSchemeDetailForm";
 import z, { ZodError } from "zod";
 
 interface StrategyTemplateSeaDogDiscountSchemeDetailProps {
