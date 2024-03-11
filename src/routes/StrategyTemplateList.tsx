@@ -82,7 +82,7 @@ const StrategyTemplateList: React.FC<StrategyTemplateListProps> = ({
 				path: `strategy/${strategy.id}/strategyTemplate`,
 			},
 		]);
-	}, [setBreadcrumbs, strategy]);
+	}, [strategy]);
 	useEffect(() => {
 		(async () => {
 			const strategy = await blackdogConfiguratorClient

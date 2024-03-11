@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons/faPenToSquare";
 import { faX } from "@fortawesome/free-solid-svg-icons/faX";
@@ -7,6 +7,7 @@ import { ViewState } from "../interfaces/viewState";
 import { useNavigate, useParams } from "react-router-dom";
 import StrategyDetailForm from "../components/StrategyDetailForm";
 import z, { ZodError } from "zod";
+import BreadcrumbsContext from "../components/BreadcrumbsContext";
 
 interface StrategyDetailProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -17,6 +18,7 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 	blackdogConfiguratorClient,
 	viewState,
 }) => {
+	const { setBreadcrumbs } = useContext(BreadcrumbsContext);
 	const params = useParams();
 	const strategyId = params.strategyId ? parseInt(params.strategyId) : null;
 	const navigate = useNavigate();
@@ -31,6 +33,68 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 	const [cashInCentsError, setCashInCentsError] = useState<string | null>(
 		null
 	);
+	useEffect(() => {
+		switch (viewState) {
+			case ViewState.create:
+				setBreadcrumbs([
+					{
+						label: "Home",
+						path: "",
+					},
+					{
+						label: "Strategies",
+						path: "strategy",
+					},
+					{
+						label: "Create",
+						path: "strategy/create",
+					},
+				]);
+				break;
+			case ViewState.edit:
+				if (!strategy) {
+					return;
+				}
+				setBreadcrumbs([
+					{
+						label: "Home",
+						path: "",
+					},
+					{
+						label: "Strategies",
+						path: "strategy",
+					},
+					{
+						label: `${strategy.title}`,
+						path: `strategy/${strategy.id}`,
+					},
+					{
+						label: "Edit",
+						path: `strategy/${strategy.id}/edit`,
+					},
+				]);
+				break;
+			case ViewState.view:
+				if (!strategy) {
+					return;
+				}
+				setBreadcrumbs([
+					{
+						label: "Home",
+						path: "",
+					},
+					{
+						label: "Strategies",
+						path: "strategy",
+					},
+					{
+						label: `${strategy.title}`,
+						path: `strategy/${strategy.id}`,
+					},
+				]);
+				break;
+		}
+	}, [viewState, strategy]);
 	useEffect(() => {
 		(async () => {
 			if (null !== strategyId) {

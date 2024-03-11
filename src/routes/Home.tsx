@@ -14,7 +14,7 @@ const Home: React.FC = () => {
 				path: "",
 			},
 		]);
-	}, [setBreadcrumbs]);
+	}, []);
 
 	return (
 		<Link to="strategy">

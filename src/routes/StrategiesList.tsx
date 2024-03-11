@@ -77,7 +77,7 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 				path: "strategy",
 			},
 		]);
-	}, [setBreadcrumbs]);
+	}, []);
 
 	return (
 		<div>
