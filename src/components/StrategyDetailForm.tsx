@@ -16,6 +16,8 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import LargeButton from "./LargeButton";
 import { faFileLines } from "@fortawesome/free-solid-svg-icons";
+import NumericInput from "react-numeric-input";
+import { bankersRounding, bankersRoundingTruncateToInt } from "../utils";
 
 interface StrategyDetailFormProps {
 	viewState?: ViewState;
@@ -55,7 +57,17 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 }) => {
 	const titleInputRef = useRef<HTMLInputElement>(null);
 	const strategyTemplateNameInputRef = useRef<HTMLSelectElement>(null);
-	const cashInCentsInputRef = useRef<HTMLInputElement>(null);
+	// const cashInCentsInputRef = useRef<HTMLInputElement>(null);
+	const [cashInCentsInternal, setCashInCentsInternal] = useState(cashInCents);
+	function setCashInCentsInternalFromCashInDollars(
+		cashInDollars: number | null
+	) {
+		setCashInCentsInternal(
+			cashInDollars
+				? bankersRoundingTruncateToInt(cashInDollars * 100)
+				: null
+		);
+	}
 	const [statusInternal, setStatusInternal] = useState(status);
 	return (
 		<>
@@ -68,18 +80,14 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 						title: titleInputRef.current?.value ?? "",
 						strategyTemplateName:
 							strategyTemplateNameInputRef.current?.value ?? "",
-						cashInCents: cashInCentsInputRef.current?.value
-							? parseInt(cashInCentsInputRef.current?.value, 10)
-							: null,
+						cashInCents: cashInCentsInternal,
 					});
 					onSubmit({
 						status: statusInternal,
 						title: titleInputRef.current?.value ?? "",
 						strategyTemplateName:
 							strategyTemplateNameInputRef.current?.value ?? "",
-						cashInCents: cashInCentsInputRef.current?.value
-							? parseInt(cashInCentsInputRef.current?.value, 10)
-							: null,
+						cashInCents: cashInCentsInternal,
 					});
 				}}
 			>
@@ -116,7 +124,12 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 						placeholder={cashInCents ? cashInCents.toString() : ""}
 						defaultValue={cashInCents ? cashInCents.toString() : ""}
 						isEditable={viewState !== ViewState.view}
-						ref={cashInCentsInputRef}
+						onChange={setCashInCentsInternalFromCashInDollars}
+						value={
+							cashInCentsInternal
+								? bankersRounding(cashInCentsInternal / 100)
+								: undefined
+						}
 					/>
 				</div>
 				<div className="form-toggles mb-4 w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
