@@ -96,13 +96,20 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 						return value ?? "";
 					}}
 					parse={(numString) => {
-						// Remove the period and convert to an integer
-						// return parseInt(numString.replace(".", ""));
 						const value = formatStringFloatValueDropPeriod(
 							numString,
 							2
 						);
-						console.log({ value });
+						if (
+							value !== null &&
+							(value < -9223372036854775808 ||
+								value > 9223372036854775807)
+						) {
+							alert(
+								"The number is too large for the max size of a bigint in MySQL."
+							);
+							return null;
+						}
 						return value;
 					}}
 					name={name}
