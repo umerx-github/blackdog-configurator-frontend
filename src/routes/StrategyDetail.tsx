@@ -249,7 +249,7 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 													}
 												);
 										navigate(
-											`/strategy/${strategyCreated.id}}`
+											`/strategy/${strategyCreated.id}`
 										);
 									} catch (e) {
 										console.error({ e });
