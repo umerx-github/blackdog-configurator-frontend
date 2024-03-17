@@ -6,10 +6,10 @@ interface NumberInputProps {
 	ariaLabel: string;
 	id?: string;
 	placeholder?: number;
-	defaultValue?: number;
+	defaultValue?: number | null;
 	isEditable?: boolean;
 	error?: string;
-	onChange?: (value: number) => void;
+	onChange?: (value: number | null) => void;
 }
 
 /**
@@ -31,12 +31,20 @@ const NumberInput: React.FC<NumberInputProps> = ({
 	ariaLabel,
 	id,
 	placeholder,
-	defaultValue,
+	defaultValue = null,
 	isEditable = false,
 	error,
 	onChange = () => {},
 }) => {
 	const handleValueUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (
+			e.target.value === "" ||
+			e.target.value === null ||
+			isNaN(Number(e.target.value))
+		) {
+			onChange(null);
+			return;
+		}
 		onChange(Number(e.target.value));
 	};
 	return (
@@ -65,6 +73,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
 						isEditable ? "p-2 pl-1" : ""
 					}`}
 					disabled={!isEditable}
+					step={undefined}
 					onChange={handleValueUpdate}
 				/>
 			</span>

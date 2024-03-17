@@ -198,7 +198,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						ariaLabel="Buy At Percentile"
 						id="buyAtPercentile"
 						placeholder={0}
-						defaultValue={buyAtPercentile ?? 0}
+						defaultValue={buyAtPercentile}
 						isEditable={viewState !== ViewState.view}
 						error={buyAtPercentileError ?? ""}
 						onChange={setBuyAtPercentileInputValue}
@@ -209,7 +209,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						ariaLabel="Sell At Percentile"
 						id="sellAtPercentile"
 						placeholder={0}
-						defaultValue={sellAtPercentile ?? 0}
+						defaultValue={sellAtPercentile}
 						isEditable={viewState !== ViewState.view}
 						error={sellAtPercentileError ?? ""}
 						onChange={setSellAtPercentileInputValue}
@@ -219,7 +219,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						name="MinimumGainPercent"
 						ariaLabel="Minimum Gain Percent"
 						id="minimumGainPercent"
-						defaultValue={minimumGainPercent ?? 0}
+						defaultValue={minimumGainPercent}
 						isEditable={viewState !== ViewState.view}
 						error={minimumGainPercentError ?? ""}
 						onChange={setMinimumGainPercentInputValue}
@@ -229,7 +229,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						name="timeframeInDays"
 						ariaLabel="Timeframe In Days"
 						id="timeframeInDays"
-						defaultValue={timeframeInDays ?? 0}
+						defaultValue={timeframeInDays}
 						isEditable={viewState !== ViewState.view}
 						error={timeframeInDaysError ?? ""}
 						onChange={setTimeframeInDaysInputValue}
