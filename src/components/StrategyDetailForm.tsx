@@ -121,14 +121,22 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 						label="Designated Funds"
 						name="cash"
 						ariaLabel="Cash"
-						placeholder={cashInCents ? cashInCents.toString() : ""}
-						defaultValue={cashInCents ? cashInCents.toString() : ""}
+						// placeholder={cashInCents ? cashInCents.toString() : ""}
+						// defaultValue={cashInCents ? cashInCents.toString() : ""}
 						isEditable={viewState !== ViewState.view}
-						onChange={setCashInCentsInternalFromCashInDollars}
-						value={
+						onChange={(value, name, values) => {
+							const valueFloatOrNull =
+								value === undefined ? null : parseFloat(value);
+							setCashInCentsInternalFromCashInDollars(
+								valueFloatOrNull
+							);
+						}}
+						defaultValue={
 							cashInCentsInternal
-								? bankersRounding(cashInCentsInternal / 100)
-								: undefined
+								? bankersRounding(
+										cashInCentsInternal / 100
+								  ).toString()
+								: ""
 						}
 					/>
 				</div>

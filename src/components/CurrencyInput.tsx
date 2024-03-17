@@ -1,5 +1,7 @@
-import React, { forwardRef, useState } from "react";
-import NumericInput from "react-numeric-input";
+import React, { useState } from "react";
+import CurrencyInputComponent, {
+	CurrencyInputOnChangeValues,
+} from "react-currency-input-field";
 
 interface CurrencyInputProps {
 	label: string;
@@ -10,9 +12,9 @@ interface CurrencyInputProps {
 	value?: string | number | undefined;
 	isEditable?: boolean;
 	onChange?: (
-		value: number | null,
-		stringValue: string,
-		input: HTMLInputElement
+		value: string | undefined,
+		name?: string | undefined,
+		values?: CurrencyInputOnChangeValues | undefined
 	) => void;
 }
 
@@ -25,35 +27,6 @@ interface CurrencyInputProps {
  * @param isEditable - Whether the input is editable (optional)
  * @returns A text input with a label
  */
-
-export const formatStringFloatValue = (
-	inputValue: string,
-	scale: number = 2
-): string | null => {
-	const endsWithPeriod = inputValue.endsWith(".");
-	const numberOfPeriods = inputValue.split(".").length - 1;
-	let floatVal = parseFloat(inputValue);
-	if (isNaN(floatVal)) {
-		return null;
-	}
-	return (
-		Number(floatVal.toFixed(scale)).toString() +
-		(endsWithPeriod && 1 === numberOfPeriods ? "." : "")
-	);
-};
-
-export const formatStringFloatValueDropPeriod = (
-	inputValue: string,
-	scale: number = 2
-): number | null => {
-	// const endsWithPeriod = inputValue.endsWith(".");
-	// const numberOfPeriods = inputValue.split(".").length - 1;
-	let floatVal = parseFloat(inputValue);
-	if (isNaN(floatVal)) {
-		return null;
-	}
-	return Number(floatVal.toFixed(scale));
-};
 
 const CurrencyInput: React.FC<CurrencyInputProps> = ({
 	label,
@@ -84,35 +57,12 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 				} ${isEditable ? "bg-zinc-100 dark:bg-zinc-800" : ""}`}
 			>
 				<span className="ml-2">$</span>
-				<NumericInput
+				<CurrencyInputComponent
 					type="currency"
-					precision={2}
 					value={value}
-					format={(num) => {
-						if (num === null) {
-							return "";
-						}
-						const value = formatStringFloatValue(num.toString());
-						return value ?? "";
-					}}
-					parse={(numString) => {
-						const value = formatStringFloatValueDropPeriod(
-							numString,
-							2
-						);
-						if (
-							value !== null &&
-							(value < -9223372036854775808 ||
-								value > 9223372036854775807)
-						) {
-							alert(
-								"The number is too large for the max size of a bigint in MySQL."
-							);
-							return null;
-						}
-						return value;
-					}}
 					name={name}
+					decimalsLimit={2}
+					allowDecimals={true}
 					aria-label={ariaLabel ?? ""}
 					placeholder={placeholder ?? ""}
 					defaultValue={defaultValue ?? ""}
@@ -120,7 +70,7 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 						isEditable ? "p-2 pl-1" : ""
 					}`}
 					disabled={!isEditable}
-					onChange={onChange}
+					onValueChange={onChange}
 					onBlur={() => setIsFocused(false)}
 					onFocus={() => setIsFocused(true)}
 				/>
