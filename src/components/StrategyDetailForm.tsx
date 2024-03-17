@@ -16,9 +16,6 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import LargeButton from "./LargeButton";
 import { faFileLines } from "@fortawesome/free-solid-svg-icons";
-import NumericInput from "react-numeric-input";
-import { bankersRounding, bankersRoundingTruncateToInt } from "../utils";
-
 interface StrategyDetailFormProps {
 	viewState?: ViewState;
 	generalError?: string | null;
@@ -59,15 +56,6 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 	const strategyTemplateNameInputRef = useRef<HTMLSelectElement>(null);
 	// const cashInCentsInputRef = useRef<HTMLInputElement>(null);
 	const [cashInCentsInternal, setCashInCentsInternal] = useState(cashInCents);
-	function setCashInCentsInternalFromCashInDollars(
-		cashInDollars: number | null
-	) {
-		setCashInCentsInternal(
-			cashInDollars
-				? bankersRoundingTruncateToInt(cashInDollars * 100)
-				: null
-		);
-	}
 	const [statusInternal, setStatusInternal] = useState(status);
 	return (
 		<>
@@ -121,23 +109,10 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 						label="Designated Funds"
 						name="cash"
 						ariaLabel="Cash"
-						// placeholder={cashInCents ? cashInCents.toString() : ""}
-						// defaultValue={cashInCents ? cashInCents.toString() : ""}
+						placeholder={"0.00"}
 						isEditable={viewState !== ViewState.view}
-						onChange={(value, name, values) => {
-							const valueFloatOrNull =
-								value === undefined ? null : parseFloat(value);
-							setCashInCentsInternalFromCashInDollars(
-								valueFloatOrNull
-							);
-						}}
-						defaultValue={
-							cashInCentsInternal
-								? bankersRounding(
-										cashInCentsInternal / 100
-								  ).toString()
-								: ""
-						}
+						onChange={setCashInCentsInternal}
+						defaultValueInCents={cashInCentsInternal}
 					/>
 				</div>
 				<div className="form-toggles mb-4 w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">

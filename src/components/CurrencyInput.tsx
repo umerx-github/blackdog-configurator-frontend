@@ -1,21 +1,15 @@
 import React, { useState } from "react";
-import CurrencyInputComponent, {
-	CurrencyInputOnChangeValues,
-} from "react-currency-input-field";
+import CurrencyInputComponent from "react-currency-input-field";
+import { bankersRounding, bankersRoundingTruncateToInt } from "../utils";
 
 interface CurrencyInputProps {
 	label: string;
 	name: string;
 	ariaLabel?: string | null;
 	placeholder?: string | null;
-	defaultValue?: string | null;
-	value?: string | number | undefined;
+	defaultValueInCents?: number | null;
 	isEditable?: boolean;
-	onChange?: (
-		value: string | undefined,
-		name?: string | undefined,
-		values?: CurrencyInputOnChangeValues | undefined
-	) => void;
+	onChange?: (valueInCents: number | null) => void;
 }
 
 /**
@@ -33,10 +27,9 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 	name,
 	ariaLabel = null,
 	placeholder = null,
-	defaultValue = null,
+	defaultValueInCents = null,
 	isEditable = false,
 	onChange = () => {},
-	value,
 }) => {
 	const [isFocused, setIsFocused] = useState(false);
 
@@ -59,18 +52,31 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 				<span className="ml-2">$</span>
 				<CurrencyInputComponent
 					type="currency"
-					value={value}
 					name={name}
 					decimalsLimit={2}
 					allowDecimals={true}
 					aria-label={ariaLabel ?? ""}
 					placeholder={placeholder ?? ""}
-					defaultValue={defaultValue ?? ""}
+					defaultValue={
+						defaultValueInCents
+							? bankersRounding(
+									defaultValueInCents / 100
+							  ).toString()
+							: ""
+					}
 					className={`bg-inherit outline-none ${
 						isEditable ? "p-2 pl-1" : ""
 					}`}
 					disabled={!isEditable}
-					onValueChange={onChange}
+					onValueChange={(value, name, values) => {
+						const valueIntOrNull =
+							value === undefined
+								? null
+								: bankersRoundingTruncateToInt(
+										parseFloat(value) * 100
+								  );
+						onChange(valueIntOrNull);
+					}}
 					onBlur={() => setIsFocused(false)}
 					onFocus={() => setIsFocused(true)}
 				/>
