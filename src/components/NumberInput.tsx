@@ -1,15 +1,18 @@
 import React, { useState } from "react";
-
+// import NumericInput from "react-numeric-input";
+import NumericInput from "../components/inputs-and-outputs/inputs/NumericInput.js";
 interface NumberInputProps {
 	label: string;
 	name: string;
 	ariaLabel: string;
 	id?: string;
-	placeholder?: number;
+	placeholder?: string;
 	defaultValue?: number | null;
 	isEditable?: boolean;
 	error?: string;
 	onChange?: (value: number | null) => void;
+	precision?: number;
+	scale?: number;
 }
 
 /**
@@ -35,18 +38,9 @@ const NumberInput: React.FC<NumberInputProps> = ({
 	isEditable = false,
 	error,
 	onChange = () => {},
+	precision,
+	scale,
 }) => {
-	const handleValueUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (
-			e.target.value === "" ||
-			e.target.value === null ||
-			isNaN(Number(e.target.value))
-		) {
-			onChange(null);
-			return;
-		}
-		onChange(Number(e.target.value));
-	};
 	return (
 		<label className="flex flex-col">
 			<span
@@ -62,19 +56,22 @@ const NumberInput: React.FC<NumberInputProps> = ({
 				}`}
 			>
 				{error ? <p>{error}</p> : null}
-				<input
-					type="number"
+				<NumericInput
+					precision={precision}
+					scale={scale}
 					name={name}
 					aria-label={ariaLabel}
-					id={id ?? ""}
-					placeholder={placeholder?.toString() ?? ""}
-					defaultValue={defaultValue?.toString() ?? ""}
+					id={id}
+					placeholder={placeholder}
+					defaultValue={defaultValue}
 					className={`bg-inherit focus:outline-zinc-400 focus:outline-dashed focus:outline-offset-2 w-full ${
 						isEditable ? "p-2 pl-1" : ""
 					}`}
 					disabled={!isEditable}
-					step={undefined}
-					onChange={handleValueUpdate}
+					onChange={(valueAsNumber: number | null) => {
+						console.log({ valueAsNumber });
+						onChange(valueAsNumber);
+					}}
 				/>
 			</span>
 		</label>
