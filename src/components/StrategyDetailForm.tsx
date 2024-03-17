@@ -63,13 +63,6 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 				className="flex flex-col gap-4 w-full"
 				onSubmit={(e) => {
 					e.preventDefault();
-					console.log({
-						status: statusInternal,
-						title: titleInputRef.current?.value ?? "",
-						strategyTemplateName:
-							strategyTemplateNameInputRef.current?.value ?? "",
-						cashInCents: cashInCentsInternal,
-					});
 					onSubmit({
 						status: statusInternal,
 						title: titleInputRef.current?.value ?? "",
@@ -112,7 +105,7 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 						placeholder={"0.00"}
 						isEditable={viewState !== ViewState.view}
 						onChange={setCashInCentsInternal}
-						defaultValueInCents={cashInCentsInternal}
+						defaultValueInCents={cashInCentsInternal ?? undefined}
 					/>
 				</div>
 				<div className="form-toggles mb-4 w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">

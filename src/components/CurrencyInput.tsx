@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CurrencyInputComponent from "react-currency-input-field";
 import { bankersRounding, bankersRoundingTruncateToInt } from "../utils";
 
 interface CurrencyInputProps {
 	label: string;
 	name: string;
-	ariaLabel?: string | null;
-	placeholder?: string | null;
-	defaultValueInCents?: number | null;
+	ariaLabel?: string;
+	placeholder?: string;
+	defaultValueInCents?: number;
 	isEditable?: boolean;
 	onChange?: (valueInCents: number | null) => void;
+	max?: number;
+	min?: number;
 }
 
 /**
@@ -25,14 +27,29 @@ interface CurrencyInputProps {
 const CurrencyInput: React.FC<CurrencyInputProps> = ({
 	label,
 	name,
-	ariaLabel = null,
-	placeholder = null,
-	defaultValueInCents = null,
+	ariaLabel,
+	placeholder,
+	defaultValueInCents,
 	isEditable = false,
 	onChange = () => {},
+	max = Number.MAX_SAFE_INTEGER,
+	min = Number.MIN_SAFE_INTEGER,
 }) => {
 	const [isFocused, setIsFocused] = useState(false);
-
+	const [stringValue, setStringValue] = useState<string | null>(
+		defaultValueInCents !== undefined
+			? bankersRounding(defaultValueInCents / 100).toString()
+			: null
+	);
+	useEffect(() => {
+		if (undefined !== defaultValueInCents) {
+			setStringValue(
+				bankersRounding(defaultValueInCents / 100).toString()
+			);
+		} else {
+			setStringValue(null);
+		}
+	}, [defaultValueInCents]);
 	return (
 		<label className="flex flex-col">
 			<span
@@ -55,27 +72,29 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 					name={name}
 					decimalsLimit={2}
 					allowDecimals={true}
-					aria-label={ariaLabel ?? ""}
-					placeholder={placeholder ?? ""}
-					defaultValue={
-						defaultValueInCents
-							? bankersRounding(
-									defaultValueInCents / 100
-							  ).toString()
-							: ""
-					}
+					aria-label={ariaLabel}
+					placeholder={placeholder}
+					value={stringValue ?? ""}
 					className={`bg-inherit outline-none ${
 						isEditable ? "p-2 pl-1" : ""
 					}`}
 					disabled={!isEditable}
-					onValueChange={(value, name, values) => {
+					onValueChange={(value) => {
 						const valueIntOrNull =
 							value === undefined
 								? null
 								: bankersRoundingTruncateToInt(
 										parseFloat(value) * 100
 								  );
-						onChange(valueIntOrNull);
+						if (valueIntOrNull === null) {
+							setStringValue(null);
+							onChange(null);
+							return;
+						}
+						if (valueIntOrNull <= max && valueIntOrNull >= min) {
+							setStringValue(value ?? null);
+							onChange(valueIntOrNull);
+						}
 					}}
 					onBlur={() => setIsFocused(false)}
 					onFocus={() => setIsFocused(true)}
