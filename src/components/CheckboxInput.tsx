@@ -11,6 +11,7 @@ interface CheckboxInputProps {
 	placeholder?: string;
 	isEditable?: boolean;
 	error?: string;
+	onChange?: (value: boolean) => void;
 }
 
 /**
@@ -22,6 +23,7 @@ interface CheckboxInputProps {
  * @param placeholder - The placeholder for the input (optional)
  * @param isEditable - Whether the input is editable (optional)
  * @param error - The error message for the input (optional)
+ * @param onChange - The function to call when the input changes (optional)
  * @returns A text input with a label
  */
 
@@ -34,10 +36,12 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
 	placeholder,
 	isEditable = false,
 	error,
+	onChange = () => {},
 }) => {
-	const [isChecked, setIsChecked] = useState(false);
+	const [isChecked, setIsChecked] = useState(defaultChecked);
 	const toggleCheckbox = () => {
 		setIsChecked(!isChecked);
+		onChange(isChecked);
 	};
 
 	return (

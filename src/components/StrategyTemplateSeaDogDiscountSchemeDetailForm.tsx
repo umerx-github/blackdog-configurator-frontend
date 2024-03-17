@@ -106,14 +106,23 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 	actionIcon = null,
 	actionUrl = null,
 }) => {
-	const statusInputRef = useRef<HTMLSelectElement>(null);
-	const alpacaAPIKeyInputRef = useRef<HTMLInputElement>(null);
-	const alpacaAPISecretInputRef = useRef<HTMLInputElement>(null);
-	const alpacaAPIPaperInputRef = useRef<HTMLInputElement>(null);
-	const buyAtPercentileInputRef = useRef<HTMLInputElement>(null);
-	const sellAtPercentileInputRef = useRef<HTMLInputElement>(null);
-	const minimumGainPercentInputRef = useRef<HTMLInputElement>(null);
-	const timeframeInDaysInputRef = useRef<HTMLInputElement>(null);
+	const [statusInputRef, setStatusInputRef] = useState<boolean>(false);
+	const [alpacaAPIKeyInputValue, setAlpacaAPIKeyInputValue] =
+		useState<string>(alpacaAPIKey);
+	const [alpacaAPISecretInputValue, setAlpacaAPISecretInputValue] =
+		useState<string>(alpacaAPISecret);
+	const [alpacaAPIPaperInputValue, setAlpacaAPIPaperInputValue] =
+		useState<boolean>(alpacaAPIPaper);
+	const [buyAtPercentileInputValue, setBuyAtPercentileInputValue] = useState<
+		number | null
+	>(buyAtPercentile);
+	const [sellAtPercentileInputValue, setSellAtPercentileInputValue] =
+		useState<number | null>(sellAtPercentile);
+	const [minimumGainPercentInputValue, setMinimumGainPercentInputValue] =
+		useState<number | null>(minimumGainPercent);
+	const [timeframeInDaysInputValue, setTimeframeInDaysInputValue] = useState<
+		number | null
+	>(timeframeInDays);
 	const [symbolIdsInternal, setSymbolIdsInternal] =
 		useState<number[]>(symbolIds);
 	const [statusState, setStatusState] = useState<ToggleState>(
@@ -130,46 +139,14 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 				onSubmit={(e) => {
 					e.preventDefault();
 					onSubmit({
-						status: statusInputRef.current?.value ?? null,
-						alpacaAPIKey:
-							alpacaAPIKeyInputRef.current?.value ?? null,
-						alpacaAPISecret:
-							alpacaAPISecretInputRef.current?.value ?? null,
-						alpacaAPIPaper:
-							alpacaAPIPaperInputRef.current?.checked ?? null,
-						buyAtPercentile:
-							buyAtPercentileInputRef.current?.value !==
-								undefined &&
-							buyAtPercentileInputRef.current?.value !== ""
-								? parseFloat(
-										buyAtPercentileInputRef.current?.value
-								  )
-								: null,
-						sellAtPercentile:
-							sellAtPercentileInputRef.current?.value !==
-								undefined &&
-							sellAtPercentileInputRef.current?.value !== ""
-								? parseFloat(
-										sellAtPercentileInputRef.current?.value
-								  )
-								: null,
-						minimumGainPercent:
-							minimumGainPercentInputRef.current?.value !==
-								undefined &&
-							minimumGainPercentInputRef.current?.value !== ""
-								? parseFloat(
-										minimumGainPercentInputRef.current
-											?.value
-								  )
-								: null,
-						timeframeInDays:
-							timeframeInDaysInputRef.current?.value !==
-								undefined &&
-							timeframeInDaysInputRef.current?.value !== ""
-								? parseFloat(
-										timeframeInDaysInputRef.current?.value
-								  )
-								: null,
+						status: statusInputRef === true ? "active" : "inactive",
+						alpacaAPIKey: alpacaAPIKeyInputValue,
+						alpacaAPISecret: alpacaAPISecretInputValue,
+						alpacaAPIPaper: alpacaAPIPaperInputValue,
+						buyAtPercentile: buyAtPercentileInputValue,
+						sellAtPercentile: sellAtPercentileInputValue,
+						minimumGainPercent: minimumGainPercentInputValue,
+						timeframeInDays: timeframeInDaysInputValue,
 						symbolIds: symbolIdsInternal,
 					});
 				}}
@@ -182,6 +159,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 							display={statusStateDisplays[statusState]}
 							labelText="Active?"
 							onToggle={toggleStatusState}
+							onChange={setStatusInputRef}
 						/>
 					</div>
 					<TextInput
@@ -192,6 +170,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						defaultValue={alpacaAPIKey}
 						isEditable={viewState !== ViewState.view}
 						error={alpacaAPIKeyError ?? ""}
+						OnChange={setAlpacaAPIKeyInputValue}
 					/>
 					<TextInput
 						label="Alpaca API Secret"
@@ -201,6 +180,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						defaultValue={alpacaAPISecret}
 						isEditable={viewState !== ViewState.view}
 						error={alpacaAPISecretError ?? ""}
+						OnChange={setAlpacaAPISecretInputValue}
 					/>
 					<CheckboxInput
 						label="Alpaca API Paper"
@@ -210,6 +190,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						id="alpacaAPIPaper"
 						error={alpacaAPIPaperError ?? ""}
 						isEditable={viewState !== ViewState.view}
+						onChange={setAlpacaAPIPaperInputValue}
 					/>
 					<NumberInput
 						label="Buy At Percentile"
@@ -220,6 +201,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						defaultValue={buyAtPercentile ?? 0}
 						isEditable={viewState !== ViewState.view}
 						error={buyAtPercentileError ?? ""}
+						onChange={setBuyAtPercentileInputValue}
 					/>
 					<NumberInput
 						label="Sell At Percentile"
@@ -230,6 +212,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						defaultValue={sellAtPercentile ?? 0}
 						isEditable={viewState !== ViewState.view}
 						error={sellAtPercentileError ?? ""}
+						onChange={setSellAtPercentileInputValue}
 					/>
 					<NumberInput
 						label="Minimum Gain Percent"
@@ -239,6 +222,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						defaultValue={minimumGainPercent ?? 0}
 						isEditable={viewState !== ViewState.view}
 						error={minimumGainPercentError ?? ""}
+						onChange={setMinimumGainPercentInputValue}
 					/>
 					<NumberInput
 						label="Timeframe In Days"
@@ -248,6 +232,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						defaultValue={timeframeInDays ?? 0}
 						isEditable={viewState !== ViewState.view}
 						error={timeframeInDaysError ?? ""}
+						onChange={setTimeframeInDaysInputValue}
 					/>
 					<label className="flex flex-col">
 						<span

@@ -9,6 +9,7 @@ interface NumberInputProps {
 	defaultValue?: number;
 	isEditable?: boolean;
 	error?: string;
+	onChange?: (value: number) => void;
 }
 
 /**
@@ -20,6 +21,7 @@ interface NumberInputProps {
  * @param defaultValue - The default value for the input (optional)
  * @param isEditable - Whether the input is editable (optional)
  * @param error - The error message for the input (optional)
+ * @param onChange - The function to call when the input changes (optional)
  * @returns A text input with a label
  */
 
@@ -32,7 +34,11 @@ const NumberInput: React.FC<NumberInputProps> = ({
 	defaultValue,
 	isEditable = false,
 	error,
+	onChange = () => {},
 }) => {
+	const handleValueUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+		onChange(Number(e.target.value));
+	};
 	return (
 		<label className="flex flex-col">
 			<span
@@ -59,6 +65,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
 						isEditable ? "p-2 pl-1" : ""
 					}`}
 					disabled={!isEditable}
+					onChange={handleValueUpdate}
 				/>
 			</span>
 		</label>

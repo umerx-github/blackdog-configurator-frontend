@@ -8,6 +8,7 @@ interface TextInputProps {
 	defaultValue?: string | null;
 	isEditable?: boolean;
 	error?: string;
+	OnChange?: (value: string) => void;
 }
 
 /**
@@ -19,6 +20,7 @@ interface TextInputProps {
  * @param defaultValue - The default value for the input (optional)
  * @param isEditable - Whether the input is editable (optional)
  * @param error - The error message for the input (optional)
+ * @param onChange - The function to call when the input changes (optional)
  * @returns A text input with a label
  */
 
@@ -30,9 +32,14 @@ const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(function (
 		placeholder,
 		defaultValue = null,
 		isEditable = false,
+		error,
+		OnChange = () => {},
 	},
 	ref
 ) {
+	const handleValueUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+		OnChange(e.target.value);
+	};
 	return (
 		<label className="flex flex-col">
 			<span
@@ -47,6 +54,7 @@ const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(function (
 					isEditable ? "bg-zinc-100 dark:bg-zinc-800" : ""
 				}`}
 			>
+				{error ? <p>{error}</p> : null}
 				<input
 					type="text"
 					name={name}
@@ -58,6 +66,7 @@ const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(function (
 					}`}
 					disabled={!isEditable}
 					ref={ref}
+					onChange={handleValueUpdate}
 				/>
 			</span>
 		</label>
