@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import NumericInput from "react-numeric-input";
 import NumericInput from "../components/inputs-and-outputs/inputs/NumericInput.js";
 interface NumberInputProps {
 	label: string;
