@@ -82,10 +82,13 @@ const NumericInput: React.FC<NumericInputProps> = ({
 		return true;
 	}
 	function parseToExternalValue(rawValue: string): number | null {
+		let externalValue: number | null = null;
 		if (scale === 0) {
-			return parseInt(rawValue);
+			externalValue = parseInt(rawValue);
+		} else {
+			externalValue = parseFloat(rawValue);
 		}
-		return parseFloat(rawValue);
+		return isNaN(externalValue) ? null : externalValue;
 	}
 	return (
 		<input
