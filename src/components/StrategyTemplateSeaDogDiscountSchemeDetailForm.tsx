@@ -234,7 +234,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						ariaLabel="Timeframe In Days"
 						id="timeframeInDays"
 						defaultValue={timeframeInDays}
-						precision={19}
+						precision={15} // Becuase JavaScript Number precision is 15
 						scale={0}
 						isEditable={viewState !== ViewState.view}
 						error={timeframeInDaysError ?? ""}

@@ -76,7 +76,6 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 						actionUrl={`/strategy/${strategy.id}/strategyTemplate`}
 						onSubmit={(data) => {
 							(async () => {
-								console.log("handling on submit");
 								try {
 									setStatusError(null);
 									setAlpacaAPIKeyError(null);
@@ -115,7 +114,6 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 													"Strategy template not created."
 												);
 											}
-											console.log("redirecting");
 											navigate(
 												`/strategy/${strategy.id}/strategyTemplate/${strategyTemplatesCreated[0].id}`
 											);
@@ -226,11 +224,8 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 					actionIcon={faX}
 					actionUrl={`/strategy/${strategy.id}/strategyTemplate/${strategyTemplate.id}`}
 					onSubmit={(data) => {
-						console.log("handling on submit");
 						(async () => {
 							try {
-								console.log("handing on submit");
-								console.log({ data });
 								setStatusError(null);
 								setAlpacaAPIKeyError(null);
 								setAlpacaAPISecretError(null);
@@ -260,7 +255,6 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 														strategyId: strategy.id,
 													}
 												);
-										console.log("redirecting");
 										navigate(
 											`/strategy/${strategy.id}/strategyTemplate/${strategyTemplateCreated.id}`
 										);
