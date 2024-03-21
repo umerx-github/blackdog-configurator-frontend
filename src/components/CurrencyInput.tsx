@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import CurrencyInputComponent from "react-currency-input-field";
 import { bankersRounding, bankersRoundingTruncateToInt } from "../utils";
 import NumericInput from "./inputs-and-outputs/inputs/NumericInput.js";
 
