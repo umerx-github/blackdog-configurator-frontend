@@ -67,10 +67,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
 						isEditable ? "p-2 pl-1" : ""
 					}`}
 					disabled={!isEditable}
-					onChange={(valueAsNumber: number | null) => {
-						console.log({ valueAsNumber });
-						onChange(valueAsNumber);
-					}}
+					onChange={onChange}
 				/>
 			</span>
 		</label>

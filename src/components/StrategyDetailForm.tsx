@@ -103,6 +103,7 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 						name="cash"
 						ariaLabel="Cash"
 						placeholder={"0.00"}
+						precision={15}
 						isEditable={viewState !== ViewState.view}
 						onChange={setCashInCentsInternal}
 						defaultValueInCents={cashInCentsInternal ?? undefined}
