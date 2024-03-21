@@ -7,6 +7,7 @@ import { ViewState } from "../interfaces/viewState";
 import { useNavigate, useParams } from "react-router-dom";
 import StrategyDetailForm from "../components/StrategyDetailForm";
 import z, { ZodError } from "zod";
+import { AxiosError } from "axios";
 import BreadcrumbsContext from "../components/BreadcrumbsContext";
 
 interface StrategyDetailProps {
@@ -98,14 +99,28 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 	useEffect(() => {
 		(async () => {
 			if (null !== strategyId) {
-				const strategyFetched = await blackdogConfiguratorClient
-					.strategy()
-					.getSingle({ id: strategyId });
-				console.log({ strategyFetched });
-				setStrategy(strategyFetched);
+				try {
+					const strategyFetched = await blackdogConfiguratorClient
+						.strategy()
+						.getSingle({ id: strategyId });
+					setStrategy(strategyFetched);
+				} catch (e) {
+					if (e instanceof AxiosError && e.response?.status === 404) {
+						setStatusError(
+							"🐾 Oh no, we've fetched far and wide but couldn't dig up the strategy you're looking for. It seems to have buried itself too well! Please try again later or check if you've got the right strategy ID. 🐾"
+						);
+					} else {
+						setGeneralError(
+							`🐾 Oops! Our servers are having a bit of a "ruff" day and couldn't fetch your request. Please try again later or check your input. 🐾`
+						);
+					}
+				}
 			}
 		})();
 	}, [strategyId]);
+	if (statusError) {
+		return <>{statusError}</>;
+	}
 	switch (viewState) {
 		case ViewState.create:
 			return (
@@ -116,8 +131,6 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 						actionUrl={`/strategy`}
 						onSubmit={(data) => {
 							(async () => {
-								console.log("handling on submit");
-								console.log({ data });
 								try {
 									setStatusError(null);
 									setTitleError(null);
