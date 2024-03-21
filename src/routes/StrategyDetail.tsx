@@ -101,7 +101,6 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 				const strategyFetched = await blackdogConfiguratorClient
 					.strategy()
 					.getSingle({ id: strategyId });
-				console.log({ strategyFetched });
 				setStrategy(strategyFetched);
 			}
 		})();
@@ -116,8 +115,6 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 						actionUrl={`/strategy`}
 						onSubmit={(data) => {
 							(async () => {
-								console.log("handling on submit");
-								console.log({ data });
 								try {
 									setStatusError(null);
 									setTitleError(null);
