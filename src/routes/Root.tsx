@@ -8,21 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon } from "@fortawesome/free-solid-svg-icons/faMoon";
 import { faSun } from "@fortawesome/free-solid-svg-icons/faSun";
 import { Outlet } from "react-router-dom";
-
-const darkModeStateDisplays = {
-	[ToggleState.on]: (
-		<FontAwesomeIcon
-			icon={faMoon}
-			className="dark:text-zinc-200 transition-bg duration-1000"
-		/>
-	),
-	[ToggleState.off]: (
-		<FontAwesomeIcon
-			icon={faSun}
-			className="text-zinc-700 transition-bg duration-1000"
-		/>
-	),
-};
+import ToggleInnerMoonAndSun from "../components/ToggleInnerMoonAndSun";
 
 const Root: React.FC = () => {
 	const [darkModeState, setDarkModeState] = useState<ToggleState>(
@@ -45,9 +31,12 @@ const Root: React.FC = () => {
 							<BlackDogHeader />
 							<Toggle
 								toggleState={darkModeState}
-								display={darkModeStateDisplays[darkModeState]}
-								onToggle={toggleDarkMode}
-							/>
+								onChange={toggleDarkMode}
+							>
+								<ToggleInnerMoonAndSun
+									toggleState={darkModeState}
+								></ToggleInnerMoonAndSun>
+							</Toggle>
 						</div>
 					</div>
 					<BreadcrumbsProvider>

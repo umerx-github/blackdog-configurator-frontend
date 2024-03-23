@@ -3,27 +3,26 @@ import { ToggleState } from "../interfaces/settings";
 
 interface ToggleProps {
 	toggleState: ToggleState;
-	display?: ReactNode;
 	labelText?: ReactNode;
 	error?: string;
-	onToggle: (newState: ToggleState) => void;
-	onChange?: (value: boolean) => void;
+	onChange: (newState: ToggleState) => void;
+	isEditable?: boolean;
+	children?: ReactNode;
 }
 
 const Toggle: React.FC<ToggleProps> = ({
 	toggleState,
-	display,
 	labelText,
 	error,
-	onToggle,
 	onChange,
+	isEditable = true,
+	children,
 }) => {
 	const handleToggle = (e: React.MouseEvent<HTMLDivElement>) => {
 		e.preventDefault();
 		const newState =
 			toggleState === ToggleState.on ? ToggleState.off : ToggleState.on;
-		onToggle(newState);
-		onChange?.(newState === ToggleState.on ? true : false);
+		onChange(newState);
 	};
 
 	return (
@@ -40,16 +39,22 @@ const Toggle: React.FC<ToggleProps> = ({
 				)}
 				<div
 					onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-						handleToggle(e);
+						if (isEditable) {
+							handleToggle(e);
+						}
 					}}
 					className="w-16 bg-white dark:bg-zinc-700 inline-flex items-center p-1 h-8"
 				>
 					<button
+						type="button"
+						disabled={!isEditable}
 						className={`${
-							toggleState === "ON" ? "toggle-transform" : ""
+							toggleState === ToggleState.on
+								? "toggle-transform"
+								: ""
 						} w-6 h-6 bg-zinc-200 dark:bg-zinc-900 text-zinc-900 dark:text-white text-sm font-medium flex justify-center items-center transition-transform duration-1000`}
 					>
-						{display}
+						{children}
 					</button>
 				</div>
 			</div>

@@ -1,3 +1,9 @@
+import {
+	Strategy as StrategyTypes,
+	StrategyTemplateSeaDogDiscountScheme as StrategyTemplateSeaDogDiscountSchemeTypes,
+} from "@umerx/umerx-blackdog-configurator-types-typescript";
+import { ToggleState } from "../interfaces/settings.js";
+
 export function bankersRoundingTruncateToInt(num: number): number {
 	return bankersRounding(num, 0);
 }
@@ -15,4 +21,39 @@ export function bankersRounding(
 		f > 0.5 - e && f < 0.5 + e ? (i % 2 == 0 ? i : i + 1) : Math.round(n);
 
 	return d ? r / m : r;
+}
+
+export function translateToggleStateToStrategyTemplateSeaDogDiscountSchemeStatus(
+	toggleState: ToggleState
+): StrategyTemplateSeaDogDiscountSchemeTypes.Status {
+	if (toggleState === ToggleState.on) {
+		return "active";
+	}
+	return "inactive";
+}
+export function translateStrategyTemplateSeaDogDiscountSchemeStatusToToggleState(
+	status: StrategyTemplateSeaDogDiscountSchemeTypes.Status
+): ToggleState {
+	if (status === "active") {
+		return ToggleState.on;
+	}
+	return ToggleState.off;
+}
+
+export function translateToggleStateToStrategyStatus(
+	toggleState: ToggleState
+): StrategyTypes.Status {
+	if (toggleState === ToggleState.on) {
+		return "active";
+	}
+	return "inactive";
+}
+
+export function translateStrategyStatusToToggleState(
+	status: StrategyTypes.Status
+): ToggleState {
+	if (status === "active") {
+		return ToggleState.on;
+	}
+	return ToggleState.off;
 }

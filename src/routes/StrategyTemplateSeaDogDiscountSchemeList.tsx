@@ -5,33 +5,20 @@ import Toggle from "../components/Toggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 import { Link } from "react-router-dom";
-import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
-import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import {
 	Strategy as StrategyTypes,
 	StrategyTemplateSeaDogDiscountScheme as StrategyTemplateSeaDogDiscountSchemeTypes,
 } from "@umerx/umerx-blackdog-configurator-types-typescript";
+import ToggleInnerCheckAndX from "../components/ToggleInnerCheckAndX";
+import {
+	translateStrategyTemplateSeaDogDiscountSchemeStatusToToggleState,
+	translateToggleStateToStrategyTemplateSeaDogDiscountSchemeStatus,
+} from "../utils";
 
 interface StrategyTemplateSeaDogDiscountSchemeListProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
 	strategy: StrategyTypes.StrategyGetResponseBodyDataInstance;
 }
-
-const toggleStateDisplays = {
-	[ToggleState.on]: (
-		<FontAwesomeIcon
-			icon={faCheck}
-			className="text-sm transition-bg duration-1000"
-		/>
-	),
-	[ToggleState.off]: (
-		<FontAwesomeIcon
-			icon={faTimes}
-			className="text-sm transition-bg duration-1000"
-		/>
-	),
-};
-
 const StrategyTemplateSeaDogDiscountSchemeList: React.FC<
 	StrategyTemplateSeaDogDiscountSchemeListProps
 > = ({ blackdogConfiguratorClient, strategy }) => {
@@ -83,29 +70,18 @@ const StrategyTemplateSeaDogDiscountSchemeList: React.FC<
 							<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
 								<Toggle
 									key={strategyTemplate.id}
-									toggleState={
-										strategyTemplate.status === "active"
-											? ToggleState.on
-											: ToggleState.off
-									}
-									display={
-										toggleStateDisplays[
-											strategyTemplate.status === "active"
-												? ToggleState.on
-												: ToggleState.off
-										]
-									}
+									toggleState={translateStrategyTemplateSeaDogDiscountSchemeStatusToToggleState(
+										strategyTemplate.status
+									)}
 									labelText={strategyTemplate.id.toString()}
-									onToggle={(newState) => {
+									onChange={(newState) => {
 										(async () => {
 											await patchStrategyTemplate(
 												strategyTemplate.id,
 												{
-													status:
-														newState ===
-														ToggleState.on
-															? "active"
-															: "inactive",
+													status: translateToggleStateToStrategyTemplateSeaDogDiscountSchemeStatus(
+														newState
+													),
 												}
 											);
 											const strategyTemplateResponse =
@@ -119,7 +95,13 @@ const StrategyTemplateSeaDogDiscountSchemeList: React.FC<
 											);
 										})();
 									}}
-								/>
+								>
+									<ToggleInnerCheckAndX
+										toggleState={translateStrategyTemplateSeaDogDiscountSchemeStatusToToggleState(
+											strategyTemplate.status
+										)}
+									/>
+								</Toggle>
 							</div>
 						</div>
 					</Link>

@@ -16,6 +16,11 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import LargeButton from "./LargeButton";
 import { faFileLines } from "@fortawesome/free-solid-svg-icons";
+import {
+	translateStrategyStatusToToggleState,
+	translateToggleStateToStrategyStatus,
+} from "../utils";
+import ToggleInnerCheckAndX from "./ToggleInnerCheckAndX";
 interface StrategyDetailFormProps {
 	viewState?: ViewState;
 	generalError?: string | null;
@@ -57,6 +62,7 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 	// const cashInCentsInputRef = useRef<HTMLInputElement>(null);
 	const [cashInCentsInternal, setCashInCentsInternal] = useState(cashInCents);
 	const [statusInternal, setStatusInternal] = useState(status);
+
 	return (
 		<>
 			<form
@@ -114,37 +120,25 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 						{" "}
 						{statusError ? <p>{statusError}</p> : null}
 						<Toggle
-							toggleState={
-								statusInternal === "active"
-									? ToggleState.on
-									: ToggleState.off
-							}
-							display={
-								statusInternal === "active" ? (
-									<FontAwesomeIcon
-										icon={faCheck}
-										className="text-sm transition-bg duration-1000"
-									/>
-								) : (
-									<FontAwesomeIcon
-										icon={faTimes}
-										className="text-sm transition-bg duration-1000"
-									/>
-								)
-							}
+							isEditable={viewState !== ViewState.view}
+							toggleState={translateStrategyStatusToToggleState(
+								statusInternal
+							)}
 							labelText="Active?"
-							onToggle={
-								viewState !== ViewState.view
-									? (togglestate) => {
-											setStatusInternal(
-												togglestate === ToggleState.on
-													? "active"
-													: "inactive"
-											);
-									  }
-									: () => {}
-							}
-						/>
+							onChange={(newState) => {
+								setStatusInternal(
+									translateToggleStateToStrategyStatus(
+										newState
+									)
+								);
+							}}
+						>
+							<ToggleInnerCheckAndX
+								toggleState={translateStrategyStatusToToggleState(
+									statusInternal
+								)}
+							/>
+						</Toggle>
 					</div>
 				</div>
 				{viewState !== ViewState.view ? (

@@ -1,17 +1,9 @@
 import React, { useEffect, useContext, useState } from "react";
-// import { ToggleState } from "../interfaces/settings";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
-// import Toggle from "../components/Toggle";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
+
 import {
-	// Link,
-	// useLoaderData,
-	// LoaderFunction,
 	useParams,
 } from "react-router-dom";
-// import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
-// import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import BreadcrumbsContext from "../components/BreadcrumbsContext";
 import { Strategy as StrategyTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import z from "zod";
@@ -21,21 +13,6 @@ interface StrategyTemplateDetailProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
 	viewState: ViewState;
 }
-
-// const toggleStateDisplays = {
-// 	[ToggleState.on]: (
-// 		<FontAwesomeIcon
-// 			icon={faCheck}
-// 			className="text-sm transition-bg duration-1000"
-// 		/>
-// 	),
-// 	[ToggleState.off]: (
-// 		<FontAwesomeIcon
-// 			icon={faTimes}
-// 			className="text-sm transition-bg duration-1000"
-// 		/>
-// 	),
-// };
 
 interface StrategyTemplateDetailParams {
 	strategyId: number;

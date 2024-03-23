@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import { ViewState } from "../interfaces/viewState";
 import { StrategyTemplateSeaDogDiscountScheme as StrategyTemplateSeaDogDiscountSchemeTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
@@ -7,12 +7,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import SymbolRepeater from "./inputs-and-outputs/SymbolRepeater";
 import Toggle from "./Toggle";
-import { ToggleState } from "../interfaces/settings";
-import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
-import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import TextInput from "./TextInput";
 import CheckboxInput from "./CheckboxInput";
 import NumberInput from "./NumberInput";
+import ToggleInnerCheckAndX from "./ToggleInnerCheckAndX";
+import {
+	translateStrategyTemplateSeaDogDiscountSchemeStatusToToggleState,
+	translateToggleStateToStrategyTemplateSeaDogDiscountSchemeStatus,
+} from "../utils";
 
 interface StrategyTemplateSeaDogDiscountSchemeDetailFormProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -63,21 +65,6 @@ interface StrategyTemplateSeaDogDiscountSchemeDetailFormProps {
 // 	2
 // ]
 
-const statusStateDisplays = {
-	[ToggleState.on]: (
-		<FontAwesomeIcon
-			icon={faCheck}
-			className="text-sm transition-bg duration-1000"
-		/>
-	),
-	[ToggleState.off]: (
-		<FontAwesomeIcon
-			icon={faTimes}
-			className="text-sm transition-bg duration-1000"
-		/>
-	),
-};
-
 const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 	StrategyTemplateSeaDogDiscountSchemeDetailFormProps
 > = ({
@@ -106,7 +93,6 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 	actionIcon = null,
 	actionUrl = null,
 }) => {
-	const [statusInputRef, setStatusInputRef] = useState<boolean>(false);
 	const [alpacaAPIKeyInputValue, setAlpacaAPIKeyInputValue] =
 		useState<string>(alpacaAPIKey);
 	const [alpacaAPISecretInputValue, setAlpacaAPISecretInputValue] =
@@ -125,12 +111,13 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 	>(timeframeInDays);
 	const [symbolIdsInternal, setSymbolIdsInternal] =
 		useState<number[]>(symbolIds);
-	const [statusState, setStatusState] = useState<ToggleState>(
-		ToggleState.off
-	);
-	const toggleStatusState = (newState: ToggleState) => {
-		setStatusState(newState);
-	};
+	const [statusInternal, setStatusInternal] =
+		useState<StrategyTemplateSeaDogDiscountSchemeTypes.Status>(status);
+
+	const toggleState =
+		translateStrategyTemplateSeaDogDiscountSchemeStatusToToggleState(
+			statusInternal
+		);
 
 	return (
 		<>
@@ -139,7 +126,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 				onSubmit={(e) => {
 					e.preventDefault();
 					onSubmit({
-						status: statusInputRef === true ? "active" : "inactive",
+						status: statusInternal,
 						alpacaAPIKey: alpacaAPIKeyInputValue,
 						alpacaAPISecret: alpacaAPISecretInputValue,
 						alpacaAPIPaper: alpacaAPIPaperInputValue,
@@ -155,12 +142,19 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 				<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
 					<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
 						<Toggle
-							toggleState={statusState}
-							display={statusStateDisplays[statusState]}
+							isEditable={viewState !== ViewState.view}
+							toggleState={toggleState}
 							labelText="Active?"
-							onToggle={toggleStatusState}
-							onChange={setStatusInputRef}
-						/>
+							onChange={(newToggleState) => {
+								setStatusInternal(
+									translateToggleStateToStrategyTemplateSeaDogDiscountSchemeStatus(
+										newToggleState
+									)
+								);
+							}}
+						>
+							<ToggleInnerCheckAndX toggleState={toggleState} />
+						</Toggle>
 					</div>
 					<TextInput
 						label="Alpaca API Key"
