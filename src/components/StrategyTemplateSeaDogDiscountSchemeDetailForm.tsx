@@ -15,6 +15,7 @@ import {
 	translateStrategyTemplateSeaDogDiscountSchemeStatusToToggleState,
 	translateToggleStateToStrategyTemplateSeaDogDiscountSchemeStatus,
 } from "../utils";
+import PasswordInput from "./PasswordInput";
 
 interface StrategyTemplateSeaDogDiscountSchemeDetailFormProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -166,7 +167,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						error={alpacaAPIKeyError ?? ""}
 						OnChange={setAlpacaAPIKeyInputValue}
 					/>
-					<TextInput
+					<PasswordInput
 						label="Alpaca API Secret"
 						name="alpacaAPISecret"
 						ariaLabel="Alpaca API Secret"
