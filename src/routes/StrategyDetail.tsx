@@ -100,9 +100,10 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 		(async () => {
 			if (null !== strategyId) {
 				try {
-					const strategyFetched = await blackdogConfiguratorClient
-						.strategy()
-						.getSingle({ id: strategyId });
+					const { data: strategyFetched } =
+						await blackdogConfiguratorClient
+							.strategy()
+							.getSingle({ id: strategyId });
 					setStrategy(strategyFetched);
 				} catch (e) {
 					if (e instanceof AxiosError && e.response?.status === 404) {
@@ -145,7 +146,7 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 										);
 									(async () => {
 										try {
-											const strategiesCreated =
+											const { data: strategiesCreated } =
 												await blackdogConfiguratorClient
 													.strategy()
 													.postMany([
@@ -252,7 +253,7 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 									);
 								(async () => {
 									try {
-										const strategyCreated =
+										const { data: strategyCreated } =
 											await blackdogConfiguratorClient
 												.strategy()
 												.patchSingle(

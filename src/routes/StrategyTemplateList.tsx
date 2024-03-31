@@ -85,7 +85,7 @@ const StrategyTemplateList: React.FC<StrategyTemplateListProps> = ({
 	}, [strategy]);
 	useEffect(() => {
 		(async () => {
-			const strategy = await blackdogConfiguratorClient
+			const { data: strategy } = await blackdogConfiguratorClient
 				.strategy()
 				.getSingle({ id: strategyId });
 			setStrategy(strategy);

@@ -17,9 +17,11 @@ export default function SymbolRepeater({
 	>([]);
 	useEffect(() => {
 		(async () => {
-			const symbols = await blackdogConfiguratorClient.symbol().getMany({
-				ids: symbolIds,
-			});
+			const { data: symbols } = await blackdogConfiguratorClient
+				.symbol()
+				.getMany({
+					ids: symbolIds,
+				});
 			setSymbols(symbols);
 			setIsLoading(false);
 		})();

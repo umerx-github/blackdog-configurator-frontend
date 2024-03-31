@@ -58,9 +58,10 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 	useEffect(() => {
 		(async () => {
 			if (null !== strategyTemplateId) {
-				const strategyTemplateFetched = await blackdogConfiguratorClient
-					.strategyTemplateSeaDogDiscountScheme()
-					.getSingle({ id: strategyTemplateId });
+				const { data: strategyTemplateFetched } =
+					await blackdogConfiguratorClient
+						.strategyTemplateSeaDogDiscountScheme()
+						.getSingle({ id: strategyTemplateId });
 				setStrategyTemplate(strategyTemplateFetched);
 			}
 		})();
@@ -96,16 +97,16 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 										);
 									(async () => {
 										try {
-											const strategyTemplatesCreated =
-												await blackdogConfiguratorClient
-													.strategyTemplateSeaDogDiscountScheme()
-													.postMany([
-														{
-															...dataParsed,
-															strategyId:
-																strategy.id,
-														},
-													]);
+											const {
+												data: strategyTemplatesCreated,
+											} = await blackdogConfiguratorClient
+												.strategyTemplateSeaDogDiscountScheme()
+												.postMany([
+													{
+														...dataParsed,
+														strategyId: strategy.id,
+													},
+												]);
 											if (
 												strategyTemplatesCreated.length <
 												1
@@ -245,16 +246,17 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 									);
 								(async () => {
 									try {
-										const strategyTemplateCreated =
-											await blackdogConfiguratorClient
-												.strategyTemplateSeaDogDiscountScheme()
-												.patchSingle(
-													{ id: strategyTemplate.id },
-													{
-														...dataParsed,
-														strategyId: strategy.id,
-													}
-												);
+										const {
+											data: strategyTemplateCreated,
+										} = await blackdogConfiguratorClient
+											.strategyTemplateSeaDogDiscountScheme()
+											.patchSingle(
+												{ id: strategyTemplate.id },
+												{
+													...dataParsed,
+													strategyId: strategy.id,
+												}
+											);
 										navigate(
 											`/strategy/${strategy.id}/strategyTemplate/${strategyTemplateCreated.id}`
 										);

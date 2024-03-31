@@ -32,7 +32,11 @@ const StrategyTemplateSeaDogDiscountSchemeList: React.FC<
 				.getMany({
 					strategyId: strategy.id,
 				});
-			setStrategyTemplates(strategyTemplateResponse);
+			if (strategyTemplateResponse.status === "success") {
+				setStrategyTemplates(strategyTemplateResponse.data);
+			} else {
+				console.error(strategyTemplateResponse);
+			}
 		})();
 	}, [strategy]);
 
@@ -41,9 +45,10 @@ const StrategyTemplateSeaDogDiscountSchemeList: React.FC<
 		strategyTemplate: StrategyTemplateSeaDogDiscountSchemeTypes.StrategyTemplateSeaDogDiscountSchemePatchSingleRequestBody
 	) => {
 		try {
-			const newStrategyTemplate = await blackdogConfiguratorClient
-				.strategyTemplateSeaDogDiscountScheme()
-				.patchSingle({ id: strategyTemplateId }, strategyTemplate);
+			const { data: newStrategyTemplate } =
+				await blackdogConfiguratorClient
+					.strategyTemplateSeaDogDiscountScheme()
+					.patchSingle({ id: strategyTemplateId }, strategyTemplate);
 			// Create a new array of strategies with the updated strategy
 			const updatedStrategyTemplates = strategyTemplates.map((s) => {
 				if (s.id === strategyTemplateId) {
@@ -51,6 +56,7 @@ const StrategyTemplateSeaDogDiscountSchemeList: React.FC<
 				}
 				return s;
 			});
+
 			setStrategyTemplates(updatedStrategyTemplates);
 		} catch (e) {
 			console.error(e);
@@ -84,12 +90,13 @@ const StrategyTemplateSeaDogDiscountSchemeList: React.FC<
 													),
 												}
 											);
-											const strategyTemplateResponse =
-												await blackdogConfiguratorClient
-													.strategyTemplateSeaDogDiscountScheme()
-													.getMany({
-														strategyId: strategy.id,
-													});
+											const {
+												data: strategyTemplateResponse,
+											} = await blackdogConfiguratorClient
+												.strategyTemplateSeaDogDiscountScheme()
+												.getMany({
+													strategyId: strategy.id,
+												});
 											setStrategyTemplates(
 												strategyTemplateResponse
 											);

@@ -22,7 +22,10 @@ interface StrategiesListProps {
 }
 
 export async function loader() {
-	return await blackdogConfiguratorClient.strategy().getMany({});
+	const { data: strategiesLoaded } = await blackdogConfiguratorClient
+		.strategy()
+		.getMany({});
+	return strategiesLoaded;
 }
 
 const StrategiesList: React.FC<StrategiesListProps> = ({
@@ -37,7 +40,7 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 		strategy: StrategyPatchSingleRequestBody
 	) => {
 		try {
-			const newStrategy = await blackdogConfiguratorClient
+			const { data: newStrategy } = await blackdogConfiguratorClient
 				.strategy()
 				.patchSingle({ id }, strategy);
 			// Create a new array of strategies with the updated strategy

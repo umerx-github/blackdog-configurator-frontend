@@ -18,7 +18,7 @@ export default function SymbolRepeater({
 	const [availableItems, setAvailableItems] = React.useState<Item[]>([]);
 	useEffect(() => {
 		(async () => {
-			const symbols = await blackdogConfiguratorClient
+			const { data: symbols } = await blackdogConfiguratorClient
 				.symbol()
 				.getMany({});
 			setAvailableItems(
@@ -49,7 +49,7 @@ export default function SymbolRepeater({
 			onCreate={async (inputValue) => {
 				(async () => {
 					setIsLoading(true);
-					const newSymbol = await blackdogConfiguratorClient
+					const { data: newSymbol } = await blackdogConfiguratorClient
 						.symbol()
 						.postMany([
 							{

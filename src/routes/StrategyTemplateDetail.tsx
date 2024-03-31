@@ -1,9 +1,7 @@
 import React, { useEffect, useContext, useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 
-import {
-	useParams,
-} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import BreadcrumbsContext from "../components/BreadcrumbsContext";
 import { Strategy as StrategyTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import z from "zod";
@@ -78,7 +76,7 @@ const StrategyTemplateDetail: React.FC<StrategyTemplateDetailProps> = ({
 	}, [strategy, strategyTemplateId]);
 	useEffect(() => {
 		(async () => {
-			const strategy = await blackdogConfiguratorClient
+			const { data: strategy } = await blackdogConfiguratorClient
 				.strategy()
 				.getSingle({ id: strategyId });
 			setStrategy(strategy);
