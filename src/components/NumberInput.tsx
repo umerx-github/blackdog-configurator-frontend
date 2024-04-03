@@ -8,6 +8,7 @@ interface NumberInputProps {
 	placeholder?: string;
 	defaultValue?: number | null;
 	isEditable?: boolean;
+	isPercentage?: boolean;
 	error?: string;
 	onChange?: (value: number | null) => void;
 	precision?: number;
@@ -22,6 +23,7 @@ interface NumberInputProps {
  * @param placeholder - The placeholder for the input (optional)
  * @param defaultValue - The default value for the input (optional)
  * @param isEditable - Whether the input is editable (optional)
+ * @param isPercentage - Whether the input is a percentage (optional). Defaults to false.
  * @param error - The error message for the input (optional)
  * @param onChange - The function to call when the input changes (optional)
  * @returns A text input with a label
@@ -35,11 +37,14 @@ const NumberInput: React.FC<NumberInputProps> = ({
 	placeholder,
 	defaultValue = null,
 	isEditable = false,
+	isPercentage = false,
 	error,
 	onChange = () => {},
 	precision,
 	scale,
 }) => {
+	const [isFocused, setIsFocused] = useState(false);
+
 	return (
 		<label className="flex flex-col">
 			<span
@@ -50,25 +55,38 @@ const NumberInput: React.FC<NumberInputProps> = ({
 				{label}
 			</span>
 			<span
-				className={`${
-					isEditable ? "bg-zinc-100 dark:bg-zinc-800" : ""
+				className={`w-full ${
+					isEditable
+						? `bg-zinc-100 dark:bg-zinc-800 ${
+								isFocused
+									? "outline-zinc-400 outline-dashed outline-offset-2"
+									: null
+						  }`
+						: null
 				}`}
+				style={{ width: `${isPercentage ? "6.5rem" : null}` }}
 			>
 				{error ? <p>{error}</p> : null}
-				<NumericInput
-					precision={precision}
-					scale={scale}
-					name={name}
-					aria-label={ariaLabel}
-					id={id}
-					placeholder={placeholder}
-					defaultValue={defaultValue}
-					className={`bg-inherit focus:outline-zinc-400 focus:outline-dashed focus:outline-offset-2 w-full ${
-						isEditable ? "p-2 pl-1" : ""
-					}`}
-					disabled={!isEditable}
-					onChange={onChange}
-				/>
+				<div
+					onFocus={() => setIsFocused(true)}
+					onBlur={() => setIsFocused(false)}
+				>
+					<NumericInput
+						precision={precision}
+						scale={scale}
+						name={name}
+						aria-label={ariaLabel}
+						id={id}
+						placeholder={placeholder}
+						defaultValue={defaultValue}
+						className={`bg-inherit outline-none ${
+							isPercentage ? "w-20" : null
+						} ${isEditable ? "p-2" : ""}`}
+						disabled={!isEditable}
+						onChange={onChange}
+					/>
+					{isPercentage ? <span className="mr-2">%</span> : null}
+				</div>
 			</span>
 		</label>
 	);

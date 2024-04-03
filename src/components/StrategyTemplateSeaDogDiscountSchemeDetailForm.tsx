@@ -196,6 +196,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						defaultValue={buyAtPercentile}
 						precision={15}
 						isEditable={viewState !== ViewState.view}
+						isPercentage={true}
 						error={buyAtPercentileError ?? ""}
 						onChange={setBuyAtPercentileInputValue}
 					/>
@@ -208,6 +209,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						precision={15}
 						defaultValue={sellAtPercentile}
 						isEditable={viewState !== ViewState.view}
+						isPercentage={true}
 						error={sellAtPercentileError ?? ""}
 						onChange={setSellAtPercentileInputValue}
 					/>
@@ -220,6 +222,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						precision={15}
 						defaultValue={minimumGainPercent}
 						isEditable={viewState !== ViewState.view}
+						isPercentage={true}
 						error={minimumGainPercentError ?? ""}
 						onChange={setMinimumGainPercentInputValue}
 					/>

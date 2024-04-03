@@ -35,6 +35,8 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 	onChange = () => {},
 	precision,
 }) => {
+	const [isFocused, setIsFocused] = useState(false);
+
 	return (
 		<label className="flex flex-col">
 			<span
@@ -47,34 +49,43 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 			<span
 				className={`w-full ${
 					isEditable
-						? "outline-zinc-400 outline-dashed outline-offset-2"
-						: ""
-				} ${isEditable ? "bg-zinc-100 dark:bg-zinc-800" : ""}`}
+						? `bg-zinc-100 dark:bg-zinc-800 ${
+								isFocused
+									? "outline-zinc-400 outline-dashed outline-offset-2"
+									: null
+						  }`
+						: null
+				}`}
 			>
-				<span className="ml-2">$</span>
-				<NumericInput
-					name={name}
-					precision={precision}
-					scale={2}
-					aria-label={ariaLabel}
-					placeholder={placeholder}
-					defaultValue={
-						defaultValueInCents !== undefined
-							? bankersRounding(defaultValueInCents / 100)
-							: null
-					}
-					className={`bg-inherit outline-none ${
-						isEditable ? "p-2 pl-1" : ""
-					}`}
-					disabled={!isEditable}
-					onChange={(value) => {
-						const valueIntOrNull =
-							value !== null
-								? bankersRoundingTruncateToInt(value * 100)
-								: null;
-						onChange(valueIntOrNull);
-					}}
-				></NumericInput>
+				<div
+					onFocus={() => setIsFocused(true)}
+					onBlur={() => setIsFocused(false)}
+				>
+					<span className="ml-2">$</span>
+					<NumericInput
+						name={name}
+						precision={precision}
+						scale={2}
+						aria-label={ariaLabel}
+						placeholder={placeholder}
+						defaultValue={
+							defaultValueInCents !== undefined
+								? bankersRounding(defaultValueInCents / 100)
+								: null
+						}
+						className={`bg-inherit outline-none ${
+							isEditable ? "p-2" : ""
+						}`}
+						disabled={!isEditable}
+						onChange={(value) => {
+							const valueIntOrNull =
+								value !== null
+									? bankersRoundingTruncateToInt(value * 100)
+									: null;
+							onChange(valueIntOrNull);
+						}}
+					/>
+				</div>
 			</span>
 		</label>
 	);
