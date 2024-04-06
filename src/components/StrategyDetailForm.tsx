@@ -11,16 +11,14 @@ import TextInput from "./TextInput";
 import DropdownInput from "./DropdownInput";
 import CurrencyInput from "./CurrencyInput";
 import Toggle from "./Toggle";
-import { ToggleState } from "../interfaces/settings";
-import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
-import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
-import LargeButton from "./LargeButton";
-import { faFileLines } from "@fortawesome/free-solid-svg-icons";
 import {
 	translateStrategyStatusToToggleState,
 	translateToggleStateToStrategyStatus,
 } from "../utils";
 import ToggleInnerCheckAndX from "./ToggleInnerCheckAndX";
+import { faRectangleList } from "@fortawesome/free-solid-svg-icons/faRectangleList";
+import { faObjectUngroup } from "@fortawesome/free-solid-svg-icons/faObjectUngroup";
+import MediumButton from "./MediumButton";
 interface StrategyDetailFormProps {
 	viewState?: ViewState;
 	generalError?: string | null;
@@ -146,9 +144,14 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 				) : null}
 			</form>
 			{viewState === ViewState.view ? (
-				<Link to="strategyTemplate">
-					<LargeButton icon={faFileLines} text="Templates" />
-				</Link>
+				<div className="flex gap-4 mt-4">
+					<Link to="strategyTemplate" className="w-6/12 max-w-60">
+						<MediumButton icon={faObjectUngroup} text="Templates" />
+					</Link>
+					<Link to="strategyLogs" className="w-6/12 max-w-60">
+						<MediumButton icon={faRectangleList} text="Logs" />
+					</Link>
+				</div>
 			) : null}
 			{actionIcon && actionUrl ? (
 				<div className="absolute bottom-4 right-4">

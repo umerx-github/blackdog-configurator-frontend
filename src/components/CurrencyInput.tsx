@@ -61,7 +61,7 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 					onFocus={() => setIsFocused(true)}
 					onBlur={() => setIsFocused(false)}
 				>
-					<span className="ml-2">$</span>
+					<span className={isEditable ? "ml-1" : "mr-1"}>$</span>
 					<NumericInput
 						name={name}
 						precision={precision}
