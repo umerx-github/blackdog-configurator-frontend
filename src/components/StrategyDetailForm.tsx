@@ -19,6 +19,7 @@ import ToggleInnerCheckAndX from "./ToggleInnerCheckAndX";
 import { faRectangleList } from "@fortawesome/free-solid-svg-icons/faRectangleList";
 import { faObjectUngroup } from "@fortawesome/free-solid-svg-icons/faObjectUngroup";
 import MediumButton from "./MediumButton";
+import BrushChart from "./charts/BrushChart";
 interface StrategyDetailFormProps {
 	viewState?: ViewState;
 	generalError?: string | null;
@@ -144,14 +145,22 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 				) : null}
 			</form>
 			{viewState === ViewState.view ? (
-				<div className="flex gap-4 mt-4">
-					<Link to="strategyTemplate" className="w-6/12 max-w-60">
-						<MediumButton icon={faObjectUngroup} text="Templates" />
-					</Link>
-					<Link to="strategyLogs" className="w-6/12 max-w-60">
-						<MediumButton icon={faRectangleList} text="Logs" />
-					</Link>
-				</div>
+				<>
+					<div className="flex gap-4 mt-4">
+						<BrushChart></BrushChart>
+					</div>
+					<div className="flex gap-4 mt-4">
+						<Link to="strategyTemplate" className="w-6/12 max-w-60">
+							<MediumButton
+								icon={faObjectUngroup}
+								text="Templates"
+							/>
+						</Link>
+						<Link to="strategyLogs" className="w-6/12 max-w-60">
+							<MediumButton icon={faRectangleList} text="Logs" />
+						</Link>
+					</div>
+				</>
 			) : null}
 			{actionIcon && actionUrl ? (
 				<div className="absolute bottom-4 right-4">
