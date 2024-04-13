@@ -29,7 +29,6 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 	const navigate = useNavigate();
 	const [strategy, setStrategy] =
 		useState<StrategyTypes.StrategyResponseBodyDataInstance | null>(null);
-	const [series, setSeries] = useState<ApexAxisChartSeries>([]);
 	const [generalError, setGeneralError] = useState<string | null>(null);
 	const [statusError, setStatusError] = useState<string | null>(null);
 	const [titleError, setTitleError] = useState<string | null>(null);
@@ -41,12 +40,15 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 	);
 	const [timeframeUnit, setTimeframeUnit] =
 		useState<TimeframeTypes.TimeframeUnit>("days");
-	const [endTimestamp, setEndTimestamp] = useState<number>(
-		new Date().getTime()
+	// 30 days: new Date(endTimestamp - 1000 * 60 * 60 * 24 * 30).getTime()
+	const [startTimestamp, setStartTimestamp] = useState<number | undefined>(
+		undefined
 	);
-	const [startTimestamp, setStartTimestamp] = useState<number>(
-		new Date(endTimestamp - 1000 * 60 * 60 * 24 * 30).getTime()
-	);
+	const [aggregateValues, setAggregateValues] = useState<
+		StrategyTypes.StrategyAggregateValuesGetManyResponseBodyDataInstance[]
+	>([]);
+	const [series, setSeries] = useState<ApexAxisChartSeries>([]);
+
 	useEffect(() => {
 		switch (viewState) {
 			case ViewState.create:
@@ -117,31 +119,33 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 			if (!(viewState === ViewState.view)) {
 				return;
 			}
-			const aggregateValues = await blackdogConfiguratorClient
+			const query: StrategyTypes.StrategyAggregateValuesGetManyRequestQuery =
+				{
+					timeframeUnit,
+				};
+			if (undefined !== startTimestamp) {
+				query.startTimestamp = startTimestamp;
+			}
+			const aggregateValuesFetched = await blackdogConfiguratorClient
 				.strategy()
 				.getAggregateValues(
 					{
 						id: strategy.id,
 					},
-					{
-						timeframeUnit,
-						startTimestamp,
-						endTimestamp,
-					}
+					query
 				);
-			const { data: aggregateValuesFetched } = aggregateValues;
-			const data = aggregateValuesFetched.map((aggregateValue) => {
-				return [
-					aggregateValue.timestamp,
-					bankersRounding(
-						aggregateValue.averageValueInCents / 100,
-						2
-					),
-				];
-			});
-			setSeries([{ data }]);
+			setAggregateValues(aggregateValuesFetched.data);
 		})();
 	}, [viewState, strategy, timeframeUnit, startTimestamp]);
+	useEffect(() => {
+		const data = aggregateValues.map((aggregateValue) => {
+			return [
+				aggregateValue.timestamp,
+				bankersRounding(aggregateValue.averageValueInCents / 100, 2),
+			];
+		});
+		setSeries([{ data }]);
+	}, [aggregateValues]);
 	useEffect(() => {
 		(async () => {
 			if (null !== strategyId) {
@@ -366,6 +370,26 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 			if (!strategy) {
 				return <></>;
 			}
+			// Set the brush chart min to 60% of the way between the earliest and latest timestamps
+			let brushChartMin: number | undefined = undefined;
+			// Assumes timestamps are sorted in ascending order
+			const earliestTimestamp =
+				aggregateValues.length > 0
+					? aggregateValues[0].timestamp
+					: undefined;
+			const latestTimestamp =
+				aggregateValues.length > 0
+					? aggregateValues[aggregateValues.length - 1].timestamp
+					: undefined;
+			if (
+				undefined !== earliestTimestamp &&
+				undefined !== latestTimestamp
+			) {
+				brushChartMin = new Date(
+					earliestTimestamp +
+						(latestTimestamp - earliestTimestamp) * 0.6
+				).getTime();
+			}
 			return (
 				<StrategyDetailView
 					viewState={ViewState.view}
@@ -376,10 +400,8 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 					strategyTemplateName={strategy.strategyTemplateName}
 					cashInCents={strategy.cashInCents}
 					series={series}
-					brushChartMin={new Date(
-						startTimestamp + (endTimestamp - startTimestamp) * 0.6
-					).getTime()}
-					brushChartMax={endTimestamp}
+					brushChartMin={brushChartMin}
+					brushChartMax={latestTimestamp}
 				></StrategyDetailView>
 			);
 		default:
