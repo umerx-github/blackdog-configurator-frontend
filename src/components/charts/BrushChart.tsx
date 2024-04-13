@@ -2,109 +2,105 @@ import { ApexOptions } from "apexcharts";
 import React from "react";
 import ReactApexChart from "react-apexcharts";
 
-interface BrushChartProps {}
+interface BrushChartProps {
+	series: ApexAxisChartSeries | ApexNonAxisChartSeries;
+	brushChartMin?: number | undefined;
+	brushChartMax?: number | undefined;
+	chartHeight?: string | number;
+	brushChartHeight?: string | number;
+	chartId?: string;
+	brushChartId?: string;
+}
 
-const data = [
-	[1324508400000, 34],
-	[1324594800000, 54],
-	[1326236400000, 43],
-];
-
-const options: ApexOptions = {
-	chart: {
-		id: "chart2",
-		type: "line",
-		height: 230,
-		toolbar: {
-			autoSelected: "pan",
-			show: false,
-		},
-	},
-	colors: ["#546E7A"],
-	stroke: {
-		width: 3,
-	},
-	dataLabels: {
-		enabled: false,
-	},
-	fill: {
-		opacity: 1,
-	},
-	markers: {
-		size: 0,
-	},
-	xaxis: {
-		type: "datetime",
-	},
-};
-
-const optionsLine: ApexOptions = {
-	chart: {
-		id: "chart1",
-		height: 130,
-		type: "area",
-		brush: {
-			target: "chart2",
-			enabled: true,
-		},
-		selection: {
-			enabled: true,
-			xaxis: {
-				min: new Date("19 Jun 2011").getTime(),
-				max: new Date("14 Aug 2012").getTime(),
+const BrushChart: React.FC<BrushChartProps> = ({
+	series,
+	brushChartMin,
+	brushChartMax,
+	chartHeight = 230,
+	brushChartHeight = 130,
+	chartId = "chart",
+	brushChartId = "brush-chart",
+}) => {
+	const options: ApexOptions = {
+		chart: {
+			id: chartId,
+			type: "line",
+			height: brushChartHeight,
+			toolbar: {
+				autoSelected: "pan",
+				show: false,
 			},
 		},
-	},
-	colors: ["#008FFB"],
-	fill: {
-		type: "gradient",
-		gradient: {
-			opacityFrom: 0.91,
-			opacityTo: 0.1,
+		colors: ["#546E7A"],
+		stroke: {
+			width: 3,
 		},
-	},
-	xaxis: {
-		type: "datetime",
-		tooltip: {
+		dataLabels: {
 			enabled: false,
 		},
-	},
-	yaxis: {
-		tickAmount: 2,
-	},
-};
-const configuration = {
-	series: [
-		{
-			data: data,
+		fill: {
+			opacity: 1,
 		},
-	],
-
-	seriesLine: [
-		{
-			data: data,
+		markers: {
+			size: 0,
 		},
-	],
-};
+		xaxis: {
+			type: "datetime",
+		},
+	};
 
-const BrushChart: React.FC<BrushChartProps> = () => {
+	const optionsLine: ApexOptions = {
+		chart: {
+			id: brushChartId,
+			height: brushChartHeight,
+			type: "area",
+			brush: {
+				target: chartId,
+				enabled: true,
+			},
+			selection: {
+				enabled: true,
+				xaxis: {
+					min: brushChartMin,
+					max: brushChartMax,
+				},
+			},
+		},
+		colors: ["#008FFB"],
+		fill: {
+			type: "gradient",
+			gradient: {
+				opacityFrom: 0.91,
+				opacityTo: 0.1,
+			},
+		},
+		xaxis: {
+			type: "datetime",
+			tooltip: {
+				enabled: false,
+			},
+		},
+		yaxis: {
+			tickAmount: 2,
+		},
+	};
 	return (
 		<div>
 			<div>
 				<div id="chart-line2">
 					<ReactApexChart
 						options={options}
-						series={configuration.series}
+						series={series}
 						type="line"
-						height={230}
+						height={chartHeight}
 					/>
 				</div>
 				<div id="chart-line">
 					<ReactApexChart
 						options={optionsLine}
-						series={configuration.seriesLine}
+						series={series}
 						type="area"
-						height={130}
+						height={brushChartHeight}
 					/>
 				</div>
 			</div>

@@ -2,13 +2,17 @@ import React, { useContext, useEffect, useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons/faPenToSquare";
 import { faX } from "@fortawesome/free-solid-svg-icons/faX";
-import { Strategy as StrategyTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
+import {
+	Strategy as StrategyTypes,
+	Timeframe as TimeframeTypes,
+} from "@umerx/umerx-blackdog-configurator-types-typescript";
 import { ViewState } from "../interfaces/viewState";
 import { useNavigate, useParams } from "react-router-dom";
-import StrategyDetailForm from "../components/StrategyDetailForm";
+import StrategyDetailView from "../components/StrategyDetailView";
 import z, { ZodError } from "zod";
 import { AxiosError } from "axios";
 import BreadcrumbsContext from "../components/BreadcrumbsContext";
+import { bankersRounding } from "../utils";
 
 interface StrategyDetailProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -25,6 +29,7 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 	const navigate = useNavigate();
 	const [strategy, setStrategy] =
 		useState<StrategyTypes.StrategyResponseBodyDataInstance | null>(null);
+	const [series, setSeries] = useState<ApexAxisChartSeries>([]);
 	const [generalError, setGeneralError] = useState<string | null>(null);
 	const [statusError, setStatusError] = useState<string | null>(null);
 	const [titleError, setTitleError] = useState<string | null>(null);
@@ -33,6 +38,14 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 	>(null);
 	const [cashInCentsError, setCashInCentsError] = useState<string | null>(
 		null
+	);
+	const [timeframeUnit, setTimeframeUnit] =
+		useState<TimeframeTypes.TimeframeUnit>("days");
+	const [endTimestamp, setEndTimestamp] = useState<number>(
+		new Date().getTime()
+	);
+	const [startTimestamp, setStartTimestamp] = useState<number>(
+		new Date(endTimestamp - 1000 * 60 * 60 * 24 * 30).getTime()
 	);
 	useEffect(() => {
 		switch (viewState) {
@@ -98,6 +111,39 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 	}, [viewState, strategy]);
 	useEffect(() => {
 		(async () => {
+			if (!strategy) {
+				return;
+			}
+			if (!(viewState === ViewState.view)) {
+				return;
+			}
+			const aggregateValues = await blackdogConfiguratorClient
+				.strategy()
+				.getAggregateValues(
+					{
+						id: strategy.id,
+					},
+					{
+						timeframeUnit,
+						startTimestamp,
+						endTimestamp,
+					}
+				);
+			const { data: aggregateValuesFetched } = aggregateValues;
+			const data = aggregateValuesFetched.map((aggregateValue) => {
+				return [
+					aggregateValue.timestamp,
+					bankersRounding(
+						aggregateValue.averageValueInCents / 100,
+						2
+					),
+				];
+			});
+			setSeries([{ data }]);
+		})();
+	}, [viewState, strategy, timeframeUnit, startTimestamp]);
+	useEffect(() => {
+		(async () => {
 			if (null !== strategyId) {
 				try {
 					const { data: strategyFetched } =
@@ -126,7 +172,7 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 		case ViewState.create:
 			return (
 				<>
-					<StrategyDetailForm
+					<StrategyDetailView
 						viewState={ViewState.create}
 						actionIcon={faX}
 						actionUrl={`/strategy`}
@@ -225,7 +271,7 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 						titleError={titleError}
 						strategyTemplateNameError={strategyTemplateNameError}
 						cashInCentsError={cashInCentsError}
-					></StrategyDetailForm>
+					></StrategyDetailView>
 				</>
 			);
 		case ViewState.edit:
@@ -233,7 +279,7 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 				return <></>;
 			}
 			return (
-				<StrategyDetailForm
+				<StrategyDetailView
 					viewState={ViewState.edit}
 					actionIcon={faX}
 					actionUrl={`/strategy/${strategy.id}`}
@@ -314,14 +360,14 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 					titleError={titleError}
 					strategyTemplateNameError={strategyTemplateNameError}
 					cashInCentsError={cashInCentsError}
-				></StrategyDetailForm>
+				></StrategyDetailView>
 			);
 		case ViewState.view:
 			if (!strategy) {
 				return <></>;
 			}
 			return (
-				<StrategyDetailForm
+				<StrategyDetailView
 					viewState={ViewState.view}
 					actionIcon={faPenToSquare}
 					actionUrl={`edit`}
@@ -329,7 +375,12 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 					title={strategy.title}
 					strategyTemplateName={strategy.strategyTemplateName}
 					cashInCents={strategy.cashInCents}
-				></StrategyDetailForm>
+					series={series}
+					brushChartMin={new Date(
+						startTimestamp + (endTimestamp - startTimestamp) * 0.6
+					).getTime()}
+					brushChartMax={endTimestamp}
+				></StrategyDetailView>
 			);
 		default:
 			return <>Default</>;

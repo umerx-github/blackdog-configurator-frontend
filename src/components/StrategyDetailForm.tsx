@@ -144,34 +144,6 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 					<button type="submit">Submit</button>
 				) : null}
 			</form>
-			{viewState === ViewState.view ? (
-				<>
-					<div className="flex gap-4 mt-4">
-						<BrushChart></BrushChart>
-					</div>
-					<div className="flex gap-4 mt-4">
-						<Link to="strategyTemplate" className="w-6/12 max-w-60">
-							<MediumButton
-								icon={faObjectUngroup}
-								text="Templates"
-							/>
-						</Link>
-						<Link to="strategyLogs" className="w-6/12 max-w-60">
-							<MediumButton icon={faRectangleList} text="Logs" />
-						</Link>
-					</div>
-				</>
-			) : null}
-			{actionIcon && actionUrl ? (
-				<div className="absolute bottom-4 right-4">
-					<Link to={actionUrl}>
-						<FontAwesomeIcon
-							icon={actionIcon}
-							className="text-4xl text-zinc-600 dark:text-zinc-400 transition-bg duration-1000"
-						/>
-					</Link>
-				</div>
-			) : null}
 		</>
 	);
 };
