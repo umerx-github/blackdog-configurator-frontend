@@ -38,6 +38,7 @@
 				"[yaml]": {
 					"editor.autoIndent": "advanced"
 				},
+				"redhat.telemetry.enabled": false,
 				"security.workspace.trust.untrustedFiles": "open",
 				"[javascript]": {
 					"editor.defaultFormatter": "vscode.typescript-language-features"
