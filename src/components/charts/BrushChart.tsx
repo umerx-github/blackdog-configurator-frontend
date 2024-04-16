@@ -10,6 +10,7 @@ interface BrushChartProps {
 	brushChartHeight?: string | number;
 	chartId?: string;
 	brushChartId?: string;
+	datetimeUTC?: boolean;
 }
 
 const BrushChart: React.FC<BrushChartProps> = ({
@@ -20,6 +21,7 @@ const BrushChart: React.FC<BrushChartProps> = ({
 	brushChartHeight = 130,
 	chartId = "chart",
 	brushChartId = "brush-chart",
+	datetimeUTC = false,
 }) => {
 	const options: ApexOptions = {
 		chart: {
@@ -46,6 +48,9 @@ const BrushChart: React.FC<BrushChartProps> = ({
 		},
 		xaxis: {
 			type: "datetime",
+			labels: {
+				datetimeUTC: datetimeUTC,
+			},
 		},
 	};
 
@@ -78,6 +83,9 @@ const BrushChart: React.FC<BrushChartProps> = ({
 			type: "datetime",
 			tooltip: {
 				enabled: false,
+			},
+			labels: {
+				datetimeUTC: datetimeUTC,
 			},
 		},
 		yaxis: {
