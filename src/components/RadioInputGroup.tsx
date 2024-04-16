@@ -35,10 +35,8 @@ const RadioInputGroup: React.FC<RadioInputGroupProps> = ({
 		defaultValue
 	);
 	const handleValueSelection = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.checked) {
-			setCurrentValue(e.target.value);
-			onChange(e.target.value);
-		}
+		setCurrentValue(e.target.value);
+		onChange(e.target.value);
 	};
 
 	return (

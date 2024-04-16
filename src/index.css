@@ -35,10 +35,6 @@ input[type="radio"]:checked + .radio-btn {
 	transition: background-color 0.3s ease;
 }
 
-.radio-btn:hover {
-	background-color: #e0e0e0;
-}
-
 .toggle-transform {
 	transform: translate(2rem, 0px);
 }
