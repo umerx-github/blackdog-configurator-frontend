@@ -1,8 +1,10 @@
+import { useState } from "react";
+
 interface RadioInputProps {
 	name: string;
 	value: string;
 	label: string;
-	isChecked: boolean;
+	selectedValue?: string;
 	isEditable?: boolean;
 	handleValueSelection: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -11,23 +13,43 @@ const RadioInput: React.FC<RadioInputProps> = ({
 	name,
 	value,
 	label,
-	isChecked,
+	selectedValue,
 	isEditable = false,
 	handleValueSelection,
 }) => {
+	const handleClick = () => {
+		if (isEditable) {
+			handleValueSelection({
+				target: {
+					value,
+					checked: selectedValue === value,
+				},
+			} as React.ChangeEvent<HTMLInputElement>);
+		}
+	};
+
 	return (
-		<label className="flex items-center">
+		<>
 			<input
 				type="radio"
 				name={name}
 				value={value}
-				checked={isChecked}
 				disabled={!isEditable}
-				onChange={handleValueSelection}
 				className="mr-2"
+				hidden
 			/>
-			<span>{label}</span>
-		</label>
+			<label
+				className="radio-label flex items-center"
+				onClick={handleClick}
+			>
+				<span
+					className={`radio-btn w-4 h-4 ${
+						selectedValue === value ? "bg-gray-900" : "bg-gray-200"
+					}`}
+				></span>
+				{label}
+			</label>
+		</>
 	);
 };
 

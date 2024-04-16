@@ -43,15 +43,14 @@ const RadioInputGroup: React.FC<RadioInputGroupProps> = ({
 
 	return (
 		<>
-			{console.log(currentValue)}
 			{inputs.map((input) => (
 				<RadioInput
 					key={input.value}
 					name={name}
 					value={input.value}
 					label={input.label}
-					isChecked={input.value === currentValue}
 					isEditable={isEditable}
+					selectedValue={currentValue}
 					handleValueSelection={handleValueSelection}
 				/>
 			))}
