@@ -35,23 +35,20 @@ const RadioInputGroup: React.FC<RadioInputGroupProps> = ({
 		defaultValue
 	);
 	const handleValueSelection = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.checked) {
-			setCurrentValue(e.target.value);
-			onChange(e.target.value);
-		}
+		setCurrentValue(e.target.value);
+		onChange(e.target.value);
 	};
 
 	return (
 		<>
-			{console.log(currentValue)}
 			{inputs.map((input) => (
 				<RadioInput
 					key={input.value}
 					name={name}
 					value={input.value}
 					label={input.label}
-					isChecked={input.value === currentValue}
 					isEditable={isEditable}
+					selectedValue={currentValue}
 					handleValueSelection={handleValueSelection}
 				/>
 			))}

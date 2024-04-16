@@ -7,6 +7,11 @@
 	min-height: 100vh;
 }
 
+input[type="radio"]:checked + .radio-btn {
+	background-color: #007bff;
+	color: white;
+}
+
 .orbitron {
 	font-family: "Orbitron", sans-serif;
 	font-optical-sizing: auto;
@@ -20,6 +25,14 @@
 
 .max-width-75 {
 	max-width: 75%;
+}
+
+.radio-btn {
+	display: inline-block;
+	cursor: pointer;
+	margin-right: 0.5rem;
+	border-radius: 10px;
+	transition: background-color 0.3s ease;
 }
 
 .toggle-transform {

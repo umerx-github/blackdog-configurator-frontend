@@ -8,6 +8,7 @@ import {
 } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import { AxiosError } from "axios";
 import RadioInputGroup from "../components/RadioInputGroup";
+import LogDate from "../components/LogDate";
 
 interface StrategyLogProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -106,27 +107,32 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 
 	return (
 		<>
-			<div className="max-w-md mx-auto bg-white rounded-lg border border-gray-200 shadow-md p-4">
+			<div className="max-w-md mx-auto bg-white border border-gray-200 p-4 mb-4">
 				<h2 className="mb-4 text-lg font-semibold text-gray-900">
-					Display Options
+					Options
 				</h2>
 				<div className="flex items-center mb-4">
-					<RadioInputGroup
-						name="timezone"
-						inputs={[
-							{
-								value: "localTime",
-								label: "Local Time",
-							},
-							{ value: "utc", label: "UTC" },
-							{ value: "both", label: "Both" },
-						]}
-						defaultValue={timezone}
-						isEditable={true}
-						onChange={(value) => {
-							setTimezone(value);
-						}}
-					/>
+					<div className="flex flex-col gap-2">
+						<span className="text-zinc-500 dark:text-zinc-400 text-sm">
+							Timezone
+						</span>
+						<RadioInputGroup
+							name="timezone"
+							inputs={[
+								{
+									value: "localTime",
+									label: "Local Time",
+								},
+								{ value: "utc", label: "UTC" },
+								{ value: "both", label: "Both" },
+							]}
+							defaultValue={timezone}
+							isEditable={true}
+							onChange={(value) => {
+								setTimezone(value);
+							}}
+						/>
+					</div>
 				</div>
 			</div>
 			<div className="container mx-auto">
@@ -167,58 +173,12 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 										{logs.map((log) => (
 											<tr key={log.id}>
 												<td className="px-6 py-4 whitespace-nowrap">
-													<div className="text-sm text-gray-900">
-														{new Date(
+													<LogDate
+														timestamp={
 															log.timestamp
-														).toLocaleDateString(
-															"en-GB",
-															{
-																day: "numeric",
-																month: "short",
-																year: "numeric",
-																timeZone: "UTC",
-															}
-														)}
-														<span>, </span>
-														{new Date(
-															log.timestamp
-														).toLocaleTimeString(
-															"en-US",
-															{
-																hour: "2-digit",
-																minute: "2-digit",
-																second: "2-digit",
-																timeZone: "UTC",
-																timeZoneName:
-																	"short",
-															}
-														)}
-													</div>
-													<div className="text-sm text-gray-500">
-														{new Date(
-															log.timestamp
-														).toLocaleDateString(
-															"en-GB",
-															{
-																day: "numeric",
-																month: "short",
-																year: "numeric",
-															}
-														)}
-														<span>, </span>
-														{new Date(
-															log.timestamp
-														).toLocaleTimeString(
-															"en-US",
-															{
-																hour: "2-digit",
-																minute: "2-digit",
-																second: "2-digit",
-																timeZoneName:
-																	"short",
-															}
-														)}
-													</div>
+														}
+														timezone={timezone}
+													/>
 												</td>
 												<td className="px-6 py-4 whitespace-nowrap">
 													<div className="text-sm text-gray-900">
