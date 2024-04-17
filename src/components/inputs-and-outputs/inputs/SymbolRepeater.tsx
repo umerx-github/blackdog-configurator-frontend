@@ -73,7 +73,9 @@ export default function SymbolRepeater({
 				setIsLoading(true);
 				setSymbolIds(items.map((item) => parseInt(item.itemId)));
 			}}
-			filterNewItemValue={(value) => value.toUpperCase()}
+			filterNewItemValue={(value) =>
+				value.replace(/[^a-zA-Z]/, "").toUpperCase()
+			}
 		/>
 	);
 }
