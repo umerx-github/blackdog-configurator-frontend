@@ -12,19 +12,27 @@ input[type="radio"]:checked + .radio-btn {
 	color: white;
 }
 
-.orbitron {
-	font-family: "Orbitron", sans-serif;
-	font-optical-sizing: auto;
-	font-style: normal;
-}
-
 .logo-dog {
 	font-size: 80%;
 	margin-bottom: 2px;
 }
 
+.max-2-lines {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .max-width-75 {
 	max-width: 75%;
+}
+
+.orbitron {
+	font-family: "Orbitron", sans-serif;
+	font-optical-sizing: auto;
+	font-style: normal;
 }
 
 .radio-btn {

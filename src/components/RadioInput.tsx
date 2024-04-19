@@ -43,8 +43,10 @@ const RadioInput: React.FC<RadioInputProps> = ({
 				onClick={handleClick}
 			>
 				<span
-					className={`radio-btn w-4 h-4 hover:bg-gray-300 dark:hover:bg-gray-600 ${
-						selectedValue === value ? "bg-gray-900" : "bg-gray-200"
+					className={`radio-btn w-4 h-4 ${
+						selectedValue === value
+							? "bg-gray-900"
+							: "bg-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
 					}`}
 				></span>
 				{label}
