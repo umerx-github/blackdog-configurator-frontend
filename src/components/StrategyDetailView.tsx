@@ -18,6 +18,7 @@ interface StrategyDetailViewProps {
 	status?: StrategyTypes.Status;
 	statusError?: string | null;
 	title?: string | null;
+	setTitle?: (title: string) => void;
 	titleError?: string | null;
 	strategyTemplateName?: StrategyTemplateTypes.StrategyTemplateName | null;
 	strategyTemplateNameError?: string | null;
@@ -41,7 +42,8 @@ const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({
 	generalError = null,
 	status = "active",
 	statusError = null,
-	title = "",
+	title = null,
+	setTitle = () => {},
 	titleError = null,
 	strategyTemplateName = null,
 	strategyTemplateNameError = null,
@@ -62,6 +64,7 @@ const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({
 				status={status}
 				statusError={statusError}
 				title={title}
+				setTitle={setTitle}
 				titleError={titleError}
 				strategyTemplateName={strategyTemplateName}
 				strategyTemplateNameError={strategyTemplateNameError}

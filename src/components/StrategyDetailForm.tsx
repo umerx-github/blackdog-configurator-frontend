@@ -26,6 +26,7 @@ interface StrategyDetailFormProps {
 	status?: StrategyTypes.Status;
 	statusError?: string | null;
 	title?: string | null;
+	setTitle?: (title: string) => void;
 	titleError?: string | null;
 	strategyTemplateName?: StrategyTemplateTypes.StrategyTemplateName | null;
 	strategyTemplateNameError?: string | null;
@@ -46,12 +47,13 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 	generalError = null,
 	status = "active",
 	statusError = null,
-	title = "",
+	title = null,
 	titleError = null,
 	strategyTemplateName = null,
 	strategyTemplateNameError = null,
 	cashInCents = null,
 	cashInCentsError = null,
+	setTitle = () => {},
 	onSubmit = () => {},
 	actionIcon = null,
 	actionUrl = null,
@@ -70,7 +72,7 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 					e.preventDefault();
 					onSubmit({
 						status: statusInternal,
-						title: titleInputRef.current?.value ?? "",
+						title: title,
 						strategyTemplateName:
 							strategyTemplateNameInputRef.current?.value ?? "",
 						cashInCents: cashInCentsInternal,
@@ -84,7 +86,8 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 						label="Title"
 						name="title"
 						ariaLabel="Title"
-						defaultValue={title}
+						value={title}
+						onChange={(newTitle) => setTitle(newTitle)}
 						ref={titleInputRef}
 						isEditable={viewState !== ViewState.view}
 					/>

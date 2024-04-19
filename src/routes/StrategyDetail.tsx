@@ -31,6 +31,7 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 		useState<StrategyTypes.StrategyResponseBodyDataInstance | null>(null);
 	const [generalError, setGeneralError] = useState<string | null>(null);
 	const [statusError, setStatusError] = useState<string | null>(null);
+	const [title, setTitle] = useState<string | undefined>(undefined);
 	const [titleError, setTitleError] = useState<string | null>(null);
 	const [strategyTemplateNameError, setTemplateError] = useState<
 		string | null
@@ -48,7 +49,13 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 		StrategyTypes.StrategyAggregateValuesGetManyResponseBodyDataInstance[]
 	>([]);
 	const [series, setSeries] = useState<ApexAxisChartSeries>([]);
-
+	useEffect(() => {
+		if (null === strategy) {
+			setTitle(undefined);
+			return;
+		}
+		setTitle(strategy.title);
+	}, [strategy]);
 	useEffect(() => {
 		switch (viewState) {
 			case ViewState.create:
@@ -180,6 +187,8 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 						viewState={ViewState.create}
 						actionIcon={faX}
 						actionUrl={`/strategy`}
+						title={title}
+						setTitle={setTitle}
 						onSubmit={(data) => {
 							(async () => {
 								try {
@@ -196,7 +205,7 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 										);
 									(async () => {
 										try {
-											const { data: strategiesCreated } =
+											const { data: thingy } =
 												await blackdogConfiguratorClient
 													.strategy()
 													.postMany([
@@ -204,13 +213,26 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 															...dataParsed,
 														},
 													]);
+											const strategiesCreated: StrategyTypes.StrategyResponseBodyDataInstance[] =
+												[
+													{
+														id: thingy[0].id,
+														status: "inactive",
+														title: "Test this title out!",
+														strategyTemplateName:
+															"NoOp",
+														cashInCents: 999,
+													},
+												];
 											if (strategiesCreated.length < 1) {
 												throw new Error(
 													"Strategy strategyTemplateName not created."
 												);
 											}
+											const newStrategy =
+												strategiesCreated[0];
 											navigate(
-												`/strategy/${strategiesCreated[0].id}`
+												`/strategy/${newStrategy.id}`
 											);
 										} catch (e) {
 											console.error({ e });
@@ -287,6 +309,8 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 					viewState={ViewState.edit}
 					actionIcon={faX}
 					actionUrl={`/strategy/${strategy.id}`}
+					title={title}
+					setTitle={setTitle}
 					onSubmit={(data) => {
 						(async () => {
 							try {
@@ -356,7 +380,6 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 						})();
 					}}
 					status={strategy.status}
-					title={strategy.title}
 					strategyTemplateName={strategy.strategyTemplateName}
 					cashInCents={strategy.cashInCents}
 					generalError={generalError}
@@ -396,7 +419,7 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 					actionIcon={faPenToSquare}
 					actionUrl={`edit`}
 					status={strategy.status}
-					title={strategy.title}
+					title={title}
 					strategyTemplateName={strategy.strategyTemplateName}
 					cashInCents={strategy.cashInCents}
 					series={series}

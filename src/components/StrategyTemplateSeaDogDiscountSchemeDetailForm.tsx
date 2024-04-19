@@ -162,10 +162,10 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						name="alpacaAPIKey"
 						ariaLabel="Alpaca API Key"
 						id="alpacaAPIKey"
-						defaultValue={alpacaAPIKey}
+						value={alpacaAPIKey}
 						isEditable={viewState !== ViewState.view}
 						error={alpacaAPIKeyError ?? ""}
-						OnChange={setAlpacaAPIKeyInputValue}
+						onChange={setAlpacaAPIKeyInputValue}
 					/>
 					<PasswordInput
 						label="Alpaca API Secret"
