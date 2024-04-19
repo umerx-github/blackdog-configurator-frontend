@@ -54,6 +54,8 @@ export default function DragAndDropRepeater({
 			<div>
 				<CreatableSelect
 					value={{ label: newItemValue, value: newItemId }}
+					// Using optional inputValue prop makes this a controlled input
+					inputValue={newItemValue}
 					options={availableItems.map((option) => {
 						return {
 							label: option.itemValue,

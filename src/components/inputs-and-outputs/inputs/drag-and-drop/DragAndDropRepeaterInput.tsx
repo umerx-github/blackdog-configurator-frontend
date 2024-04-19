@@ -15,6 +15,7 @@ export default function DragAndDropRepeaterInput({
 	onAdd = () => {},
 	onDelete = () => {},
 	onCreate = () => {},
+	filterNewItemValue = (value: string) => value,
 }: {
 	droppableId: string;
 	selectedItems?: Item[];
@@ -24,6 +25,7 @@ export default function DragAndDropRepeaterInput({
 	onAdd?: (item: Item) => void;
 	onDelete?: (item: Item) => void;
 	onCreate?: (inputValue: string) => void;
+	filterNewItemValue?: (value: string) => string;
 }) {
 	const [newItemId, setNewItemId] = useState("");
 	const [newItemValue, setNewItemValue] = useState("");
@@ -38,13 +40,14 @@ export default function DragAndDropRepeaterInput({
 			newItemValue={newItemValue}
 			isLoading={isLoading}
 			onNewItemValueChange={(newItemValue) => {
-				const newItem = availableItems.find(
-					(option) => option.itemId === newItemValue
-				);
-				if (newItem) {
-					setNewItemId(newItem.itemId);
-					setNewItemValue(newItem.itemValue);
-				}
+				const filteredValue = filterNewItemValue(newItemValue);
+				setNewItemValue(filteredValue);
+				// THIS DOESN'T SEEM TO DO ANYTHING - IT NEVER EXECUTES
+				// if (newItem) {
+				// 	console.log("found new item");
+				// 	setNewItemId(newItem.itemId);
+				// 	setNewItemValue(newItem.itemValue);
+				// }
 			}}
 			onReorder={(items) => {
 				onReorder(items);
