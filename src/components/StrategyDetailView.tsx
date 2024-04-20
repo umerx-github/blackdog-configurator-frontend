@@ -12,24 +12,12 @@ import { faObjectUngroup } from "@fortawesome/free-solid-svg-icons/faObjectUngro
 import MediumButton from "./MediumButton";
 import BrushChart from "./charts/BrushChart";
 import StrategyDetailForm from "./StrategyDetailForm";
+import { StrategyDetailFormModel } from "../interfaces/strategyDetail";
 interface StrategyDetailViewProps {
-	viewState?: ViewState;
-	generalError?: string | null;
-	status?: StrategyTypes.Status;
-	statusError?: string | null;
-	title?: string | null;
-	setTitle?: (title: string) => void;
-	titleError?: string | null;
-	strategyTemplateName?: StrategyTemplateTypes.StrategyTemplateName | null;
-	strategyTemplateNameError?: string | null;
-	cashInCents?: number | null;
-	cashInCentsError?: string | null;
-	onSubmit?: (data: {
-		status: string | null;
-		title: string | null;
-		strategyTemplateName: string | null;
-		cashInCents: number | null;
-	}) => void;
+	viewState: ViewState;
+	model: StrategyDetailFormModel;
+	onChange?: (model: StrategyDetailFormModel) => void;
+	onSubmit?: (model: StrategyDetailFormModel) => void;
 	actionIcon?: IconDefinition | null;
 	actionUrl?: string | null;
 	series?: ApexAxisChartSeries | ApexNonAxisChartSeries;
@@ -38,17 +26,9 @@ interface StrategyDetailViewProps {
 }
 
 const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({
-	viewState = ViewState.view,
-	generalError = null,
-	status = "active",
-	statusError = null,
-	title = null,
-	setTitle = () => {},
-	titleError = null,
-	strategyTemplateName = null,
-	strategyTemplateNameError = null,
-	cashInCents = null,
-	cashInCentsError = null,
+	viewState,
+	model,
+	onChange = () => {},
 	onSubmit = () => {},
 	actionIcon = null,
 	actionUrl = null,
@@ -60,19 +40,9 @@ const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({
 		<>
 			<StrategyDetailForm
 				viewState={viewState}
-				generalError={generalError}
-				status={status}
-				statusError={statusError}
-				title={title}
-				setTitle={setTitle}
-				titleError={titleError}
-				strategyTemplateName={strategyTemplateName}
-				strategyTemplateNameError={strategyTemplateNameError}
-				cashInCents={cashInCents}
-				cashInCentsError={cashInCentsError}
+				model={model}
 				onSubmit={onSubmit}
-				actionIcon={actionIcon}
-				actionUrl={actionUrl}
+				onChange={onChange}
 			></StrategyDetailForm>
 			{viewState === ViewState.view ? (
 				<>
