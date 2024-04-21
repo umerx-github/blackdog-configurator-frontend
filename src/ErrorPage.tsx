@@ -1,3 +1,4 @@
+import { Client } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import { useRouteError, isRouteErrorResponse } from "react-router-dom";
 
 // TODO: Implement a better error page
@@ -11,6 +12,16 @@ const ErrorPage: React.FC = () => {
 				<h1>{error.status}</h1>
 				<p>
 					<i>{error.statusText}</i>
+				</p>
+			</div>
+		);
+	}
+	if (error instanceof Client.ClientResponseError) {
+		return (
+			<div id="error-page">
+				<h1>{error.statusCode}</h1>
+				<p>
+					<i>{error.message}</i>
 				</p>
 			</div>
 		);
