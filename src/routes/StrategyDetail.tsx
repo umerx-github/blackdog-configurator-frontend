@@ -16,6 +16,17 @@ import BreadcrumbsContext from "../components/BreadcrumbsContext";
 import { bankersRounding } from "../utils";
 import { StrategyDetailFormModel } from "../interfaces/strategyDetail";
 
+function convertStrategyDetailFormModelToRequestBodyDataInstanceProperties(
+	model: StrategyDetailFormModel
+) {
+	return {
+		status: model.status,
+		title: model.title,
+		strategyTemplateName: model.strategyTemplateName,
+		cashInCents: model.cashInCents,
+	};
+}
+
 interface StrategyDetailProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
 	viewState: ViewState;
@@ -215,7 +226,6 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 		setSeries([{ data }]);
 	}, [aggregateValues]);
 	useEffect(() => {
-		console.log("fetching strategy", strategyId, strategy);
 		if (null === strategyId) {
 			return;
 		}
@@ -260,13 +270,9 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 						onSubmit={getValidationWrappedSubmitter(async () => {
 							const dataParsed =
 								StrategyTypes.StrategyPostSingleRequestBodyFromRaw(
-									{
-										status: model.status,
-										title: model.title,
-										strategyTemplateName:
-											model.strategyTemplateName,
-										cashInCents: model.cashInCents,
-									}
+									convertStrategyDetailFormModelToRequestBodyDataInstanceProperties(
+										model
+									)
 								);
 
 							const { data: strategiesCreated } =
@@ -307,16 +313,10 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 					onSubmit={getValidationWrappedSubmitter(async () => {
 						const dataParsed =
 							StrategyTypes.StrategyPatchSingleRequestBodyFromRaw(
-								{
-									status: model.status,
-									title: model.title,
-									strategyTemplateName:
-										model.strategyTemplateName,
-									cashInCents: model.cashInCents,
-								}
+								convertStrategyDetailFormModelToRequestBodyDataInstanceProperties(
+									model
+								)
 							);
-						console.log({ dataParsed });
-
 						const { data: strategyCreated } =
 							await blackdogConfiguratorClient
 								.strategy()
