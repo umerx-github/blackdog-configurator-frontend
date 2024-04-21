@@ -104,7 +104,7 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 								cashInCents,
 							})
 						}
-						defaultValueInCents={model.cashInCents ?? undefined}
+						valueInCents={model.cashInCents ?? undefined}
 					/>
 				</div>
 				<div className="form-toggles mb-4 w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">

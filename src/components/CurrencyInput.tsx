@@ -7,7 +7,7 @@ interface CurrencyInputProps {
 	name: string;
 	ariaLabel?: string;
 	placeholder?: string;
-	defaultValueInCents?: number;
+	valueInCents?: number;
 	isEditable?: boolean;
 	onChange?: (valueInCents: number | null) => void;
 	max?: number;
@@ -20,7 +20,7 @@ interface CurrencyInputProps {
  * @param name - The name of the input (required)
  * @param ariaLabel - The aria-label for the input (required)
  * @param placeholder - The placeholder for the input (optional)
- * @param defaultValue - The default value for the input (optional)
+ * @param value - The default value for the input (optional)
  * @param isEditable - Whether the input is editable (optional)
  * @returns A text input with a label
  */
@@ -30,7 +30,7 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 	name,
 	ariaLabel,
 	placeholder,
-	defaultValueInCents,
+	valueInCents,
 	isEditable = false,
 	onChange = () => {},
 	precision,
@@ -68,9 +68,9 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 						scale={2}
 						aria-label={ariaLabel}
 						placeholder={placeholder}
-						defaultValue={
-							defaultValueInCents !== undefined
-								? bankersRounding(defaultValueInCents / 100)
+						value={
+							valueInCents !== undefined
+								? bankersRounding(valueInCents / 100)
 								: null
 						}
 						className={`bg-inherit outline-none ${

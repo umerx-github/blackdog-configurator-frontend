@@ -193,7 +193,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						ariaLabel="Buy At Percentile"
 						id="buyAtPercentile"
 						placeholder={"0.00"}
-						defaultValue={buyAtPercentile}
+						value={buyAtPercentile}
 						precision={15}
 						isEditable={viewState !== ViewState.view}
 						isPercentage={true}
@@ -207,7 +207,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						id="sellAtPercentile"
 						placeholder={"0.00"}
 						precision={15}
-						defaultValue={sellAtPercentile}
+						value={sellAtPercentile}
 						isEditable={viewState !== ViewState.view}
 						isPercentage={true}
 						error={sellAtPercentileError ?? ""}
@@ -220,7 +220,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						id="minimumGainPercent"
 						placeholder={"0.00"}
 						precision={15}
-						defaultValue={minimumGainPercent}
+						value={minimumGainPercent}
 						isEditable={viewState !== ViewState.view}
 						isPercentage={true}
 						error={minimumGainPercentError ?? ""}
@@ -231,7 +231,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						name="timeframeInDays"
 						ariaLabel="Timeframe In Days"
 						id="timeframeInDays"
-						defaultValue={timeframeInDays}
+						value={timeframeInDays}
 						precision={15} // Becuase JavaScript Number precision is 15
 						scale={0}
 						isEditable={viewState !== ViewState.view}

@@ -4,6 +4,7 @@ import { faPenToSquare } from "@fortawesome/free-solid-svg-icons/faPenToSquare";
 import { faX } from "@fortawesome/free-solid-svg-icons/faX";
 import {
 	Strategy as StrategyTypes,
+	StrategyTemplate as StrategyTemplateTypes,
 	Timeframe as TimeframeTypes,
 } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import { ViewState } from "../interfaces/viewState";
@@ -31,7 +32,11 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 	const navigate = useNavigate();
 	const [strategy, setStrategy] =
 		useState<StrategyTypes.StrategyResponseBodyDataInstance | null>(null);
-	const [model, setModel] = useState<StrategyDetailFormModel>({});
+	const [model, setModel] = useState<StrategyDetailFormModel>({
+		status: StrategyTypes.StatusSchema.Enum.active,
+		strategyTemplateName:
+			StrategyTemplateTypes.StrategyTemplateNameSchema.Enum.NoOp,
+	});
 	const [timeframeUnit, setTimeframeUnit] =
 		useState<TimeframeTypes.TimeframeUnit>("days");
 	// 30 days: new Date(endTimestamp - 1000 * 60 * 60 * 24 * 30).getTime()
@@ -42,6 +47,64 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 		StrategyTypes.StrategyAggregateValuesGetManyResponseBodyDataInstance[]
 	>([]);
 	const [series, setSeries] = useState<ApexAxisChartSeries>([]);
+	function getValidationWrappedSubmitter(
+		submitter: () => Promise<StrategyTypes.StrategyResponseBodyDataInstance>
+	) {
+		return () => {
+			(async () => {
+				let newModel: StrategyDetailFormModel = {
+					...model,
+					generalError: null,
+					statusError: null,
+					titleError: null,
+					strategyTemplateNameError: null,
+					cashInCentsError: null,
+				};
+				try {
+					const newStrategy = await submitter();
+					newModel = {
+						...newModel,
+						...newStrategy,
+					};
+					navigate(`/strategy/${newStrategy.id}`);
+				} catch (e) {
+					console.error({ e });
+					if (e instanceof ZodError) {
+						let generalErrors: string[] = [];
+						e.issues.forEach((issue) => {
+							switch (issue.path[0]) {
+								case "status":
+									newModel.statusError = issue.message;
+									break;
+								case "title":
+									newModel.titleError = issue.message;
+									break;
+								case "strategyTemplateName":
+									newModel.strategyTemplateNameError =
+										issue.message;
+									break;
+								case "cashInCents":
+									newModel.cashInCentsError = issue.message;
+									break;
+								default:
+									generalErrors.push(
+										`${issue.path} ${issue.message}`
+									);
+									break;
+							}
+						});
+						if (generalErrors.length > 0) {
+							newModel.generalError = generalErrors.join(" ");
+						}
+					} else if (typeof e === "string" || e instanceof String) {
+						newModel.generalError = e.toString();
+					}
+				} finally {
+					setModel(newModel);
+				}
+			})();
+		};
+	}
 	useEffect(() => {
 		if (!strategy) {
 			return;
@@ -194,98 +257,34 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 								...newModel,
 							});
 						}}
-						onSubmit={(data) => {
-							(async () => {
-								let newModel: StrategyDetailFormModel = {
-									...model,
-									generalError: null,
-									statusError: null,
-									titleError: null,
-									strategyTemplateNameError: null,
-									cashInCentsError: null,
-								};
-								try {
-									const dataParsed =
-										StrategyTypes.StrategyPostSingleRequestBodyFromRaw(
-											{
-												...data,
-											}
-										);
+						onSubmit={getValidationWrappedSubmitter(async () => {
+							const dataParsed =
+								StrategyTypes.StrategyPostSingleRequestBodyFromRaw(
+									{
+										status: model.status,
+										title: model.title,
+										strategyTemplateName:
+											model.strategyTemplateName,
+										cashInCents: model.cashInCents,
+									}
+								);
 
-									const { data: strategiesCreated } =
-										await blackdogConfiguratorClient
-											.strategy()
-											.postMany([
-												{
-													...dataParsed,
-												},
-											]);
-									// const strategiesCreated: StrategyTypes.StrategyResponseBodyDataInstance[] =
-									// 	[
-									// 		{
-									// 			id: thingy[0].id,
-									// 			status: "inactive",
-									// 			title: "Test this title out!",
-									// 			strategyTemplateName: "NoOp",
-									// 			cashInCents: 999,
-									// 		},
-									// 	];
-									if (strategiesCreated.length < 1) {
-										throw new Error(
-											"Strategy strategyTemplateName not created."
-										);
-									}
-									const newStrategy = strategiesCreated[0];
-									newModel = {
-										...newModel,
-										...newStrategy,
-									};
-									navigate(`/strategy/${newStrategy.id}`);
-								} catch (e) {
-									if (e instanceof ZodError) {
-										let generalErrors: string[] = [];
-										e.issues.forEach((issue) => {
-											switch (issue.path[0]) {
-												case "status":
-													newModel.statusError =
-														issue.message;
-													break;
-												case "title":
-													newModel.titleError =
-														issue.message;
-													break;
-												case "strategyTemplateName":
-													newModel.strategyTemplateNameError =
-														issue.message;
-													break;
-												case "cashInCents":
-													newModel.cashInCentsError =
-														issue.message;
-													break;
-												default:
-													generalErrors.push(
-														`${issue.path} ${issue.message}`
-													);
-													break;
-											}
-										});
-										console.error({ generalErrors });
-										if (generalErrors.length > 0) {
-											newModel.generalError =
-												generalErrors.join(" ");
-										}
-									} else if (
-										typeof e === "string" ||
-										e instanceof String
-									) {
-										console.error({ e });
-										newModel.generalError = e.toString();
-									}
-								} finally {
-									setModel(newModel);
-								}
-							})();
-						}}
+							const { data: strategiesCreated } =
+								await blackdogConfiguratorClient
+									.strategy()
+									.postMany([
+										{
+											...dataParsed,
+										},
+									]);
+							if (strategiesCreated.length < 1) {
+								throw new Error(
+									"Strategy strategyTemplateName not created."
+								);
+							}
+							const newStrategy = strategiesCreated[0];
+							return newStrategy;
+						})}
 					></StrategyDetailView>
 				</>
 			);
@@ -305,84 +304,31 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 							...newModel,
 						});
 					}}
-					onSubmit={(data) => {
-						(async () => {
-							let newModel: StrategyDetailFormModel = {
-								...model,
-								generalError: null,
-								statusError: null,
-								titleError: null,
-								strategyTemplateNameError: null,
-								cashInCentsError: null,
-							};
-							try {
-								const dataParsed =
-									StrategyTypes.StrategyPostSingleRequestBodyFromRaw(
-										{
-											...data,
-										}
-									);
-
-								const { data: strategyCreated } =
-									await blackdogConfiguratorClient
-										.strategy()
-										.patchSingle(
-											{ id: strategy.id },
-											{
-												...dataParsed,
-											}
-										);
-								const newStrategy = strategyCreated;
-								newModel = {
-									...newModel,
-									...newStrategy,
-								};
-								navigate(`/strategy/${newStrategy.id}`);
-							} catch (e) {
-								if (e instanceof ZodError) {
-									let generalErrors: string[] = [];
-									e.issues.forEach((issue) => {
-										switch (issue.path[0]) {
-											case "status":
-												newModel.statusError =
-													issue.message;
-												break;
-											case "title":
-												newModel.titleError =
-													issue.message;
-												break;
-											case "strategyTemplateName":
-												newModel.strategyTemplateNameError =
-													issue.message;
-												break;
-											case "cashInCents":
-												newModel.cashInCentsError =
-													issue.message;
-												break;
-											default:
-												generalErrors.push(
-													`${issue.path} ${issue.message}`
-												);
-												break;
-										}
-									});
-									console.error({ generalErrors });
-									if (generalErrors.length > 0) {
-										newModel.generalError =
-											generalErrors.join(" ");
-									}
-								} else if (
-									typeof e === "string" ||
-									e instanceof String
-								) {
-									console.error({ e });
-									newModel.generalError = e.toString();
+					onSubmit={getValidationWrappedSubmitter(async () => {
+						const dataParsed =
+							StrategyTypes.StrategyPatchSingleRequestBodyFromRaw(
+								{
+									status: model.status,
+									title: model.title,
+									strategyTemplateName:
+										model.strategyTemplateName,
+									cashInCents: model.cashInCents,
 								}
-							} finally {
-								setModel(newModel);
-							}
-						})();
-					}}
+							);
+						console.log({ dataParsed });
+
+						const { data: strategyCreated } =
+							await blackdogConfiguratorClient
+								.strategy()
+								.patchSingle(
+									{ id: strategy.id },
+									{
+										...dataParsed,
+									}
+								);
+						const newStrategy = strategyCreated;
+						return newStrategy;
+					})}
 				></StrategyDetailView>
 			);
 		case ViewState.view:
