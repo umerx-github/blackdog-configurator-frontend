@@ -3,6 +3,7 @@ import { ViewState } from "../interfaces/viewState";
 import {
 	Strategy as StrategyTypes,
 	StrategyTemplate as StrategyTemplateTypes,
+	StrategyTemplate,
 } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import TextInput from "./TextInput";
 import DropdownInput from "./DropdownInput";
@@ -14,6 +15,7 @@ import {
 } from "../utils";
 import ToggleInnerCheckAndX from "./ToggleInnerCheckAndX";
 import { StrategyDetailFormModel } from "../interfaces/strategyDetail";
+import { SourceTextModule } from "vm";
 
 interface StrategyDetailFormProps {
 	viewState: ViewState;
@@ -63,7 +65,27 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 								.options
 						}
 						placeholder="Select a strategyTemplateName"
-						defaultValue={model.strategyTemplateName}
+						value={model.strategyTemplateName}
+						onChange={(newStrategyTemplateName) => {
+							// validate that newStrategyTemplateName is a valid option from the schema
+							try {
+								const strategyTemplateName =
+									StrategyTemplateTypes.StrategyTemplateNameSchema.parse(
+										newStrategyTemplateName
+									);
+								onChange({
+									...model,
+									strategyTemplateName,
+								});
+							} catch (e) {
+								onChange({
+									...model,
+									strategyTemplateName: null,
+									strategyTemplateNameError:
+										"Invalid strategyTemplateName",
+								});
+							}
+						}}
 						isEditable={viewState !== ViewState.view}
 					/>
 					{model.cashInCentsError ? (
