@@ -3,6 +3,7 @@ import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-conf
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons/faPenToSquare";
 import { faX } from "@fortawesome/free-solid-svg-icons/faX";
 import {
+	Response as ResponseTypes,
 	Strategy as StrategyTypes,
 	StrategyTemplate as StrategyTemplateTypes,
 	Timeframe as TimeframeTypes,
@@ -25,6 +26,36 @@ function convertStrategyDetailFormModelToRequestBodyDataInstanceProperties(
 		strategyTemplateName: model.strategyTemplateName,
 		cashInCents: model.cashInCents,
 	};
+}
+
+function appendIssuesToModel(
+	issues: ResponseTypes.ResponseIssue[],
+	model: StrategyDetailFormModel
+) {
+	let generalErrors: string[] = [];
+	issues.forEach((issue) => {
+		switch (issue.path[issue.path.length - 1]) {
+			case "status":
+				model.statusError = issue.message;
+				break;
+			case "title":
+				model.titleError = issue.message;
+				break;
+			case "strategyTemplateName":
+				model.strategyTemplateNameError = issue.message;
+				break;
+			case "cashInCents":
+				model.cashInCentsError = issue.message;
+				break;
+			default:
+				generalErrors.push(`${issue.path} ${issue.message}`);
+				break;
+		}
+	});
+	if (generalErrors.length > 0) {
+		model.generalError = generalErrors.join(" ");
+	}
+	return model;
 }
 
 interface StrategyDetailProps {
@@ -81,31 +112,23 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 				} catch (e) {
 					console.error({ e });
 					if (e instanceof ZodError) {
-						let generalErrors: string[] = [];
-						e.issues.forEach((issue) => {
-							switch (issue.path[0]) {
-								case "status":
-									newModel.statusError = issue.message;
-									break;
-								case "title":
-									newModel.titleError = issue.message;
-									break;
-								case "strategyTemplateName":
-									newModel.strategyTemplateNameError =
-										issue.message;
-									break;
-								case "cashInCents":
-									newModel.cashInCentsError = issue.message;
-									break;
-								default:
-									generalErrors.push(
-										`${issue.path} ${issue.message}`
-									);
-									break;
+						appendIssuesToModel(e.issues, newModel);
+					} else if (e instanceof AxiosError) {
+						try {
+							const response =
+								ResponseTypes.ResponseBaseErrorExpected.parse(
+									e?.response?.data
+								);
+							appendIssuesToModel(response.issues, newModel);
+						} catch (e) {
+							console.error({ e });
+							if (typeof e === "string" || e instanceof String) {
+								newModel.generalError = e.toString();
+							} else {
+								setError(
+									`🐾 Oops! Our servers are having a bit of a "ruff" day and couldn't fetch your request. Please try again later or check your input. 🐾`
+								);
 							}
-						});
-						if (generalErrors.length > 0) {
-							newModel.generalError = generalErrors.join(" ");
 						}
 					} else if (typeof e === "string" || e instanceof String) {
 						newModel.generalError = e.toString();
