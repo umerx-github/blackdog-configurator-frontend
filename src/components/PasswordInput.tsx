@@ -11,7 +11,7 @@ interface PasswordInputProps {
 	defaultValue?: string;
 	isEditable?: boolean;
 	error?: string;
-	OnChange?: (value: string) => void;
+	onChange?: (value: string) => void;
 }
 
 /**
@@ -36,12 +36,12 @@ const PasswordInput = forwardRef<HTMLInputElement | null, PasswordInputProps>(
 			defaultValue = "",
 			isEditable = false,
 			error,
-			OnChange = () => {},
+			onChange = () => {},
 		},
 		ref
 	) {
 		const handleValueUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
-			OnChange(e.target.value);
+			onChange(e.target.value);
 		};
 		const [showPassword, setShowPassword] = useState(false);
 		function toggleShowPassword(e: React.MouseEvent<HTMLButtonElement>) {
