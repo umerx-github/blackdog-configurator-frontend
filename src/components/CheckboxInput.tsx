@@ -6,7 +6,7 @@ interface CheckboxInputProps {
 	label: string;
 	name: string;
 	ariaLabel: string;
-	defaultChecked: boolean;
+	checked: boolean;
 	id: string;
 	placeholder?: string;
 	isEditable?: boolean;
@@ -18,7 +18,7 @@ interface CheckboxInputProps {
  * @param label - The label for the input (required)
  * @param name - The name of the input (required)
  * @param ariaLabel - The aria-label for the input (required)
- * @param defaultChecked - The default value for the input (required)
+ * @param checked - The default value for the input (required)
  * @param id - The id for the input (required)
  * @param placeholder - The placeholder for the input (optional)
  * @param isEditable - Whether the input is editable (optional)
@@ -31,17 +31,15 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
 	label,
 	name,
 	ariaLabel,
-	defaultChecked,
+	checked,
 	id,
 	placeholder,
 	isEditable = false,
 	error,
 	onChange = () => {},
 }) => {
-	const [isChecked, setIsChecked] = useState(defaultChecked);
 	const toggleCheckbox = () => {
-		setIsChecked(!isChecked);
-		onChange(isChecked);
+		onChange(!checked);
 	};
 
 	return (
@@ -64,7 +62,7 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
 						type="checkbox"
 						name={name}
 						aria-label={ariaLabel}
-						checked={isChecked}
+						checked={checked}
 						onChange={toggleCheckbox}
 						hidden
 						id={id}
@@ -73,7 +71,7 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
 						disabled={!isEditable}
 					/>
 					<label htmlFor={id} className="">
-						{isChecked && (
+						{checked && (
 							<span className="checkmark">
 								<i className="">
 									<FontAwesomeIcon

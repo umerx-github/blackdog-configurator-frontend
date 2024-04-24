@@ -90,19 +90,19 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						value={model.alpacaAPIKey}
 						isEditable={viewState !== ViewState.view}
 						error={model.alpacaAPIKeyError ?? ""}
-						onChange={(value) =>
+						onChange={(value) => {
 							onChange({
 								...model,
 								alpacaAPIKey: value,
-							})
-						}
+							});
+						}}
 					/>
 					<PasswordInput
 						label="Alpaca API Secret"
 						name="alpacaAPISecret"
 						ariaLabel="Alpaca API Secret"
 						id="alpacaAPISecret"
-						defaultValue={model.alpacaAPISecret}
+						value={model.alpacaAPISecret}
 						isEditable={viewState !== ViewState.view}
 						error={model.alpacaAPISecretError ?? ""}
 						onChange={(value) => {
@@ -116,7 +116,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						label="Alpaca API Paper"
 						name="alpacaAPIPaper"
 						ariaLabel="Alpaca API Paper"
-						defaultChecked={model.alpacaAPIPaper ?? true}
+						checked={model.alpacaAPIPaper ?? true}
 						id="alpacaAPIPaper"
 						error={model.alpacaAPIPaperError ?? ""}
 						isEditable={viewState !== ViewState.view}

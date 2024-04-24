@@ -17,11 +17,13 @@ export default function SymbolRepeater({
 	>([]);
 	useEffect(() => {
 		(async () => {
+			const query: SymbolTypes.SymbolGetManyRequestQuery = {};
+			if (symbolIds.length > 0) {
+				query.ids = symbolIds;
+			}
 			const { data: symbols } = await blackdogConfiguratorClient
 				.symbol()
-				.getMany({
-					ids: symbolIds,
-				});
+				.getMany(query);
 			setSymbols(symbols);
 			setIsLoading(false);
 		})();
