@@ -9,6 +9,8 @@ import {
 import { AxiosError } from "axios";
 import RadioInputGroup from "../components/RadioInputGroup";
 import LogDate from "../components/LogDate";
+import LogLevel from "../components/LogLevel";
+import CopyButton from "../components/CopyButton";
 
 interface StrategyLogProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -107,8 +109,8 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 
 	return (
 		<>
-			<div className="max-w-md mx-auto bg-white border border-gray-200 p-4 mb-4">
-				<h2 className="mb-4 text-lg font-semibold text-gray-900">
+			<div className="max-w-md mx-auto bg-white border border-zinc-200 p-4 mb-4">
+				<h2 className="mb-4 text-lg font-semibold text-zinc-900">
 					Options
 				</h2>
 				<div className="flex items-center mb-4">
@@ -139,37 +141,37 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 				<div className="flex flex-col">
 					<div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
 						<div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-							<div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-								<table className="min-w-full divide-y divide-gray-200">
-									<thead className="bg-gray-50">
+							<div className="border border-zinc-200 overflow-hidden border-b border-zinc-200">
+								<table className="min-w-full divide-y divide-zinc-200">
+									<thead className="bg-zinc-50">
 										<tr>
 											<th
 												scope="col"
-												className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+												className="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider"
 											>
 												Timestamp
 											</th>
 											<th
 												scope="col"
-												className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+												className="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider"
 											>
 												Level
 											</th>
 											<th
 												scope="col"
-												className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+												className="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider"
 											>
 												Message
 											</th>
 											<th
 												scope="col"
-												className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+												className="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider"
 											>
 												Raw Data
 											</th>
 										</tr>
 									</thead>
-									<tbody className="bg-white divide-y divide-gray-200">
+									<tbody className="bg-white divide-y divide-zinc-200">
 										{logs.map((log) => (
 											<tr key={log.id}>
 												<td className="px-6 py-4 whitespace-nowrap">
@@ -181,19 +183,37 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 													/>
 												</td>
 												<td className="px-6 py-4 whitespace-nowrap">
-													<div className="text-sm text-gray-900">
-														{log.level}
+													<div className="text-sm text-zinc-900">
+														<LogLevel
+															level={log.level}
+														/>
 													</div>
 												</td>
-												<td className="px-6 py-4 whitespace-nowrap">
-													<div className="text-sm text-gray-900">
-														{log.message}
+												<td className="px-6 py-4">
+													<div className="flex">
+														<div className="text-sm text-zinc-900 max-2-lines">
+															{log.message}
+														</div>
+														<CopyButton
+															text={log.message}
+														/>
 													</div>
 												</td>
-												<td className="px-6 py-4 text-sm text-gray-500">
-													{JSON.stringify(
-														log?.data?.rawData
-													)}
+												<td className="px-6 py-4 text-sm">
+													<div className="flex">
+														<div className="max-2-lines">
+															{JSON.stringify(
+																log?.data
+																	?.rawData
+															)}
+														</div>
+														<CopyButton
+															text={JSON.stringify(
+																log?.data
+																	?.rawData
+															)}
+														/>
+													</div>
 												</td>
 											</tr>
 										))}
