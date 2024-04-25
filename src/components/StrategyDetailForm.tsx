@@ -3,10 +3,8 @@ import { ViewState } from "../interfaces/viewState";
 import {
 	Strategy as StrategyTypes,
 	StrategyTemplate as StrategyTemplateTypes,
+	StrategyTemplate,
 } from "@umerx/umerx-blackdog-configurator-types-typescript";
-import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import TextInput from "./TextInput";
 import DropdownInput from "./DropdownInput";
 import CurrencyInput from "./CurrencyInput";
@@ -16,80 +14,49 @@ import {
 	translateToggleStateToStrategyStatus,
 } from "../utils";
 import ToggleInnerCheckAndX from "./ToggleInnerCheckAndX";
-import { faRectangleList } from "@fortawesome/free-solid-svg-icons/faRectangleList";
-import { faObjectUngroup } from "@fortawesome/free-solid-svg-icons/faObjectUngroup";
-import MediumButton from "./MediumButton";
-import BrushChart from "./charts/BrushChart";
+import { StrategyDetailFormModel } from "../interfaces/strategyDetail";
+import { SourceTextModule } from "vm";
+
 interface StrategyDetailFormProps {
-	viewState?: ViewState;
-	generalError?: string | null;
-	status?: StrategyTypes.Status;
-	statusError?: string | null;
-	title?: string | null;
-	titleError?: string | null;
-	strategyTemplateName?: StrategyTemplateTypes.StrategyTemplateName | null;
-	strategyTemplateNameError?: string | null;
-	cashInCents?: number | null;
-	cashInCentsError?: string | null;
-	onSubmit?: (data: {
-		status: string | null;
-		title: string | null;
-		strategyTemplateName: string | null;
-		cashInCents: number | null;
-	}) => void;
-	actionIcon?: IconDefinition | null;
-	actionUrl?: string | null;
+	viewState: ViewState;
+	model: StrategyDetailFormModel;
+	onChange?: (model: StrategyDetailFormModel) => void;
+	onSubmit?: (model: StrategyDetailFormModel) => void;
 }
-
+const defaultStatus = StrategyTypes.StatusSchema.Enum.active;
 const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
-	viewState = ViewState.view,
-	generalError = null,
-	status = "active",
-	statusError = null,
-	title = "",
-	titleError = null,
-	strategyTemplateName = null,
-	strategyTemplateNameError = null,
-	cashInCents = null,
-	cashInCentsError = null,
+	viewState,
+	model,
+	onChange = () => {},
 	onSubmit = () => {},
-	actionIcon = null,
-	actionUrl = null,
 }) => {
-	const titleInputRef = useRef<HTMLInputElement>(null);
-	const strategyTemplateNameInputRef = useRef<HTMLSelectElement>(null);
-	// const cashInCentsInputRef = useRef<HTMLInputElement>(null);
-	const [cashInCentsInternal, setCashInCentsInternal] = useState(cashInCents);
-	const [statusInternal, setStatusInternal] = useState(status);
-
 	return (
 		<>
 			<form
 				className="flex flex-col gap-4 w-full"
 				onSubmit={(e) => {
 					e.preventDefault();
-					onSubmit({
-						status: statusInternal,
-						title: titleInputRef.current?.value ?? "",
-						strategyTemplateName:
-							strategyTemplateNameInputRef.current?.value ?? "",
-						cashInCents: cashInCentsInternal,
-					});
+					onSubmit(model);
 				}}
 			>
 				<div className="form-inputs grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-					{generalError ? <p>{generalError}</p> : null}
-					{titleError ? <p>{titleError}</p> : null}
+					{model.generalError ? <p>{model.generalError}</p> : null}
+					{model.titleError ? <p>{model.titleError}</p> : null}
 					<TextInput
 						label="Title"
 						name="title"
 						ariaLabel="Title"
-						defaultValue={title}
-						ref={titleInputRef}
+						value={model.title}
+						onChange={(title) =>
+							onChange({
+								...model,
+								title,
+							})
+						}
 						isEditable={viewState !== ViewState.view}
 					/>
-					{strategyTemplateNameError ? (
-						<p>{strategyTemplateNameError}</p>
+					{model.strategyTemplateNameError ? (
+						<p>{model.strategyTemplateNameError}</p>
 					) : null}
 					<DropdownInput
 						label="Template"
@@ -98,11 +65,32 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 								.options
 						}
 						placeholder="Select a strategyTemplateName"
-						defaultValue={strategyTemplateName}
-						ref={strategyTemplateNameInputRef}
+						value={model.strategyTemplateName}
+						onChange={(newStrategyTemplateName) => {
+							// validate that newStrategyTemplateName is a valid option from the schema
+							try {
+								const strategyTemplateName =
+									StrategyTemplateTypes.StrategyTemplateNameSchema.parse(
+										newStrategyTemplateName
+									);
+								onChange({
+									...model,
+									strategyTemplateName,
+								});
+							} catch (e) {
+								onChange({
+									...model,
+									strategyTemplateName: null,
+									strategyTemplateNameError:
+										"Invalid strategyTemplateName",
+								});
+							}
+						}}
 						isEditable={viewState !== ViewState.view}
 					/>
-					{cashInCentsError ? <p>{cashInCentsError}</p> : null}
+					{model.cashInCentsError ? (
+						<p>{model.cashInCentsError}</p>
+					) : null}
 					<CurrencyInput
 						label="Designated Funds"
 						name="cash"
@@ -110,31 +98,37 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 						placeholder={"0.00"}
 						precision={15}
 						isEditable={viewState !== ViewState.view}
-						onChange={setCashInCentsInternal}
-						defaultValueInCents={cashInCentsInternal ?? undefined}
+						onChange={(cashInCents) =>
+							onChange({
+								...model,
+								cashInCents,
+							})
+						}
+						valueInCents={model.cashInCents ?? undefined}
 					/>
 				</div>
 				<div className="form-toggles mb-4 w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
 					<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
 						{" "}
-						{statusError ? <p>{statusError}</p> : null}
+						{model.statusError ? <p>{model.statusError}</p> : null}
 						<Toggle
 							isEditable={viewState !== ViewState.view}
 							toggleState={translateStrategyStatusToToggleState(
-								statusInternal
+								model.status ?? defaultStatus
 							)}
 							labelText="Active?"
-							onChange={(newState) => {
-								setStatusInternal(
-									translateToggleStateToStrategyStatus(
-										newState
-									)
-								);
-							}}
+							onChange={(toggleState) =>
+								onChange({
+									...model,
+									status: translateToggleStateToStrategyStatus(
+										toggleState
+									),
+								})
+							}
 						>
 							<ToggleInnerCheckAndX
 								toggleState={translateStrategyStatusToToggleState(
-									statusInternal
+									model.status ?? defaultStatus
 								)}
 							/>
 						</Toggle>

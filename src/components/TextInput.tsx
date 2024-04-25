@@ -6,9 +6,10 @@ interface TextInputProps {
 	id?: string;
 	placeholder?: string;
 	defaultValue?: string | null;
+	value?: string | null;
 	isEditable?: boolean;
 	error?: string;
-	OnChange?: (value: string) => void;
+	onChange?: (value: string) => void;
 }
 
 /**
@@ -30,16 +31,14 @@ const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(function (
 		name,
 		ariaLabel,
 		placeholder,
+		error,
+		value = null,
 		defaultValue = null,
 		isEditable = false,
-		error,
-		OnChange = () => {},
+		onChange: onChange = () => {},
 	},
 	ref
 ) {
-	const handleValueUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
-		OnChange(e.target.value);
-	};
 	return (
 		<label className="flex flex-col">
 			<span
@@ -55,19 +54,35 @@ const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(function (
 				}`}
 			>
 				{error ? <p>{error}</p> : null}
-				<input
-					type="text"
-					name={name}
-					aria-label={ariaLabel}
-					placeholder={placeholder ?? ""}
-					defaultValue={defaultValue ?? ""}
-					className={`bg-inherit w-full focus:outline-zinc-400 focus:outline-dashed focus:outline-offset-2 ${
-						isEditable ? "p-2" : ""
-					}`}
-					disabled={!isEditable}
-					ref={ref}
-					onChange={handleValueUpdate}
-				/>
+				{undefined === value ? (
+					<input
+						type="text"
+						name={name}
+						aria-label={ariaLabel}
+						placeholder={placeholder ?? ""}
+						defaultValue={defaultValue ?? ""}
+						className={`bg-inherit w-full focus:outline-zinc-400 focus:outline-dashed focus:outline-offset-2 ${
+							isEditable ? "p-2" : ""
+						}`}
+						disabled={!isEditable}
+						ref={ref}
+						onChange={(e) => onChange(e.target.value)}
+					/>
+				) : (
+					<input
+						type="text"
+						name={name}
+						aria-label={ariaLabel}
+						placeholder={placeholder ?? ""}
+						value={value ?? defaultValue ?? ""}
+						className={`bg-inherit w-full focus:outline-zinc-400 focus:outline-dashed focus:outline-offset-2 ${
+							isEditable ? "p-2" : ""
+						}`}
+						disabled={!isEditable}
+						ref={ref}
+						onChange={(e) => onChange(e.target.value)}
+					/>
+				)}
 			</span>
 		</label>
 	);

@@ -3,14 +3,77 @@ import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-conf
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons/faPenToSquare";
 import { faX } from "@fortawesome/free-solid-svg-icons/faX";
 import {
+	Response as ResponseTypes,
 	Strategy as StrategyTypes,
 	StrategyTemplateSeaDogDiscountScheme as StrategyTemplateSeaDogDiscountSchemeTypes,
 } from "@umerx/umerx-blackdog-configurator-types-typescript";
+import { AxiosError } from "axios";
 import { ViewState } from "../interfaces/viewState";
 import { useNavigate } from "react-router-dom";
 import StrategyTemplateSeaDogDiscountSchemeDetailForm from "../components/StrategyTemplateSeaDogDiscountSchemeDetailForm";
 import z, { ZodError } from "zod";
+import { StrategyTemplateSeaDogDiscountSchemeDetailFormModel } from "../interfaces/strategyTemplateSeaDogDiscountSchemeDetail";
 
+function convertStrategyTemplateSeaDogDiscountSchemeDetailFormModelToRequestBodyDataInstanceProperties(
+	model: StrategyTemplateSeaDogDiscountSchemeDetailFormModel
+) {
+	return {
+		status: model.status,
+		alpacaAPIKey: model.alpacaAPIKey,
+		alpacaAPISecret: model.alpacaAPISecret,
+		alpacaAPIPaper: model.alpacaAPIPaper,
+		buyAtPercentile: model.buyAtPercentile,
+		sellAtPercentile: model.sellAtPercentile,
+		minimumGainPercent: model.minimumGainPercent,
+		timeframeInDays: model.timeframeInDays,
+		symbolIds: model.symbolIds,
+	};
+}
+
+function appendIssuesToModel(
+	issues: ResponseTypes.ResponseIssue[],
+	model: StrategyTemplateSeaDogDiscountSchemeDetailFormModel
+) {
+	let generalErrors: string[] = [];
+	issues.forEach((issue) => {
+		switch (issue.path[issue.path.length - 1]) {
+			case "status":
+				model.statusError = issue.message;
+				break;
+			case "alpacaAPIKey":
+				model.alpacaAPIKeyError = issue.message;
+				break;
+			case "alpacaAPISecret":
+				model.alpacaAPISecretError = issue.message;
+				break;
+			case "alpacaAPIPaper":
+				model.alpacaAPIPaperError = issue.message;
+				break;
+			case "buyAtPercentile":
+				model.buyAtPercentileError = issue.message;
+				break;
+			case "sellAtPercentile":
+				model.sellAtPercentileError = issue.message;
+				break;
+			case "minimumGainPercent":
+				model.minimumGainPercentError = issue.message;
+				break;
+			case "timeframeInDays":
+				model.timeframeInDaysError = issue.message;
+				break;
+			case "symbolIds":
+				model.symbolIdsError = issue.message;
+				break;
+			default:
+				generalErrors.push(`${issue.path}: ${issue.message}`);
+				break;
+		}
+	});
+	if (generalErrors.length > 0) {
+		model.generalError = generalErrors.join(" ");
+	}
+	return model;
+}
 interface StrategyTemplateSeaDogDiscountSchemeDetailProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
 	strategy: StrategyTypes.StrategyGetResponseBodyDataInstance;
@@ -31,30 +94,70 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 		useState<StrategyTemplateSeaDogDiscountSchemeTypes.StrategyTemplateSeaDogDiscountSchemeResponseBodyDataInstance | null>(
 			null
 		);
-	const [generalError, setGeneralError] = useState<string | null>(null);
-	const [statusError, setStatusError] = useState<string | null>(null);
-	const [alpacaAPIKeyError, setAlpacaAPIKeyError] = useState<string | null>(
-		null
-	);
-	const [alpacaAPISecretError, setAlpacaAPISecretError] = useState<
-		string | null
-	>(null);
-	const [alpacaAPIPaperError, setAlpacaAPIPaperError] = useState<
-		string | null
-	>(null);
-	const [buyAtPercentileError, setBuyAtPercentileError] = useState<
-		string | null
-	>(null);
-	const [sellAtPercentileError, setSellAtPercentileError] = useState<
-		string | null
-	>(null);
-	const [minimumGainPercentError, setMinimumGainPercentError] = useState<
-		string | null
-	>(null);
-	const [timeframeInDaysError, setTimeframeInDaysError] = useState<
-		string | null
-	>(null);
-	const [symbolIdsError, setSymbolIdsError] = useState<string | null>(null);
+	const [model, setModel] =
+		useState<StrategyTemplateSeaDogDiscountSchemeDetailFormModel>({
+			status: StrategyTemplateSeaDogDiscountSchemeTypes.StatusSchema.Enum
+				.active,
+		});
+	const [error, setError] = useState<string | null>(null);
+	function getValidationWrappedSubmitter(
+		submitter: () => Promise<StrategyTemplateSeaDogDiscountSchemeTypes.StrategyTemplateSeaDogDiscountSchemeResponseBodyDataInstance>
+	) {
+		return () => {
+			(async () => {
+				let newModel: StrategyTemplateSeaDogDiscountSchemeDetailFormModel =
+					{
+						...model,
+						statusError: null,
+						alpacaAPIKeyError: null,
+						alpacaAPISecretError: null,
+						alpacaAPIPaperError: null,
+						buyAtPercentileError: null,
+						sellAtPercentileError: null,
+						minimumGainPercentError: null,
+						timeframeInDaysError: null,
+						symbolIdsError: null,
+						generalError: null,
+					};
+				try {
+					const newStrategyTemplate = await submitter();
+					newModel = {
+						...newModel,
+						...newStrategyTemplate,
+					};
+					navigate(
+						`/strategy/${strategy.id}/strategyTemplate/${newStrategyTemplate.id}`
+					);
+				} catch (e) {
+					console.error({ e });
+					if (e instanceof ZodError) {
+						appendIssuesToModel(e.issues, newModel);
+					} else if (e instanceof AxiosError) {
+						try {
+							const response =
+								ResponseTypes.ResponseBaseErrorExpected.parse(
+									e?.response?.data
+								);
+							appendIssuesToModel(response.issues, newModel);
+						} catch (e) {
+							console.error({ e });
+							if (typeof e === "string" || e instanceof String) {
+								newModel.generalError = e.toString();
+							} else {
+								setError(
+									`🐾 Oops! Our servers are having a bit of a "ruff" day and couldn't fetch your request. Please try again later or check your input. 🐾`
+								);
+							}
+						}
+					} else if (typeof e === "string" || e instanceof String) {
+						newModel.generalError = e.toString();
+					}
+				} finally {
+					setModel(newModel);
+				}
+			})();
+		};
+	}
 	useEffect(() => {
 		(async () => {
 			if (null !== strategyTemplateId) {
@@ -66,151 +169,67 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 			}
 		})();
 	}, [strategyTemplateId]);
+	useEffect(() => {
+		if (!strategyTemplate) {
+			return;
+		}
+		setModel({
+			...model,
+			status: strategyTemplate.status,
+			alpacaAPIKey: strategyTemplate.alpacaAPIKey,
+			alpacaAPISecret: strategyTemplate.alpacaAPISecret,
+			alpacaAPIPaper: strategyTemplate.alpacaAPIPaper,
+			buyAtPercentile: strategyTemplate.buyAtPercentile,
+			sellAtPercentile: strategyTemplate.sellAtPercentile,
+			minimumGainPercent: strategyTemplate.minimumGainPercent,
+			timeframeInDays: strategyTemplate.timeframeInDays,
+			symbolIds: strategyTemplate.symbolIds,
+		});
+	}, [strategyTemplate]);
 	switch (viewState) {
 		case ViewState.create:
 			return (
 				<>
 					<StrategyTemplateSeaDogDiscountSchemeDetailForm
+						model={model}
 						blackdogConfiguratorClient={blackdogConfiguratorClient}
 						viewState={ViewState.create}
 						actionIcon={faX}
 						actionUrl={`/strategy/${strategy.id}/strategyTemplate`}
-						onSubmit={(data) => {
-							(async () => {
-								try {
-									setStatusError(null);
-									setAlpacaAPIKeyError(null);
-									setAlpacaAPISecretError(null);
-									setAlpacaAPIPaperError(null);
-									setBuyAtPercentileError(null);
-									setSellAtPercentileError(null);
-									setMinimumGainPercentError(null);
-									setTimeframeInDaysError(null);
-									setSymbolIdsError(null);
-									setGeneralError(null);
-									const dataParsed =
-										StrategyTemplateSeaDogDiscountSchemeTypes.StrategyTemplateSeaDogDiscountSchemePostSingleRequestBodyFromRaw(
-											{
-												...data,
-												strategyId: strategy.id,
-											}
-										);
-									(async () => {
-										try {
-											const {
-												data: strategyTemplatesCreated,
-											} = await blackdogConfiguratorClient
-												.strategyTemplateSeaDogDiscountScheme()
-												.postMany([
-													{
-														...dataParsed,
-														strategyId: strategy.id,
-													},
-												]);
-											if (
-												strategyTemplatesCreated.length <
-												1
-											) {
-												throw new Error(
-													"Strategy template not created."
-												);
-											}
-											navigate(
-												`/strategy/${strategy.id}/strategyTemplate/${strategyTemplatesCreated[0].id}`
-											);
-										} catch (e) {
-											console.error({ e });
-											// If e has a message and it is a string, set general error to e.message
-											if (
-												typeof e === "string" ||
-												e instanceof String
-											) {
-												console.error({ e });
-												setGeneralError(e.toString());
-												return;
-											}
-										}
-									})();
-								} catch (e) {
-									console.error({ e });
-									if (e instanceof ZodError) {
-										let generalErrors: string[] = [];
-										e.issues.forEach((issue) => {
-											switch (issue.path[0]) {
-												case "status":
-													setStatusError(
-														issue.message
-													);
-													break;
-												case "alpacaAPIKey":
-													setAlpacaAPIKeyError(
-														issue.message
-													);
-													break;
-												case "alpacaAPISecret":
-													setAlpacaAPISecretError(
-														issue.message
-													);
-													break;
-												case "alpacaAPIPaper":
-													setAlpacaAPIPaperError(
-														issue.message
-													);
-													break;
-												case "buyAtPercentile":
-													setBuyAtPercentileError(
-														issue.message
-													);
-													break;
-												case "sellAtPercentile":
-													setSellAtPercentileError(
-														issue.message
-													);
-													break;
-												case "minimumGainPercent":
-													setMinimumGainPercentError(
-														issue.message
-													);
-													break;
-												case "timeframeInDays":
-													setTimeframeInDaysError(
-														issue.message
-													);
-													break;
-												case "symbolIds":
-													setSymbolIdsError(
-														issue.message
-													);
-													break;
-												default:
-													generalErrors.push(
-														`${issue.path}: ${issue.message}`
-													);
-													break;
-											}
-										});
-										console.error({ generalErrors });
-										if (generalErrors.length > 0) {
-											setGeneralError(
-												generalErrors.join(" ")
-											);
-										}
-										return;
-									}
-									setGeneralError(`Error found. ${e}`);
-								}
-							})();
+						onChange={(newModel) => {
+							setModel({
+								...model,
+								...newModel,
+							});
 						}}
-						generalError={generalError}
-						statusError={statusError}
-						alpacaAPIKeyError={alpacaAPIKeyError}
-						alpacaAPISecretError={alpacaAPISecretError}
-						alpacaAPIPaperError={alpacaAPIPaperError}
-						buyAtPercentileError={buyAtPercentileError}
-						sellAtPercentileError={sellAtPercentileError}
-						minimumGainPercentError={minimumGainPercentError}
-						timeframeInDaysError={timeframeInDaysError}
-						symbolIdsError={symbolIdsError}
+						onSubmit={getValidationWrappedSubmitter(async () => {
+							const dataParsed =
+								StrategyTemplateSeaDogDiscountSchemeTypes.StrategyTemplateSeaDogDiscountSchemePostSingleRequestBodyFromRaw(
+									{
+										strategyId: strategy.id,
+										...convertStrategyTemplateSeaDogDiscountSchemeDetailFormModelToRequestBodyDataInstanceProperties(
+											model
+										),
+									}
+								);
+							const { data: strategyTemplatesCreated } =
+								await blackdogConfiguratorClient
+									.strategyTemplateSeaDogDiscountScheme()
+									.postMany([
+										{
+											...dataParsed,
+											strategyId: strategy.id,
+										},
+									]);
+							if (strategyTemplatesCreated.length < 1) {
+								throw new Error(
+									"Strategy template not created."
+								);
+							}
+							const newStrategyTemplate =
+								strategyTemplatesCreated[0];
+							return newStrategyTemplate;
+						})}
 					></StrategyTemplateSeaDogDiscountSchemeDetailForm>
 				</>
 			);
@@ -220,134 +239,39 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 			}
 			return (
 				<StrategyTemplateSeaDogDiscountSchemeDetailForm
+					model={model}
 					blackdogConfiguratorClient={blackdogConfiguratorClient}
 					viewState={ViewState.edit}
 					actionIcon={faX}
 					actionUrl={`/strategy/${strategy.id}/strategyTemplate/${strategyTemplate.id}`}
-					onSubmit={(data) => {
-						(async () => {
-							try {
-								setStatusError(null);
-								setAlpacaAPIKeyError(null);
-								setAlpacaAPISecretError(null);
-								setAlpacaAPIPaperError(null);
-								setBuyAtPercentileError(null);
-								setSellAtPercentileError(null);
-								setMinimumGainPercentError(null);
-								setTimeframeInDaysError(null);
-								setSymbolIdsError(null);
-								setGeneralError(null);
-								const dataParsed =
-									StrategyTemplateSeaDogDiscountSchemeTypes.StrategyTemplateSeaDogDiscountSchemePutSingleRequestBodyFromRaw(
-										{
-											...data,
-											strategyId: strategy.id,
-										}
-									);
-								(async () => {
-									try {
-										const {
-											data: strategyTemplateCreated,
-										} = await blackdogConfiguratorClient
-											.strategyTemplateSeaDogDiscountScheme()
-											.patchSingle(
-												{ id: strategyTemplate.id },
-												{
-													...dataParsed,
-													strategyId: strategy.id,
-												}
-											);
-										navigate(
-											`/strategy/${strategy.id}/strategyTemplate/${strategyTemplateCreated.id}`
-										);
-									} catch (e) {
-										console.error({ e });
-										// If e has a message and it is a string, set general error to e.message
-										if (
-											typeof e === "string" ||
-											e instanceof String
-										) {
-											console.error({ e });
-											setGeneralError(e.toString());
-											return;
-										}
-									}
-								})();
-							} catch (e) {
-								console.error({ e });
-								if (e instanceof ZodError) {
-									e.issues.forEach((issue) => {
-										switch (issue.path[0]) {
-											case "status":
-												setStatusError(issue.message);
-												break;
-											case "alpacaAPIKey":
-												setAlpacaAPIKeyError(
-													issue.message
-												);
-												break;
-											case "alpacaAPISecret":
-												setAlpacaAPISecretError(
-													issue.message
-												);
-												break;
-											case "alpacaAPIPaper":
-												setAlpacaAPIPaperError(
-													issue.message
-												);
-												break;
-											case "buyAtPercentile":
-												setBuyAtPercentileError(
-													issue.message
-												);
-												break;
-											case "sellAtPercentile":
-												setSellAtPercentileError(
-													issue.message
-												);
-												break;
-											case "minimumGainPercent":
-												setMinimumGainPercentError(
-													issue.message
-												);
-												break;
-											case "timeframeInDays":
-												setTimeframeInDaysError(
-													issue.message
-												);
-												break;
-											case "symbolIds":
-												setSymbolIdsError(
-													issue.message
-												);
-												break;
-										}
-									});
-									return;
-								}
-								setGeneralError(`Error found. ${e}`);
-							}
-						})();
+					onChange={(newModel) => {
+						setModel({
+							...model,
+							...newModel,
+						});
 					}}
-					status={strategyTemplate.status}
-					alpacaAPIKey={strategyTemplate.alpacaAPIKey}
-					alpacaAPISecret={strategyTemplate.alpacaAPISecret}
-					alpacaAPIPaper={strategyTemplate.alpacaAPIPaper}
-					buyAtPercentile={strategyTemplate.buyAtPercentile}
-					sellAtPercentile={strategyTemplate.sellAtPercentile}
-					minimumGainPercent={strategyTemplate.minimumGainPercent}
-					timeframeInDays={strategyTemplate.timeframeInDays}
-					symbolIds={strategyTemplate.symbolIds}
-					generalError={generalError}
-					statusError={statusError}
-					alpacaAPIKeyError={alpacaAPIKeyError}
-					alpacaAPISecretError={alpacaAPISecretError}
-					alpacaAPIPaperError={alpacaAPIPaperError}
-					buyAtPercentileError={buyAtPercentileError}
-					sellAtPercentileError={sellAtPercentileError}
-					minimumGainPercentError={minimumGainPercentError}
-					timeframeInDaysError={timeframeInDaysError}
-					symbolIdsError={symbolIdsError}
+					onSubmit={getValidationWrappedSubmitter(async () => {
+						const dataParsed =
+							StrategyTemplateSeaDogDiscountSchemeTypes.StrategyTemplateSeaDogDiscountSchemePutSingleRequestBodyFromRaw(
+								{
+									strategyId: strategy.id,
+									...convertStrategyTemplateSeaDogDiscountSchemeDetailFormModelToRequestBodyDataInstanceProperties(
+										model
+									),
+								}
+							);
+						const { data: strategyTemplateCreated } =
+							await blackdogConfiguratorClient
+								.strategyTemplateSeaDogDiscountScheme()
+								.patchSingle(
+									{ id: strategyTemplate.id },
+									{
+										...dataParsed,
+										strategyId: strategy.id,
+									}
+								);
+						return strategyTemplateCreated;
+					})}
 				></StrategyTemplateSeaDogDiscountSchemeDetailForm>
 			);
 		case ViewState.view:
@@ -356,19 +280,11 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 			}
 			return (
 				<StrategyTemplateSeaDogDiscountSchemeDetailForm
+					model={model}
 					blackdogConfiguratorClient={blackdogConfiguratorClient}
 					viewState={ViewState.view}
 					actionIcon={faPenToSquare}
 					actionUrl={`/strategy/${strategy.id}/strategyTemplate/${strategyTemplate.id}/edit`}
-					status={strategyTemplate.status}
-					alpacaAPIKey={strategyTemplate.alpacaAPIKey}
-					alpacaAPISecret={strategyTemplate.alpacaAPISecret}
-					alpacaAPIPaper={strategyTemplate.alpacaAPIPaper}
-					buyAtPercentile={strategyTemplate.buyAtPercentile}
-					sellAtPercentile={strategyTemplate.sellAtPercentile}
-					minimumGainPercent={strategyTemplate.minimumGainPercent}
-					timeframeInDays={strategyTemplate.timeframeInDays}
-					symbolIds={strategyTemplate.symbolIds}
 				></StrategyTemplateSeaDogDiscountSchemeDetailForm>
 			);
 		default:

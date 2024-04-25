@@ -16,108 +16,42 @@ import {
 	translateToggleStateToStrategyTemplateSeaDogDiscountSchemeStatus,
 } from "../utils";
 import PasswordInput from "./PasswordInput";
+import { StrategyTemplateSeaDogDiscountSchemeDetailFormModel } from "../interfaces/strategyTemplateSeaDogDiscountSchemeDetail";
 
 interface StrategyTemplateSeaDogDiscountSchemeDetailFormProps {
+	viewState: ViewState;
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
-	viewState?: ViewState;
-	generalError?: string | null;
-	status?: StrategyTemplateSeaDogDiscountSchemeTypes.Status;
-	statusError?: string | null;
-	alpacaAPIKey?: string;
-	alpacaAPIKeyError?: string | null;
-	alpacaAPISecret?: string;
-	alpacaAPISecretError?: string | null;
-	alpacaAPIPaper?: boolean;
-	alpacaAPIPaperError?: string | null;
-	buyAtPercentile?: number | null;
-	buyAtPercentileError?: string | null;
-	sellAtPercentile?: number | null;
-	sellAtPercentileError?: string | null;
-	minimumGainPercent?: number | null;
-	minimumGainPercentError?: string | null;
-	timeframeInDays?: number | null;
-	timeframeInDaysError?: string | null;
-	symbolIds?: number[];
-	symbolIdsError?: string | null;
-	onSubmit?: (data: {
-		status: string | null;
-		alpacaAPIKey: string | null;
-		alpacaAPISecret: string | null;
-		alpacaAPIPaper: boolean | null;
-		buyAtPercentile: number | null;
-		sellAtPercentile: number | null;
-		minimumGainPercent: number | null;
-		timeframeInDays: number | null;
-		symbolIds: number[];
-	}) => void;
+	model: StrategyTemplateSeaDogDiscountSchemeDetailFormModel;
 	actionIcon?: IconDefinition | null;
 	actionUrl?: string | null;
+	onChange?: (
+		model: StrategyTemplateSeaDogDiscountSchemeDetailFormModel
+	) => void;
+	onSubmit?: (
+		model: StrategyTemplateSeaDogDiscountSchemeDetailFormModel
+	) => void;
 }
-// "status": "active",
-// "alpacaAPIKey": "key",
-// "alpacaAPISecret": "secret",
-// "alpacaAPIPaper": true,
-// "buyAtPercentile": 10,
-// "sellAtPercentile": 50,
-// "minimumGainPercent": 10,
-// "timeframeInDays": 90,
-// "symbolIds": [
-// 	1,
-// 	2
-// ]
-
+const defaultStatus =
+	StrategyTemplateSeaDogDiscountSchemeTypes.StatusSchema.Enum.active;
 const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 	StrategyTemplateSeaDogDiscountSchemeDetailFormProps
 > = ({
+	viewState,
+	model,
 	blackdogConfiguratorClient,
-	viewState = ViewState.view,
-	generalError = null,
-	status = "active",
-	statusError = null,
-	alpacaAPIKey = "",
-	alpacaAPIKeyError = null,
-	alpacaAPISecret = "",
-	alpacaAPISecretError = null,
-	alpacaAPIPaper = true,
-	alpacaAPIPaperError = null,
-	buyAtPercentile = null,
-	buyAtPercentileError = null,
-	sellAtPercentile = null,
-	sellAtPercentileError = null,
-	minimumGainPercent = null,
-	minimumGainPercentError = null,
-	timeframeInDays = null,
-	timeframeInDaysError = null,
-	symbolIds = [],
-	symbolIdsError = null,
+	actionIcon,
+	actionUrl,
+	onChange = () => {},
 	onSubmit = () => {},
-	actionIcon = null,
-	actionUrl = null,
 }) => {
-	const [alpacaAPIKeyInputValue, setAlpacaAPIKeyInputValue] =
-		useState<string>(alpacaAPIKey);
-	const [alpacaAPISecretInputValue, setAlpacaAPISecretInputValue] =
-		useState<string>(alpacaAPISecret);
-	const [alpacaAPIPaperInputValue, setAlpacaAPIPaperInputValue] =
-		useState<boolean>(alpacaAPIPaper);
-	const [buyAtPercentileInputValue, setBuyAtPercentileInputValue] = useState<
-		number | null
-	>(buyAtPercentile);
-	const [sellAtPercentileInputValue, setSellAtPercentileInputValue] =
-		useState<number | null>(sellAtPercentile);
-	const [minimumGainPercentInputValue, setMinimumGainPercentInputValue] =
-		useState<number | null>(minimumGainPercent);
-	const [timeframeInDaysInputValue, setTimeframeInDaysInputValue] = useState<
-		number | null
-	>(timeframeInDays);
-	const [symbolIdsInternal, setSymbolIdsInternal] =
-		useState<number[]>(symbolIds);
-	const [statusInternal, setStatusInternal] =
-		useState<StrategyTemplateSeaDogDiscountSchemeTypes.Status>(status);
+	// const toggleState =
+	// 	translateStrategyTemplateSeaDogDiscountSchemeStatusToToggleState(
+	// 		statusInternal
+	// 	);
 
 	const toggleState =
 		translateStrategyTemplateSeaDogDiscountSchemeStatusToToggleState(
-			statusInternal
+			model.status ?? "active"
 		);
 
 	return (
@@ -126,20 +60,10 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 				className="flex flex-col gap-4 w-full"
 				onSubmit={(e) => {
 					e.preventDefault();
-					onSubmit({
-						status: statusInternal,
-						alpacaAPIKey: alpacaAPIKeyInputValue,
-						alpacaAPISecret: alpacaAPISecretInputValue,
-						alpacaAPIPaper: alpacaAPIPaperInputValue,
-						buyAtPercentile: buyAtPercentileInputValue,
-						sellAtPercentile: sellAtPercentileInputValue,
-						minimumGainPercent: minimumGainPercentInputValue,
-						timeframeInDays: timeframeInDaysInputValue,
-						symbolIds: symbolIdsInternal,
-					});
+					onSubmit(model);
 				}}
 			>
-				{generalError ? <p>{generalError}</p> : null}
+				{model.generalError ? <p>{model.generalError}</p> : null}
 				<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
 					<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
 						<Toggle
@@ -147,11 +71,12 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 							toggleState={toggleState}
 							labelText="Active?"
 							onChange={(newToggleState) => {
-								setStatusInternal(
-									translateToggleStateToStrategyTemplateSeaDogDiscountSchemeStatus(
+								onChange({
+									...model,
+									status: translateToggleStateToStrategyTemplateSeaDogDiscountSchemeStatus(
 										newToggleState
-									)
-								);
+									),
+								});
 							}}
 						>
 							<ToggleInnerCheckAndX toggleState={toggleState} />
@@ -162,30 +87,45 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						name="alpacaAPIKey"
 						ariaLabel="Alpaca API Key"
 						id="alpacaAPIKey"
-						defaultValue={alpacaAPIKey}
+						value={model.alpacaAPIKey}
 						isEditable={viewState !== ViewState.view}
-						error={alpacaAPIKeyError ?? ""}
-						OnChange={setAlpacaAPIKeyInputValue}
+						error={model.alpacaAPIKeyError ?? ""}
+						onChange={(value) => {
+							onChange({
+								...model,
+								alpacaAPIKey: value,
+							});
+						}}
 					/>
 					<PasswordInput
 						label="Alpaca API Secret"
 						name="alpacaAPISecret"
 						ariaLabel="Alpaca API Secret"
 						id="alpacaAPISecret"
-						defaultValue={alpacaAPISecret}
+						value={model.alpacaAPISecret}
 						isEditable={viewState !== ViewState.view}
-						error={alpacaAPISecretError ?? ""}
-						OnChange={setAlpacaAPISecretInputValue}
+						error={model.alpacaAPISecretError ?? ""}
+						onChange={(value) => {
+							onChange({
+								...model,
+								alpacaAPISecret: value,
+							});
+						}}
 					/>
 					<CheckboxInput
 						label="Alpaca API Paper"
 						name="alpacaAPIPaper"
 						ariaLabel="Alpaca API Paper"
-						defaultChecked={alpacaAPIPaper}
+						checked={model.alpacaAPIPaper ?? true}
 						id="alpacaAPIPaper"
-						error={alpacaAPIPaperError ?? ""}
+						error={model.alpacaAPIPaperError ?? ""}
 						isEditable={viewState !== ViewState.view}
-						onChange={setAlpacaAPIPaperInputValue}
+						onChange={(value) => {
+							onChange({
+								...model,
+								alpacaAPIPaper: value,
+							});
+						}}
 					/>
 					<NumberInput
 						label="Buy At Percentile"
@@ -193,12 +133,17 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						ariaLabel="Buy At Percentile"
 						id="buyAtPercentile"
 						placeholder={"0.00"}
-						defaultValue={buyAtPercentile}
+						value={model.buyAtPercentile}
 						precision={15}
 						isEditable={viewState !== ViewState.view}
 						isPercentage={true}
-						error={buyAtPercentileError ?? ""}
-						onChange={setBuyAtPercentileInputValue}
+						error={model.buyAtPercentileError ?? ""}
+						onChange={(value) => {
+							onChange({
+								...model,
+								buyAtPercentile: value,
+							});
+						}}
 					/>
 					<NumberInput
 						label="Sell At Percentile"
@@ -207,11 +152,16 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						id="sellAtPercentile"
 						placeholder={"0.00"}
 						precision={15}
-						defaultValue={sellAtPercentile}
+						value={model.sellAtPercentile}
 						isEditable={viewState !== ViewState.view}
 						isPercentage={true}
-						error={sellAtPercentileError ?? ""}
-						onChange={setSellAtPercentileInputValue}
+						error={model.sellAtPercentileError ?? ""}
+						onChange={(value) => {
+							onChange({
+								...model,
+								sellAtPercentile: value,
+							});
+						}}
 					/>
 					<NumberInput
 						label="Minimum Gain Percent"
@@ -220,23 +170,33 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 						id="minimumGainPercent"
 						placeholder={"0.00"}
 						precision={15}
-						defaultValue={minimumGainPercent}
+						value={model.minimumGainPercent}
 						isEditable={viewState !== ViewState.view}
 						isPercentage={true}
-						error={minimumGainPercentError ?? ""}
-						onChange={setMinimumGainPercentInputValue}
+						error={model.minimumGainPercentError ?? ""}
+						onChange={(value) => {
+							onChange({
+								...model,
+								minimumGainPercent: value,
+							});
+						}}
 					/>
 					<NumberInput
 						label="Timeframe In Days"
 						name="timeframeInDays"
 						ariaLabel="Timeframe In Days"
 						id="timeframeInDays"
-						defaultValue={timeframeInDays}
+						value={model.timeframeInDays}
 						precision={15} // Becuase JavaScript Number precision is 15
 						scale={0}
 						isEditable={viewState !== ViewState.view}
-						error={timeframeInDaysError ?? ""}
-						onChange={setTimeframeInDaysInputValue}
+						error={model.timeframeInDaysError ?? ""}
+						onChange={(value) => {
+							onChange({
+								...model,
+								timeframeInDays: value,
+							});
+						}}
 					/>
 					<label className="flex flex-col">
 						<span
@@ -253,15 +213,20 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 									: ""
 							}`}
 						>
-							{symbolIdsError ? <p>{symbolIdsError}</p> : null}
+							{model.symbolIdsError ? (
+								<p>{model.symbolIdsError}</p>
+							) : null}
 							<SymbolRepeater
 								viewState={viewState}
 								blackdogConfiguratorClient={
 									blackdogConfiguratorClient
 								}
-								symbolIds={symbolIdsInternal}
+								symbolIds={model.symbolIds ?? []}
 								setSymbolIds={(newSymbolIds) => {
-									setSymbolIdsInternal(newSymbolIds);
+									onChange({
+										...model,
+										symbolIds: newSymbolIds,
+									});
 								}}
 							></SymbolRepeater>
 						</span>

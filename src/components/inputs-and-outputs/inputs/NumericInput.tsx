@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 interface NumericInputProps {
 	name?: string;
 	ariaLabel?: string;
 	id?: string;
 	placeholder?: string;
-	defaultValue?: number | null;
+	value?: number | null;
 	onChange?: (value: number | null) => void;
 	onInvalid?: (value: string) => void;
 	precision?: number;
@@ -20,7 +20,7 @@ interface NumericInputProps {
  * @param ariaLabel - The aria-label for the input (required)
  * @param id - The id for the input (optional)
  * @param placeholder - The placeholder for the input (optional)
- * @param defaultValue - The default value for the input (optional)
+ * @param value - The value for the input (optional)
  * @param isEditable - Whether the input is editable (optional)
  * @param error - The error message for the input (optional)
  * @param onChange - The function to call when the input changes (optional)
@@ -31,7 +31,7 @@ const NumericInput: React.FC<NumericInputProps> = ({
 	ariaLabel,
 	id,
 	placeholder,
-	defaultValue = null,
+	value = null,
 	onChange = () => {},
 	onInvalid = () => {},
 	precision = null,
@@ -40,8 +40,11 @@ const NumericInput: React.FC<NumericInputProps> = ({
 	disabled,
 }) => {
 	const [internalValue, setInternalValue] = React.useState<string | null>(
-		defaultValue?.toString() ?? null
+		value?.toString() ?? null
 	);
+	useEffect(() => {
+		setInternalValue(value?.toString() ?? null);
+	}, [value]);
 	function internallyValid(rawValue: string): boolean {
 		const validNumberOrInProgress = /^[\d]*\.?[\d]*$/;
 		if (!validNumberOrInProgress.test(rawValue)) {
@@ -98,7 +101,7 @@ const NumericInput: React.FC<NumericInputProps> = ({
 			aria-label={ariaLabel}
 			id={id ?? ""}
 			placeholder={placeholder}
-			value={internalValue?.toString()}
+			value={internalValue?.toString() ?? ""}
 			disabled={disabled}
 			onChange={(e) => {
 				const rawValue = e.target.value;

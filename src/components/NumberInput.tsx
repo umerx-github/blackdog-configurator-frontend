@@ -6,7 +6,7 @@ interface NumberInputProps {
 	ariaLabel: string;
 	id?: string;
 	placeholder?: string;
-	defaultValue?: number | null;
+	value?: number | null;
 	isEditable?: boolean;
 	isPercentage?: boolean;
 	error?: string;
@@ -21,7 +21,7 @@ interface NumberInputProps {
  * @param ariaLabel - The aria-label for the input (required)
  * @param id - The id for the input (optional)
  * @param placeholder - The placeholder for the input (optional)
- * @param defaultValue - The default value for the input (optional)
+ * @param value - The default value for the input (optional)
  * @param isEditable - Whether the input is editable (optional)
  * @param isPercentage - Whether the input is a percentage (optional). Defaults to false.
  * @param error - The error message for the input (optional)
@@ -35,7 +35,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
 	ariaLabel,
 	id,
 	placeholder,
-	defaultValue = null,
+	value = null,
 	isEditable = false,
 	isPercentage = false,
 	error,
@@ -78,7 +78,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
 						aria-label={ariaLabel}
 						id={id}
 						placeholder={placeholder}
-						defaultValue={defaultValue}
+						value={value}
 						className={`bg-inherit outline-none ${
 							isPercentage ? "w-20" : null
 						} ${isEditable ? "p-2" : ""}`}
