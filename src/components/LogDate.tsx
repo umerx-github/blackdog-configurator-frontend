@@ -8,7 +8,7 @@ const LogDate: React.FC<LogDateProps> = ({ timestamp, timezone }) => {
 		case "localTime":
 			return (
 				<>
-					<div className="text-sm text-gray-900">
+					<div className="text-sm text-zinc-900 dark:text-white">
 						{new Date(timestamp).toLocaleDateString("en-GB", {
 							day: "numeric",
 							month: "short",
@@ -27,7 +27,7 @@ const LogDate: React.FC<LogDateProps> = ({ timestamp, timezone }) => {
 		case "utc":
 			return (
 				<>
-					<div className="text-sm text-gray-900">
+					<div className="text-sm text-zinc-900 dark:text-white">
 						{new Date(timestamp).toLocaleDateString("en-GB", {
 							day: "numeric",
 							month: "short",
@@ -48,7 +48,7 @@ const LogDate: React.FC<LogDateProps> = ({ timestamp, timezone }) => {
 		case "both":
 			return (
 				<>
-					<div className="text-sm text-gray-900">
+					<div className="text-sm text-zinc-900 dark:text-white">
 						{new Date(timestamp).toLocaleDateString("en-GB", {
 							day: "numeric",
 							month: "short",
@@ -62,7 +62,7 @@ const LogDate: React.FC<LogDateProps> = ({ timestamp, timezone }) => {
 							timeZoneName: "short",
 						})}
 					</div>
-					<div className="text-sm text-gray-500">
+					<div className="text-sm text-zinc-500 dark:text-zinc-400">
 						{new Date(timestamp).toLocaleDateString("en-GB", {
 							day: "numeric",
 							month: "short",

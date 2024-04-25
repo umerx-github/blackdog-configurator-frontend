@@ -16,77 +16,26 @@ interface LogLevelProps {
 }
 
 const LogLevel: React.FC<LogLevelProps> = ({ level }) => {
-	const iconColor = () => {
-		switch (level) {
-			case "emergency":
-			case "alert":
-			case "critical":
-			case "error":
-				return "text-gray-900 dark:text-white";
-			case "warning":
-			case "notice":
-			case "info":
-			case "debug":
-				return "text-gray-500 dark:text-gray-400";
-			default:
-				return "text-gray-900 dark:text-white";
-		}
-	};
-
 	const iconClass = () => {
 		switch (level) {
 			case "emergency":
-				return (
-					<FontAwesomeIcon
-						icon={faExclamationTriangle}
-						className={iconColor()}
-					/>
-				);
+				return <FontAwesomeIcon icon={faExclamationTriangle} />;
 			case "alert":
-				return (
-					<FontAwesomeIcon icon={faBell} className={iconColor()} />
-				);
+				return <FontAwesomeIcon icon={faBell} />;
 			case "critical":
-				return (
-					<FontAwesomeIcon
-						icon={faHeartbeat}
-						className={iconColor()}
-					/>
-				);
+				return <FontAwesomeIcon icon={faHeartbeat} />;
 			case "error":
-				return (
-					<FontAwesomeIcon
-						icon={faTimesCircle}
-						className={iconColor()}
-					/>
-				);
+				return <FontAwesomeIcon icon={faTimesCircle} />;
 			case "warning":
-				return (
-					<FontAwesomeIcon
-						icon={faExclamationCircle}
-						className={iconColor()}
-					/>
-				);
+				return <FontAwesomeIcon icon={faExclamationCircle} />;
 			case "notice":
-				return (
-					<FontAwesomeIcon
-						icon={faInfoCircle}
-						className={iconColor()}
-					/>
-				);
+				return <FontAwesomeIcon icon={faInfoCircle} />;
 			case "info":
-				return (
-					<FontAwesomeIcon icon={faInfo} className={iconColor()} />
-				);
+				return <FontAwesomeIcon icon={faInfo} />;
 			case "debug":
-				return <FontAwesomeIcon icon={faBug} className={iconColor()} />;
+				return <FontAwesomeIcon icon={faBug} />;
 			default:
-				return (
-					<FontAwesomeIcon
-						icon={faExclamationTriangle}
-						className={iconColor()}
-					/>
-				);
+				return <FontAwesomeIcon icon={faExclamationTriangle} />;
 		}
 	};
 

@@ -43,7 +43,7 @@ const Toggle: React.FC<ToggleProps> = ({
 							handleToggle(e);
 						}
 					}}
-					className="w-16 bg-white dark:bg-zinc-700 inline-flex items-center p-1 h-8"
+					className="w-16 bg-white dark:bg-zinc-800 inline-flex items-center p-1 h-8"
 				>
 					<button
 						type="button"
@@ -52,7 +52,7 @@ const Toggle: React.FC<ToggleProps> = ({
 							toggleState === ToggleState.on
 								? "toggle-transform"
 								: ""
-						} w-6 h-6 bg-zinc-200 dark:bg-zinc-900 text-zinc-900 dark:text-white text-sm font-medium flex justify-center items-center transition-transform duration-1000`}
+						} w-6 h-6 bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-white text-sm font-medium flex justify-center items-center transition-transform duration-1000`}
 					>
 						{children}
 					</button>
