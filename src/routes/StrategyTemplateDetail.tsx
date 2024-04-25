@@ -2,7 +2,7 @@ import React, { useEffect, useContext, useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 
 import { useParams } from "react-router-dom";
-import BreadcrumbsContext from "../components/BreadcrumbsContext";
+import BreadcrumbsContext from "../components/breadcrumbs/BreadcrumbsContext";
 import { Strategy as StrategyTypes } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import z from "zod";
 import StrategyTemplateSeaDogDiscountSchemeDetail from "./StrategyTemplateSeaDogDiscountSchemeDetail";

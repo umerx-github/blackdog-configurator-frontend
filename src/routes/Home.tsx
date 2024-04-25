@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from "react";
-import LargeButton from "../components/LargeButton";
+import LargeButton from "../components/buttons/LargeButton";
 import { faChess } from "@fortawesome/free-solid-svg-icons/faChess";
 import { Link } from "react-router-dom";
-import BreadcrumbsContext from "../components/BreadcrumbsContext";
+import BreadcrumbsContext from "../components/breadcrumbs/BreadcrumbsContext";
 
 const Home: React.FC = () => {
 	const { setBreadcrumbs } = useContext(BreadcrumbsContext);

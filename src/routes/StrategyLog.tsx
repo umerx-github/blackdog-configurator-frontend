@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import BreadcrumbsContext from "../components/BreadcrumbsContext";
+import BreadcrumbsContext from "../components/breadcrumbs/BreadcrumbsContext";
 import { useParams } from "react-router-dom";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import {
@@ -8,9 +8,9 @@ import {
 } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import { AxiosError } from "axios";
 import RadioInputGroup from "../components/RadioInputGroup";
-import LogDate from "../components/LogDate";
-import LogLevel from "../components/LogLevel";
-import CopyButton from "../components/CopyButton";
+import LogDate from "../components/logging/LogDate";
+import LogLevel from "../components/logging/LogLevel";
+import CopyButton from "../components/buttons/CopyButton";
 import Modal from "../components/Modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons/faEllipsisVertical";

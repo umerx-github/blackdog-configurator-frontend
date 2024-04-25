@@ -5,15 +5,15 @@ import {
 	StrategyTemplate as StrategyTemplateTypes,
 	StrategyTemplate,
 } from "@umerx/umerx-blackdog-configurator-types-typescript";
-import TextInput from "./TextInput";
-import DropdownInput from "./DropdownInput";
-import CurrencyInput from "./CurrencyInput";
-import Toggle from "./Toggle";
+import TextInput from "./inputs-and-outputs/inputs/TextInput";
+import DropdownInput from "./inputs-and-outputs/inputs/DropdownInput";
+import CurrencyInput from "./inputs-and-outputs/inputs/CurrencyInput";
+import Toggle from "./toggle/Toggle";
 import {
 	translateStrategyStatusToToggleState,
 	translateToggleStateToStrategyStatus,
 } from "../utils";
-import ToggleInnerCheckAndX from "./ToggleInnerCheckAndX";
+import ToggleInnerCheckAndX from "./toggle/ToggleInnerCheckAndX";
 import { StrategyDetailFormModel } from "../interfaces/strategyDetail";
 import { SourceTextModule } from "vm";
 

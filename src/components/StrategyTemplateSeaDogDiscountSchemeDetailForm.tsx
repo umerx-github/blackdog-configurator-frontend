@@ -6,16 +6,16 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import SymbolRepeater from "./inputs-and-outputs/SymbolRepeater";
-import Toggle from "./Toggle";
-import TextInput from "./TextInput";
-import CheckboxInput from "./CheckboxInput";
-import NumberInput from "./NumberInput";
-import ToggleInnerCheckAndX from "./ToggleInnerCheckAndX";
+import Toggle from "./toggle/Toggle";
+import TextInput from "./inputs-and-outputs/inputs/TextInput";
+import CheckboxInput from "./inputs-and-outputs/inputs/CheckboxInput";
+import NumberInput from "./inputs-and-outputs/inputs/NumberInput";
+import ToggleInnerCheckAndX from "./toggle/ToggleInnerCheckAndX";
 import {
 	translateStrategyTemplateSeaDogDiscountSchemeStatusToToggleState,
 	translateToggleStateToStrategyTemplateSeaDogDiscountSchemeStatus,
 } from "../utils";
-import PasswordInput from "./PasswordInput";
+import PasswordInput from "./inputs-and-outputs/inputs/PasswordInput";
 import { StrategyTemplateSeaDogDiscountSchemeDetailFormModel } from "../interfaces/strategyTemplateSeaDogDiscountSchemeDetail";
 
 interface StrategyTemplateSeaDogDiscountSchemeDetailFormProps {
