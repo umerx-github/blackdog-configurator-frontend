@@ -14,6 +14,7 @@ import Home from "./routes/Home.tsx";
 import StrategyTemplateList from "./routes/StrategyTemplateList.tsx";
 import StrategyTemplateDetail from "./routes/StrategyTemplateDetail.tsx";
 import StrategyLog from "./routes/StrategyLog.tsx";
+import { Outlet } from "react-router-dom";
 
 const blackdogConfiguratorBackendScheme =
 	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_BACKEND_SCHEME ?? "";
@@ -38,13 +39,20 @@ export const blackdogConfiguratorClient =
 const router = createBrowserRouter([
 	{
 		path: "/",
-		element: <Root />,
-		errorElement: <ErrorPage />,
+		element: (
+			<Root>
+				<Outlet />
+			</Root>
+		),
+		errorElement: (
+			<Root>
+				<ErrorPage />
+			</Root>
+		),
 		children: [
 			{
 				path: "",
 				element: <Home />,
-				errorElement: <ErrorPage />,
 				children: [],
 			},
 			{
@@ -60,7 +68,6 @@ const router = createBrowserRouter([
 							/>
 						),
 						loader: strategiesListLoader,
-						errorElement: <ErrorPage />,
 					},
 					{
 						path: ":strategyId",
@@ -75,7 +82,6 @@ const router = createBrowserRouter([
 										viewState={ViewState.view}
 									/>
 								),
-								errorElement: <ErrorPage />,
 							},
 							{
 								path: "edit",
@@ -87,7 +93,6 @@ const router = createBrowserRouter([
 										viewState={ViewState.edit}
 									/>
 								),
-								errorElement: <ErrorPage />,
 							},
 							{
 								path: "strategyTemplate",
@@ -117,7 +122,6 @@ const router = createBrowserRouter([
 														}
 													/>
 												),
-												errorElement: <ErrorPage />,
 											},
 											{
 												path: "edit",
@@ -131,7 +135,6 @@ const router = createBrowserRouter([
 														}
 													/>
 												),
-												errorElement: <ErrorPage />,
 											},
 										],
 									},
@@ -145,7 +148,6 @@ const router = createBrowserRouter([
 												viewState={ViewState.create}
 											/>
 										),
-										errorElement: <ErrorPage />,
 									},
 								],
 							},
@@ -158,7 +160,6 @@ const router = createBrowserRouter([
 										}
 									/>
 								),
-								errorElement: <ErrorPage />,
 							},
 						],
 					},
@@ -172,15 +173,10 @@ const router = createBrowserRouter([
 								viewState={ViewState.create}
 							/>
 						),
-						errorElement: <ErrorPage />,
 					},
 				],
 			},
 		],
-	},
-	{
-		path: "*",
-		element: <ErrorPage />,
 	},
 ]);
 
