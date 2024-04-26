@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ToggleState } from "../interfaces/settings";
+import { ToggleState } from "../../interfaces/settings";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon } from "@fortawesome/free-solid-svg-icons/faMoon";
 import { faSun } from "@fortawesome/free-solid-svg-icons/faSun";

@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { faRectangleList } from "@fortawesome/free-solid-svg-icons/faRectangleList";
 import { faObjectUngroup } from "@fortawesome/free-solid-svg-icons/faObjectUngroup";
-import MediumButton from "./MediumButton";
+import MediumButton from "./buttons/MediumButton";
 import BrushChart from "./charts/BrushChart";
 import StrategyDetailForm from "./StrategyDetailForm";
 import { StrategyDetailFormModel } from "../interfaces/strategyDetail";

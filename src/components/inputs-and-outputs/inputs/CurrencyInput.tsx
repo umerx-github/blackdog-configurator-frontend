@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { bankersRounding, bankersRoundingTruncateToInt } from "../utils";
-import NumericInput from "./inputs-and-outputs/inputs/NumericInput.js";
+import {
+	bankersRounding,
+	bankersRoundingTruncateToInt,
+} from "../../../utils/index.js";
+import NumericInput from "./NumericInput.js";
 
 interface CurrencyInputProps {
 	label: string;

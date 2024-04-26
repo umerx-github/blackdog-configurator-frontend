@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import BreadcrumbsContext from "../components/BreadcrumbsContext";
+import BreadcrumbsContext from "../components/breadcrumbs/BreadcrumbsContext";
 import { useParams } from "react-router-dom";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import {
@@ -8,9 +8,12 @@ import {
 } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import { AxiosError } from "axios";
 import RadioInputGroup from "../components/RadioInputGroup";
-import LogDate from "../components/LogDate";
-import LogLevel from "../components/LogLevel";
-import CopyButton from "../components/CopyButton";
+import LogDate from "../components/logging/LogDate";
+import LogLevel from "../components/logging/LogLevel";
+import CopyButton from "../components/buttons/CopyButton";
+import Modal from "../components/Modal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons/faEllipsisVertical";
 
 interface StrategyLogProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -30,6 +33,7 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 		StrategyLogTypes.StrategyLogResponseBodyDataInstance[]
 	>([]);
 	const [timezone, setTimezone] = useState<string>("localTime");
+	const [openStatus, setOpenStatus] = useState<Record<number, boolean>>({});
 
 	useEffect(() => {
 		if (!strategy) {
@@ -109,8 +113,8 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 
 	return (
 		<>
-			<div className="max-w-md mx-auto bg-white border border-zinc-200 p-4 mb-4">
-				<h2 className="mb-4 text-lg font-semibold text-zinc-900">
+			<div className="max-w-md mx-auto bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 p-4 mb-4">
+				<h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-white">
 					Options
 				</h2>
 				<div className="flex items-center mb-4">
@@ -141,37 +145,41 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 				<div className="flex flex-col">
 					<div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
 						<div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-							<div className="border border-zinc-200 overflow-hidden border-b border-zinc-200">
-								<table className="min-w-full divide-y divide-zinc-200">
-									<thead className="bg-zinc-50">
+							<div className="border border-zinc-200 dark:border-zinc-700 overflow-hidden border-b">
+								<table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
+									<thead className="bg-zinc-50 dark:bg-zinc-800 transition-bg duration-1000">
 										<tr>
 											<th
 												scope="col"
-												className="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider"
+												className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider"
 											>
 												Timestamp
 											</th>
 											<th
 												scope="col"
-												className="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider"
+												className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider"
 											>
 												Level
 											</th>
 											<th
 												scope="col"
-												className="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider"
+												className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider"
 											>
 												Message
 											</th>
 											<th
 												scope="col"
-												className="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider"
+												className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider"
 											>
 												Raw Data
 											</th>
+											<th
+												scope="col"
+												className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider"
+											></th>
 										</tr>
 									</thead>
-									<tbody className="bg-white divide-y divide-zinc-200">
+									<tbody className="bg-white dark:bg-zinc-900 divide-y divide-zinc-200 transition-bg duration-1000">
 										{logs.map((log) => (
 											<tr key={log.id}>
 												<td className="px-6 py-4 whitespace-nowrap">
@@ -183,7 +191,7 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 													/>
 												</td>
 												<td className="px-6 py-4 whitespace-nowrap">
-													<div className="text-sm text-zinc-900">
+													<div className="text-sm text-zinc-900 dark:text-white">
 														<LogLevel
 															level={log.level}
 														/>
@@ -191,15 +199,12 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 												</td>
 												<td className="px-6 py-4">
 													<div className="flex">
-														<div className="text-sm text-zinc-900 max-2-lines">
+														<div className="text-sm text-zinc-900 dark:text-white max-2-lines">
 															{log.message}
 														</div>
-														<CopyButton
-															text={log.message}
-														/>
 													</div>
 												</td>
-												<td className="px-6 py-4 text-sm">
+												<td className="px-6 py-4 text-sm text-zinc-900 dark:text-white">
 													<div className="flex">
 														<div className="max-2-lines">
 															{JSON.stringify(
@@ -207,13 +212,64 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 																	?.rawData
 															)}
 														</div>
-														<CopyButton
-															text={JSON.stringify(
-																log?.data
-																	?.rawData
-															)}
-														/>
 													</div>
+												</td>
+												<td>
+													<button
+														onClick={() =>
+															setOpenStatus({
+																...openStatus,
+																[log.id]:
+																	!openStatus[
+																		log.id
+																	],
+															})
+														}
+														className="text-xl text-zinc-500 dark:text-zinc-400"
+													>
+														<FontAwesomeIcon
+															icon={
+																faEllipsisVertical
+															}
+														/>
+													</button>
+												</td>
+												<td>
+													<Modal
+														isOpen={
+															openStatus[
+																log.id
+															] ?? false
+														}
+														onClose={() => {
+															setOpenStatus({
+																...openStatus,
+																[log.id]: false,
+															});
+														}}
+													>
+														<div className="flex justify-between items-start">
+															<h2 className="font-semibold text-zinc-900 dark:text-white mb-4">
+																Log Details
+															</h2>
+															<CopyButton
+																text={JSON.stringify(
+																	log
+																)}
+															/>
+														</div>
+														<pre
+															className="text-wrap overflow-scroll text-xs"
+															style={{
+																maxHeight:
+																	"60vh",
+															}}
+														>
+															{JSON.stringify(
+																log
+															)}
+														</pre>
+													</Modal>
 												</td>
 											</tr>
 										))}

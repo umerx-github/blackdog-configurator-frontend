@@ -25,9 +25,9 @@ const CopyButton: React.FC<CopyButtonProps> = ({ text }) => {
 		>
 			{isCopied ? (
 				<div
-					className="absolute p-2 color-white bg-white dark:bg-zinc-900 z-10"
+					className="absolute p-2 z-10"
 					style={{
-						transform: "translate(-65%, -50%)",
+						transform: "translate(-65%, -30%)",
 					}}
 				>
 					<FontAwesomeIcon icon={faCheck} />

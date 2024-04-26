@@ -1,5 +1,5 @@
 import { useState } from "react";
-import RadioInput from "./RadioInput";
+import RadioInput from "./inputs-and-outputs/inputs/RadioInput";
 
 interface RadioInputGroupProps {
 	name: string;

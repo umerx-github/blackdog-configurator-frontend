@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ToggleState } from "../interfaces/settings";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
-import Toggle from "../components/Toggle";
+import Toggle from "../components/toggle/Toggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 import { Link } from "react-router-dom";
@@ -9,7 +9,7 @@ import {
 	Strategy as StrategyTypes,
 	StrategyTemplateSeaDogDiscountScheme as StrategyTemplateSeaDogDiscountSchemeTypes,
 } from "@umerx/umerx-blackdog-configurator-types-typescript";
-import ToggleInnerCheckAndX from "../components/ToggleInnerCheckAndX";
+import ToggleInnerCheckAndX from "../components/toggle/ToggleInnerCheckAndX";
 import {
 	translateStrategyTemplateSeaDogDiscountSchemeStatusToToggleState,
 	translateToggleStateToStrategyTemplateSeaDogDiscountSchemeStatus,

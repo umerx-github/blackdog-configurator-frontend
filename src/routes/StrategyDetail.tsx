@@ -13,7 +13,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import StrategyDetailView from "../components/StrategyDetailView";
 import z, { ZodError } from "zod";
 import { AxiosError } from "axios";
-import BreadcrumbsContext from "../components/BreadcrumbsContext";
+import BreadcrumbsContext from "../components/breadcrumbs/BreadcrumbsContext";
 import { bankersRounding } from "../utils";
 import { StrategyDetailFormModel } from "../interfaces/strategyDetail";
 

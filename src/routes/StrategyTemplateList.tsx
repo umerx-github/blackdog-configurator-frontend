@@ -12,7 +12,7 @@ import {
 } from "react-router-dom";
 // import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 // import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
-import BreadcrumbsContext from "../components/BreadcrumbsContext";
+import BreadcrumbsContext from "../components/breadcrumbs/BreadcrumbsContext";
 import { StrategyGetSingleResponseBodyData } from "@umerx/umerx-blackdog-configurator-types-typescript/build/src/strategy";
 import z from "zod";
 import StrategyTemplateSeaDogDiscountSchemeList from "./StrategyTemplateSeaDogDiscountSchemeList";
