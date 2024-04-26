@@ -7,10 +7,12 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon } from "@fortawesome/free-solid-svg-icons/faMoon";
 import { faSun } from "@fortawesome/free-solid-svg-icons/faSun";
-import { Outlet } from "react-router-dom";
 import ToggleInnerMoonAndSun from "../components/ToggleInnerMoonAndSun";
 
-const Root: React.FC = () => {
+interface RootProps {
+	children?: React.ReactNode;
+}
+const Root: React.FC<RootProps> = ({ children }) => {
 	const [darkModeState, setDarkModeState] = useState<ToggleState>(
 		ToggleState.off
 	);
@@ -45,7 +47,7 @@ const Root: React.FC = () => {
 						</div>
 						<div className="blackdog-main-content">
 							<div className="p-4">
-								<Outlet />
+								{children ? children : null}
 							</div>
 						</div>
 					</BreadcrumbsProvider>
