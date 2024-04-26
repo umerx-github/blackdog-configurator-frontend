@@ -14,6 +14,8 @@ import CopyButton from "../components/buttons/CopyButton";
 import Modal from "../components/Modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons/faEllipsisVertical";
+import PageSizePicker from "../components/RowsPerPagePicker";
+import PageNumberNavigator from "../components/PageNumberNavigator";
 
 interface StrategyLogProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -34,6 +36,9 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 	>([]);
 	const [timezone, setTimezone] = useState<string>("localTime");
 	const [openStatus, setOpenStatus] = useState<Record<number, boolean>>({});
+	const [currentPageNumber, setCurrentPageNumber] = useState<number>(1);
+	const [pageSize, setPageSize] = useState<number>(2);
+	const [totalPages, setTotalPages] = useState<number>(1);
 
 	useEffect(() => {
 		if (!strategy) {
@@ -87,11 +92,14 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 		(async () => {
 			if (null !== strategyId) {
 				try {
-					const { data: logsFetched } =
-						await blackdogConfiguratorClient
-							.strategyLog()
-							.getMany({ strategyIds: [strategyId] });
+					const { data: logsFetched, totalPages } =
+						await blackdogConfiguratorClient.strategyLog().getMany({
+							strategyIds: [strategyId],
+							pageSize: pageSize,
+							pageNumber: currentPageNumber,
+						});
 					setLogs(logsFetched);
+					setTotalPages(totalPages);
 				} catch (e) {
 					if (e instanceof AxiosError && e.response?.status === 404) {
 						setStatusError(
@@ -105,7 +113,11 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 				}
 			}
 		})();
-	}, [strategyId]);
+	}, [strategyId, pageSize, currentPageNumber]);
+
+	useEffect(() => {
+		setCurrentPageNumber(1);
+	}, [pageSize]);
 
 	if (statusError) {
 		return <>{statusError}</>;
@@ -275,6 +287,17 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 										))}
 									</tbody>
 								</table>
+							</div>
+							<div className="flex justify-between">
+								<PageSizePicker
+									pageSize={pageSize}
+									setPageSize={setPageSize}
+								/>
+								<PageNumberNavigator
+									currentPageNumber={currentPageNumber}
+									setCurrentPageNumber={setCurrentPageNumber}
+									totalPages={totalPages}
+								/>
 							</div>
 						</div>
 					</div>
