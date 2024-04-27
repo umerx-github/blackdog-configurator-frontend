@@ -14,6 +14,7 @@ import {
 	translateStrategyTemplateSeaDogDiscountSchemeStatusToToggleState,
 	translateToggleStateToStrategyTemplateSeaDogDiscountSchemeStatus,
 } from "../utils";
+import FixedButtonLink from "../components/buttons/FixedButtonLink";
 
 interface StrategyTemplateSeaDogDiscountSchemeListProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -114,14 +115,7 @@ const StrategyTemplateSeaDogDiscountSchemeList: React.FC<
 					</Link>
 				))}
 			</div>
-			<div className="absolute bottom-4 right-4">
-				<Link to="create">
-					<FontAwesomeIcon
-						icon={faPlus}
-						className="text-4xl text-zinc-600 dark:text-zinc-400 transition-bg duration-1000"
-					/>
-				</Link>
-			</div>
+			<FixedButtonLink icon={faPlus} to="create" />
 		</div>
 	);
 };

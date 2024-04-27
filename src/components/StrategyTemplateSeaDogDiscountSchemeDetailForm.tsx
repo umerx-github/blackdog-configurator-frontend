@@ -17,6 +17,7 @@ import {
 } from "../utils";
 import PasswordInput from "./inputs-and-outputs/inputs/PasswordInput";
 import { StrategyTemplateSeaDogDiscountSchemeDetailFormModel } from "../interfaces/strategyTemplateSeaDogDiscountSchemeDetail";
+import FixedButtonLink from "./buttons/FixedButtonLink";
 
 interface StrategyTemplateSeaDogDiscountSchemeDetailFormProps {
 	viewState: ViewState;
@@ -237,14 +238,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 				) : null}
 			</form>
 			{actionIcon && actionUrl ? (
-				<div className="absolute bottom-4 right-4">
-					<Link to={actionUrl}>
-						<FontAwesomeIcon
-							icon={actionIcon}
-							className="text-4xl text-zinc-600 dark:text-zinc-400 transition-bg duration-1000"
-						/>
-					</Link>
-				</div>
+				<FixedButtonLink icon={actionIcon} to={actionUrl} />
 			) : null}
 		</>
 	);

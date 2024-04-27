@@ -13,6 +13,7 @@ import MediumButton from "./buttons/MediumButton";
 import BrushChart from "./charts/BrushChart";
 import StrategyDetailForm from "./StrategyDetailForm";
 import { StrategyDetailFormModel } from "../interfaces/strategyDetail";
+import FixedButtonLink from "./buttons/FixedButtonLink";
 interface StrategyDetailViewProps {
 	viewState: ViewState;
 	model: StrategyDetailFormModel;
@@ -67,14 +68,7 @@ const StrategyDetailView: React.FC<StrategyDetailViewProps> = ({
 				</>
 			) : null}
 			{actionIcon && actionUrl ? (
-				<div className="absolute bottom-4 right-4">
-					<Link to={actionUrl}>
-						<FontAwesomeIcon
-							icon={actionIcon}
-							className="text-4xl text-zinc-600 dark:text-zinc-400 transition-bg duration-1000"
-						/>
-					</Link>
-				</div>
+				<FixedButtonLink icon={actionIcon} to={actionUrl} />
 			) : null}
 		</>
 	);

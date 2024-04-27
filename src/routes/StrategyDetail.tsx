@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons/faPenToSquare";
-import { faX } from "@fortawesome/free-solid-svg-icons/faX";
 import {
 	Response as ResponseTypes,
 	Strategy as StrategyTypes,
@@ -11,11 +10,12 @@ import {
 import { ViewState } from "../interfaces/viewState";
 import { useNavigate, useParams } from "react-router-dom";
 import StrategyDetailView from "../components/StrategyDetailView";
-import z, { ZodError } from "zod";
+import { ZodError } from "zod";
 import { AxiosError } from "axios";
 import BreadcrumbsContext from "../components/breadcrumbs/BreadcrumbsContext";
 import { bankersRounding } from "../utils";
 import { StrategyDetailFormModel } from "../interfaces/strategyDetail";
+import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
 
 function convertStrategyDetailFormModelToRequestBodyDataInstanceProperties(
 	model: StrategyDetailFormModel
@@ -282,7 +282,7 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 					<StrategyDetailView
 						viewState={ViewState.create}
 						model={model}
-						actionIcon={faX}
+						actionIcon={faXmark}
 						actionUrl={`/strategy`}
 						onChange={(newModel) => {
 							setModel({
@@ -325,7 +325,7 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 				<StrategyDetailView
 					viewState={ViewState.edit}
 					model={model}
-					actionIcon={faX}
+					actionIcon={faXmark}
 					actionUrl={`/strategy/${strategy.id}`}
 					onChange={(newModel) => {
 						setModel({

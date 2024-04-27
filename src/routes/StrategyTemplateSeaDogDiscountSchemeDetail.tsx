@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons/faPenToSquare";
-import { faX } from "@fortawesome/free-solid-svg-icons/faX";
 import {
 	Response as ResponseTypes,
 	Strategy as StrategyTypes,
@@ -13,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import StrategyTemplateSeaDogDiscountSchemeDetailForm from "../components/StrategyTemplateSeaDogDiscountSchemeDetailForm";
 import z, { ZodError } from "zod";
 import { StrategyTemplateSeaDogDiscountSchemeDetailFormModel } from "../interfaces/strategyTemplateSeaDogDiscountSchemeDetail";
+import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
 
 function convertStrategyTemplateSeaDogDiscountSchemeDetailFormModelToRequestBodyDataInstanceProperties(
 	model: StrategyTemplateSeaDogDiscountSchemeDetailFormModel
@@ -194,7 +194,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 						model={model}
 						blackdogConfiguratorClient={blackdogConfiguratorClient}
 						viewState={ViewState.create}
-						actionIcon={faX}
+						actionIcon={faXmark}
 						actionUrl={`/strategy/${strategy.id}/strategyTemplate`}
 						onChange={(newModel) => {
 							setModel({
@@ -242,7 +242,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 					model={model}
 					blackdogConfiguratorClient={blackdogConfiguratorClient}
 					viewState={ViewState.edit}
-					actionIcon={faX}
+					actionIcon={faXmark}
 					actionUrl={`/strategy/${strategy.id}/strategyTemplate/${strategyTemplate.id}`}
 					onChange={(newModel) => {
 						setModel({

@@ -16,6 +16,7 @@ import {
 	translateToggleStateToStrategyStatus,
 } from "../utils";
 import ToggleInnerCheckAndX from "../components/toggle/ToggleInnerCheckAndX";
+import FixedButtonLink from "../components/buttons/FixedButtonLink";
 
 interface StrategiesListProps {
 	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
@@ -106,14 +107,7 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 					</Link>
 				))}
 			</div>
-			<div className="absolute bottom-4 right-4">
-				<Link to="create">
-					<FontAwesomeIcon
-						icon={faPlus}
-						className="text-4xl text-zinc-600 dark:text-zinc-400 transition-bg duration-1000"
-					/>
-				</Link>
-			</div>
+			<FixedButtonLink icon={faPlus} to="create" />
 		</div>
 	);
 };
