@@ -76,7 +76,7 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 				} catch (e) {
 					if (e instanceof AxiosError && e.response?.status === 404) {
 						setStatusError(
-							"🐾 Oh no, we've fetched far and wide but couldn't dig up the strategy logs you're looking for. It seems to have buried itself too well! Please try again later or check if you've got the right strategy ID. 🐾"
+							"🐾 Oh no, we've fetched far and wide but couldn't dig up the strategy logs you're looking for. Please try again later or check if you've got the right strategy ID. 🐾"
 						);
 					} else {
 						setGeneralError(
@@ -103,7 +103,7 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 				} catch (e) {
 					if (e instanceof AxiosError && e.response?.status === 404) {
 						setStatusError(
-							"🐾 Oh no, we've fetched far and wide but couldn't dig up the strategy logs you're looking for. It seems to have buried itself too well! Please try again later or check if you've got the right strategy ID. 🐾"
+							"🐾 Oh no, we've fetched far and wide but couldn't dig up the strategy logs you're looking for. Please try again later or check if you've got the right strategy ID. 🐾"
 						);
 					} else {
 						setGeneralError(

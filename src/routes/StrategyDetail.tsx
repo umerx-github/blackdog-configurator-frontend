@@ -262,7 +262,7 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 			} catch (e) {
 				if (e instanceof AxiosError && e.response?.status === 404) {
 					setError(
-						"🐾 Oh no, we've fetched far and wide but couldn't dig up the strategy you're looking for. It seems to have buried itself too well! Please try again later or check if you've got the right strategy ID. 🐾"
+						"🐾 StrategyDetailOh no, we've fetched far and wide but couldn't dig up the strategy you're looking for. Please try again later or check if you've got the right strategy ID. 🐾"
 					);
 				} else {
 					setError(
