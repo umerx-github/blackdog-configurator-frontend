@@ -14,7 +14,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({ text }) => {
 			setIsCopied(true);
 			setTimeout(() => {
 				setIsCopied(false);
-			}, 2000);
+			}, 1000);
 		});
 	};
 
@@ -24,15 +24,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({ text }) => {
 			onClick={handleCopy}
 		>
 			{isCopied ? (
-				<div
-					className="absolute p-2 z-10"
-					style={{
-						transform: "translate(-65%, -30%)",
-					}}
-				>
-					<FontAwesomeIcon icon={faCheck} />
-					<div className="text-xs">Copied!</div>
-				</div>
+				<FontAwesomeIcon icon={faCheck} />
 			) : (
 				<FontAwesomeIcon icon={faClipboard} />
 			)}
