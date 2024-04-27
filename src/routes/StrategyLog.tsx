@@ -37,7 +37,7 @@ const StrategyLog: React.FC<StrategyLogProps> = ({
 	const [timezone, setTimezone] = useState<string>("localTime");
 	const [openStatus, setOpenStatus] = useState<Record<number, boolean>>({});
 	const [currentPageNumber, setCurrentPageNumber] = useState<number>(1);
-	const [pageSize, setPageSize] = useState<number>(2);
+	const [pageSize, setPageSize] = useState<number>(50);
 	const [totalPages, setTotalPages] = useState<number>(1);
 
 	useEffect(() => {

@@ -15,8 +15,6 @@ const RowsPerPagePicker: React.FC<RowsPerPagePickerProps> = ({
 				onChange={(e) => setPageSize(parseInt(e.target.value))}
 				className="border border-zinc-300 dark:border-zinc-600 dark:bg-zinc-900 px-2 py-1 cursor-pointer"
 			>
-				<option value={2}>2</option>
-				<option value={5}>5</option>
 				<option value={50}>50</option>
 				<option value={500}>500</option>
 				<option value={5000}>5000</option>
