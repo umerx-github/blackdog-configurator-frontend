@@ -8,6 +8,7 @@ import ErrorPage from "./ErrorPage.tsx";
 import StrategiesList, {
 	loader as strategiesListLoader,
 } from "./routes/StrategiesList.tsx";
+import { loader as strategyDetailLoader } from "./routes/StrategyDetail.tsx";
 import StrategyDetail from "./routes/StrategyDetail.tsx";
 import { ViewState } from "./interfaces/viewState";
 import Home from "./routes/Home.tsx";
@@ -82,24 +83,7 @@ const router = createBrowserRouter([
 										viewState={ViewState.view}
 									/>
 								),
-								loader: async ({ params }) => {
-									try {
-										const { data: strategyLoaded } =
-											await blackdogConfiguratorClient
-												.strategy()
-												.getSingle({
-													id: parseInt(
-														params.strategyId ?? ""
-													),
-												});
-										return strategyLoaded;
-									} catch (e) {
-										throw new Response(
-											"Strategy not found",
-											{ status: 403 }
-										);
-									}
-								},
+								loader: strategyDetailLoader,
 							},
 							{
 								path: "edit",

@@ -1,8 +1,6 @@
 import React, { useEffect, useContext, useState } from "react";
-import { ToggleState } from "../interfaces/settings";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import Toggle from "../components/toggle/Toggle";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 import { Link, useLoaderData } from "react-router-dom";
 import BreadcrumbsContext from "../components/breadcrumbs/BreadcrumbsContext";
