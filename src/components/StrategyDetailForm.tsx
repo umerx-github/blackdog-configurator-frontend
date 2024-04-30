@@ -108,7 +108,7 @@ const StrategyDetailForm: React.FC<StrategyDetailFormProps> = ({
 					/>
 				</div>
 				<div className="form-toggles mb-4 w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-					<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
+					<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-700 transition-bg duration-1000">
 						{" "}
 						{model.statusError ? <p>{model.statusError}</p> : null}
 						<Toggle

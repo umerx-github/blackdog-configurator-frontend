@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
+import { blackdogConfiguratorClient } from "../main";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons/faPenToSquare";
 import {
 	Response as ResponseTypes,
@@ -16,6 +17,11 @@ import BreadcrumbsContext from "../components/breadcrumbs/BreadcrumbsContext";
 import { bankersRounding } from "../utils";
 import { StrategyDetailFormModel } from "../interfaces/strategyDetail";
 import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
+
+interface StrategyDetailProps {
+	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
+	viewState: ViewState;
+}
 
 function convertStrategyDetailFormModelToRequestBodyDataInstanceProperties(
 	model: StrategyDetailFormModel
@@ -56,11 +62,6 @@ function appendIssuesToModel(
 		model.generalError = generalErrors.join(" ");
 	}
 	return model;
-}
-
-interface StrategyDetailProps {
-	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
-	viewState: ViewState;
 }
 
 const StrategyDetail: React.FC<StrategyDetailProps> = ({
@@ -122,13 +123,6 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 							appendIssuesToModel(response.issues, newModel);
 						} catch (e) {
 							console.error({ e });
-							if (typeof e === "string" || e instanceof String) {
-								newModel.generalError = e.toString();
-							} else {
-								setError(
-									`🐾 Oops! Our servers are having a bit of a "ruff" day and couldn't fetch your request. Please try again later or check your input. 🐾`
-								);
-							}
 						}
 					} else if (typeof e === "string" || e instanceof String) {
 						newModel.generalError = e.toString();

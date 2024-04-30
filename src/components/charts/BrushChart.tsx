@@ -23,6 +23,8 @@ const BrushChart: React.FC<BrushChartProps> = ({
 	brushChartId = "brush-chart",
 	datetimeUTC = false,
 }) => {
+	const [color1, color2] = ["#a1a1aa", "#a1a1aa"];
+
 	const options: ApexOptions = {
 		chart: {
 			id: chartId,
@@ -33,7 +35,7 @@ const BrushChart: React.FC<BrushChartProps> = ({
 				show: false,
 			},
 		},
-		colors: ["#546E7A"],
+		colors: [color1],
 		stroke: {
 			width: 3,
 		},
@@ -71,7 +73,7 @@ const BrushChart: React.FC<BrushChartProps> = ({
 				},
 			},
 		},
-		colors: ["#008FFB"],
+		colors: [color2],
 		fill: {
 			type: "gradient",
 			gradient: {

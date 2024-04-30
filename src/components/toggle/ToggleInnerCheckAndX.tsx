@@ -1,5 +1,4 @@
 import React from "react";
-
 import { ToggleState } from "../../interfaces/settings";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";

@@ -82,6 +82,24 @@ const router = createBrowserRouter([
 										viewState={ViewState.view}
 									/>
 								),
+								loader: async ({ params }) => {
+									try {
+										const { data: strategyLoaded } =
+											await blackdogConfiguratorClient
+												.strategy()
+												.getSingle({
+													id: parseInt(
+														params.strategyId ?? ""
+													),
+												});
+										return strategyLoaded;
+									} catch (e) {
+										throw new Response(
+											"Strategy not found",
+											{ status: 403 }
+										);
+									}
+								},
 							},
 							{
 								path: "edit",

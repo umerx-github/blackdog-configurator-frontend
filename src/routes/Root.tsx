@@ -4,10 +4,6 @@ import BlackDogHeader from "../components/BlackdogHeader";
 import Toggle from "../components/toggle/Toggle";
 import BreadcrumbsProvider from "../components/breadcrumbs/BreadcrumbsProvider";
 import Breadcrumbs from "../components/breadcrumbs/Breadcrumbs";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMoon } from "@fortawesome/free-solid-svg-icons/faMoon";
-import { faSun } from "@fortawesome/free-solid-svg-icons/faSun";
-import { Outlet } from "react-router-dom";
 import ToggleInnerMoonAndSun from "../components/toggle/ToggleInnerMoonAndSun";
 
 interface RootProps {
