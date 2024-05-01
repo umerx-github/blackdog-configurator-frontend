@@ -8,6 +8,7 @@ import ErrorPage from "./ErrorPage.tsx";
 import StrategiesList, {
 	loader as strategiesListLoader,
 } from "./routes/StrategiesList.tsx";
+import { loader as strategyDetailLoader } from "./routes/StrategyDetail.tsx";
 import StrategyDetail from "./routes/StrategyDetail.tsx";
 import { ViewState } from "./interfaces/viewState";
 import Home from "./routes/Home.tsx";
@@ -82,6 +83,7 @@ const router = createBrowserRouter([
 										viewState={ViewState.view}
 									/>
 								),
+								loader: strategyDetailLoader,
 							},
 							{
 								path: "edit",

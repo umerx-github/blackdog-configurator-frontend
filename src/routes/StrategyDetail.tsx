@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
+import { blackdogConfiguratorClient } from "../main";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons/faPenToSquare";
 import {
 	Response as ResponseTypes,
@@ -8,7 +9,7 @@ import {
 	Timeframe as TimeframeTypes,
 } from "@umerx/umerx-blackdog-configurator-types-typescript";
 import { ViewState } from "../interfaces/viewState";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import StrategyDetailView from "../components/StrategyDetailView";
 import { ZodError } from "zod";
 import { AxiosError } from "axios";
@@ -16,6 +17,25 @@ import BreadcrumbsContext from "../components/breadcrumbs/BreadcrumbsContext";
 import { bankersRounding } from "../utils";
 import { StrategyDetailFormModel } from "../interfaces/strategyDetail";
 import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
+import { StrategyGetSingleResponseBodyData } from "@umerx/umerx-blackdog-configurator-types-typescript/build/src/strategy";
+
+interface StrategyDetailProps {
+	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
+	viewState: ViewState;
+}
+
+export async function loader(params: { strategyId?: string }) {
+	try {
+		const { data: strategyLoaded } = await blackdogConfiguratorClient
+			.strategy()
+			.getSingle({
+				id: parseInt(params.strategyId ?? ""),
+			});
+		return strategyLoaded;
+	} catch (e) {
+		throw new Response("Strategy not found", { status: 403 });
+	}
+}
 
 function convertStrategyDetailFormModelToRequestBodyDataInstanceProperties(
 	model: StrategyDetailFormModel
@@ -58,22 +78,18 @@ function appendIssuesToModel(
 	return model;
 }
 
-interface StrategyDetailProps {
-	blackdogConfiguratorClient: BlackdogConfiguratorClient.Client;
-	viewState: ViewState;
-}
-
 const StrategyDetail: React.FC<StrategyDetailProps> = ({
 	blackdogConfiguratorClient,
 	viewState,
 }) => {
+	const strategyLoaded = useLoaderData() as StrategyGetSingleResponseBodyData;
+	const [strategy, setStrategy] =
+		useState<StrategyGetSingleResponseBodyData>(strategyLoaded);
 	const { setBreadcrumbs } = useContext(BreadcrumbsContext);
 	const [error, setError] = useState<string | null>(null);
 	const params = useParams();
 	const strategyId = params.strategyId ? parseInt(params.strategyId) : null;
 	const navigate = useNavigate();
-	const [strategy, setStrategy] =
-		useState<StrategyTypes.StrategyResponseBodyDataInstance | null>(null);
 	const [model, setModel] = useState<StrategyDetailFormModel>({
 		status: StrategyTypes.StatusSchema.Enum.active,
 		strategyTemplateName:
@@ -122,13 +138,6 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 							appendIssuesToModel(response.issues, newModel);
 						} catch (e) {
 							console.error({ e });
-							if (typeof e === "string" || e instanceof String) {
-								newModel.generalError = e.toString();
-							} else {
-								setError(
-									`🐾 Oops! Our servers are having a bit of a "ruff" day and couldn't fetch your request. Please try again later or check your input. 🐾`
-								);
-							}
 						}
 					} else if (typeof e === "string" || e instanceof String) {
 						newModel.generalError = e.toString();
@@ -248,30 +257,6 @@ const StrategyDetail: React.FC<StrategyDetailProps> = ({
 		});
 		setSeries([{ data }]);
 	}, [aggregateValues]);
-	useEffect(() => {
-		if (null === strategyId) {
-			return;
-		}
-		(async () => {
-			try {
-				const { data: strategyFetched } =
-					await blackdogConfiguratorClient
-						.strategy()
-						.getSingle({ id: strategyId });
-				setStrategy(strategyFetched);
-			} catch (e) {
-				if (e instanceof AxiosError && e.response?.status === 404) {
-					setError(
-						"🐾 StrategyDetailOh no, we've fetched far and wide but couldn't dig up the strategy you're looking for. Please try again later or check if you've got the right strategy ID. 🐾"
-					);
-				} else {
-					setError(
-						`🐾 Oops! Our servers are having a bit of a "ruff" day and couldn't fetch your request. Please try again later or check your input. 🐾`
-					);
-				}
-			}
-		})();
-	}, [strategyId]);
 	if (error) {
 		return <>{error}</>;
 	}

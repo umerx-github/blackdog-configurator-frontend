@@ -74,7 +74,7 @@ const StrategyTemplateSeaDogDiscountSchemeList: React.FC<
 						className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-2 transition-bg duration-1000"
 					>
 						<div className="mb-4 w-full" key={strategyTemplate.id}>
-							<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
+							<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-700 transition-bg duration-1000">
 								<Toggle
 									key={strategyTemplate.id}
 									toggleState={translateStrategyTemplateSeaDogDiscountSchemeStatusToToggleState(

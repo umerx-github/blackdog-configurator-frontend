@@ -1,8 +1,6 @@
 import React, { useEffect, useContext, useState } from "react";
-import { ToggleState } from "../interfaces/settings";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
 import Toggle from "../components/toggle/Toggle";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 import { Link, useLoaderData } from "react-router-dom";
 import BreadcrumbsContext from "../components/breadcrumbs/BreadcrumbsContext";
@@ -81,7 +79,7 @@ const StrategiesList: React.FC<StrategiesListProps> = ({
 						className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-2 transition-bg duration-1000"
 					>
 						<div className="mb-4 w-full" key={strategy.id}>
-							<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-800 transition-bg duration-1000">
+							<div className="p-2 border-2 border-zinc-400 dark:border-zinc-600 bg-zinc-200 dark:bg-zinc-700 transition-bg duration-1000">
 								<Toggle
 									key={strategy.id}
 									toggleState={translateStrategyStatusToToggleState(
