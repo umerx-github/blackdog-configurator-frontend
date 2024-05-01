@@ -1,7 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Client as BlackdogConfiguratorClient } from "@umerx/umerx-blackdog-configurator-client-typescript";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+	createBrowserRouter,
+	RouterProvider,
+	useParams,
+} from "react-router-dom";
 import "./index.css";
 import Root from "./routes/Root";
 import ErrorPage from "./ErrorPage.tsx";
@@ -16,6 +20,7 @@ import StrategyTemplateList from "./routes/StrategyTemplateList.tsx";
 import StrategyTemplateDetail from "./routes/StrategyTemplateDetail.tsx";
 import StrategyLog from "./routes/StrategyLog.tsx";
 import { Outlet } from "react-router-dom";
+import path from "path";
 
 const blackdogConfiguratorBackendScheme =
 	import.meta.env.VITE_BLACKDOG_CONFIGURATOR_BACKEND_SCHEME ?? "";

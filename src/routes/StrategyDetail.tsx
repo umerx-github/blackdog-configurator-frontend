@@ -24,12 +24,15 @@ interface StrategyDetailProps {
 	viewState: ViewState;
 }
 
-export async function loader(params: { strategyId?: string }) {
+export async function loader(request: {
+	params: { strategyId?: string };
+}): Promise<StrategyGetSingleResponseBodyData> {
+	console.log({ request });
 	try {
 		const { data: strategyLoaded } = await blackdogConfiguratorClient
 			.strategy()
 			.getSingle({
-				id: parseInt(params.strategyId ?? ""),
+				id: parseInt(request.params.strategyId ?? ""),
 			});
 		return strategyLoaded;
 	} catch (e) {
