@@ -229,7 +229,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetailForm: React.FC<
 										symbolIds: newSymbolIds,
 									});
 								}}
-							></SymbolRepeater>
+							/>
 						</span>
 					</label>
 				</div>

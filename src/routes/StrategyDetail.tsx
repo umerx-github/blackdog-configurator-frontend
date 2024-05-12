@@ -27,7 +27,6 @@ interface StrategyDetailProps {
 export async function loader(request: {
 	params: { strategyId?: string };
 }): Promise<StrategyGetSingleResponseBodyData> {
-	console.log({ request });
 	try {
 		const { data: strategyLoaded } = await blackdogConfiguratorClient
 			.strategy()

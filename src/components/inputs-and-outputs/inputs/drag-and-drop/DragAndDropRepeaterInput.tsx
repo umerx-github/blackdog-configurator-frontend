@@ -42,12 +42,6 @@ export default function DragAndDropRepeaterInput({
 			onNewItemValueChange={(newItemValue) => {
 				const filteredValue = filterNewItemValue(newItemValue);
 				setNewItemValue(filteredValue);
-				// THIS DOESN'T SEEM TO DO ANYTHING - IT NEVER EXECUTES
-				// if (newItem) {
-				// 	console.log("found new item");
-				// 	setNewItemId(newItem.itemId);
-				// 	setNewItemValue(newItem.itemValue);
-				// }
 			}}
 			onReorder={(items) => {
 				onReorder(items);
@@ -65,6 +59,6 @@ export default function DragAndDropRepeaterInput({
 				setNewItemId("");
 				onCreate(inputValue);
 			}}
-		></DragAndDropRepeater>
+		/>
 	);
 }

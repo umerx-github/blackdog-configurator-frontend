@@ -5,7 +5,6 @@ import { useRouteError, isRouteErrorResponse } from "react-router-dom";
 
 const ErrorPage: React.FC = () => {
 	const error = useRouteError();
-	console.log({ error });
 	let heading = "Oops!";
 	let message = "errorSorry, an unexpected error has occurred.";
 	if (isRouteErrorResponse(error)) {
