@@ -50,9 +50,13 @@ export default function DragAndDropRepeater({
 				droppableId={droppableId}
 				items={selectedItems}
 				onDelete={onDelete}
-			></SortableList>
+			/>
 			<div>
 				<CreatableSelect
+					allowCreateWhileLoading={true}
+					isValidNewOption={(inputValue) => {
+						return inputValue.length > 0;
+					}}
 					value={{ label: newItemValue, value: newItemId }}
 					// Using optional inputValue prop makes this a controlled input
 					inputValue={newItemValue}
