@@ -98,6 +98,7 @@ const StrategyTemplateSeaDogDiscountSchemeDetail: React.FC<
 		useState<StrategyTemplateSeaDogDiscountSchemeDetailFormModel>({
 			status: StrategyTemplateSeaDogDiscountSchemeTypes.StatusSchema.Enum
 				.active,
+			alpacaAPIPaper: true,
 		});
 	const [error, setError] = useState<string | null>(null);
 	function getValidationWrappedSubmitter(
