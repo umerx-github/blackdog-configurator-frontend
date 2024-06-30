@@ -57,7 +57,15 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
 				}`}
 			>
 				{error ? <p>{error}</p> : null}
-				<span className="border h-6 w-6 flex justify-center items-center">
+				<span
+					className="border h-6 w-6 flex justify-center items-center"
+					tabIndex={0}
+					onKeyDown={(e) => {
+						if (e.code === "Space") {
+							toggleCheckbox();
+						}
+					}}
+				>
 					<input
 						type="checkbox"
 						name={name}
